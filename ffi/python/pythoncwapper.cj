@@ -18,8 +18,6 @@ import std.collection.HashMap
 import std.collection.HashSet
 import std.fs.*
 import std.io.*
-import std.log.*
-import std.os.*
 import std.sync.*
 /* Interface from dlfcn.h. */
 foreign func dlopen(c: CString, flag: Int32): CPointer<Unit>

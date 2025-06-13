@@ -14,8 +14,6 @@ import std.collection.HashMap
 import std.collection.HashSet
 import std.fs.*
 import std.io.*
-import std.log.*
-import std.os.*
 import std.sync.*
 /* Enum type of module `ctypes`. */
 public enum PyCType {

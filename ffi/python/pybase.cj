@@ -13,8 +13,6 @@ import std.collection.HashMap
 import std.collection.HashSet
 import std.fs.*
 import std.io.*
-import std.log.*
-import std.os.*
 import std.sync.*
 /**
  * This class defined python bool type.
@@ -287,7 +285,7 @@ public class PyString <: PyObj {
      * @param Rune
      */
     public init(value: Rune) {
-        super(pyString(String(Array<Rune>(1, item: value))), "PyString")
+        super(pyString(String(Array<Rune>(1, repeat: value))), "PyString")
     }
 
     /**

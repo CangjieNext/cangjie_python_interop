@@ -13,8 +13,6 @@ import std.collection.HashMap
 import std.collection.HashSet
 import std.fs.*
 import std.io.*
-import std.log.*
-import std.os.*
 import std.sync.*
 /**
  * This class provides python tuple type.

@@ -13,8 +13,6 @@ import std.collection.HashMap
 import std.collection.HashSet
 import std.fs.*
 import std.io.*
-import std.log.*
-import std.os.*
 import std.sync.*
 public class PySlice<T> <: PyObj where T <: Countable<T> & Comparable<T> & Equatable<T> & CjObj {
     init(ref: Reference) {

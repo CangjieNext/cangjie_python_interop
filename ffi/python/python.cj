@@ -15,9 +15,8 @@ import std.collection.HashMap
 import std.collection.HashSet
 import std.fs.*
 import std.io.*
-import std.log.*
-import std.os.*
 import std.sync.*
+import std.env.*
 
 /* dopra schedule.h */
 foreign func CJ_BindOSThread(): Int32
@@ -100,8 +99,37 @@ public class PythonException <: Exception {
     }
 }
 
+public enum LogLevel <: ToString {
+    | ERROR
+    | WARN
+    | INFO
+    | DEBUG
+    | TRACE
+
+    public func level(): Int32 {
+        let num = match (this) {
+            case ERROR => 0
+            case WARN => 1
+            case INFO => 2
+            case DEBUG => 3
+            case TRACE => 4
+        }
+        return Int32(num)
+    }
+
+    public func toString(): String {
+        match (this) {
+            case ERROR => "ERROR"
+            case WARN => "WARN"
+            case INFO => "INFO"
+            case DEBUG => "DEBUG"
+            case TRACE => "TRACE"
+        }
+    }
+}
+
 /* Python library logger, default log level is warn. */
-public class PythonLogger <: Logger {
+public class PythonLogger {
     private var level_ = LogLevel.WARN
 
     public mut prop level: LogLevel {
@@ -142,10 +170,10 @@ public class PythonLogger <: Logger {
      * @throws PythonException if the argument level is not larger than LogLevel.ERROR
      */
     public func log(level: LogLevel, msg: String): Unit {
-        if (this.level_ >= level) {
+        if (this.level_.level() >= level.level()) {
             print("${level}: ${msg}\n")
         }
-        if (LogLevel.ERROR >= level) {
+        if (LogLevel.ERROR.level() >= level.level()) {
             throw PythonException(msg)
         }
     }
@@ -242,7 +270,7 @@ public class PythonBuiltins {
         let trimPath = path.trimAscii()
 
         try {
-            if (!File.exists(trimPath)) {
+            if (!exists(trimPath)) {
                 PYLOG.error("\"${trimPath}\" does not exist or the file path is invalid.")
             }
 
@@ -485,7 +513,7 @@ public class PythonBuiltins {
      * @return path of String Type.
      */
     private func getPythonPathByEnv(): String {
-        let path = getEnv("PYTHON_DYNLIB") ?? ""
+        let path = getVariable("PYTHON_DYNLIB") ?? ""
         return path
     }
 
@@ -510,7 +538,7 @@ public class PythonBuiltins {
         while (minor > 0) {
             for (suffix in suffixes) {
                 let dstName = tmpName + minor.toString() + suffix
-                if (File.exists(dstName)) {
+                if (exists(dstName)) {
                     PYLOG.info("Found lib: ${dstName}.")
                     return dstName
                 }
@@ -544,7 +572,7 @@ public class PythonBuiltins {
 
     /* Obtains execution parameters and transfers them to Python. */
     private func setPyArgs(): Unit {
-        let args: Array<String> = getArgs()
+        let args: Array<String> = getCommandLine()
         if (args.size < 0) {
             return
         }
