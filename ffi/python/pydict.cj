@@ -13,8 +13,6 @@ import std.collection.HashMap
 import std.collection.HashSet
 import std.fs.*
 import std.io.*
-import std.log.*
-import std.os.*
 import std.sync.*
 public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFIType {
     init() {}
@@ -87,7 +85,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
                     PYLOG.error("Dict item type is not tuple.")
                     PyTuple()
             }
-            ret.put(tupleItem[0], tupleItem[1])
+            ret.add(tupleItem[0], tupleItem[1])
         }
         return ret
     }

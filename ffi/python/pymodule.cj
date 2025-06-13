@@ -15,8 +15,6 @@ import std.collection.HashMap
 import std.collection.HashSet
 import std.fs.*
 import std.io.*
-import std.log.*
-import std.os.*
 import std.sync.*
 class PyModule <: PyObj {
     private var moduleName: String = ""
