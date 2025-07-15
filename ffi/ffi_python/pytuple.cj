@@ -7,7 +7,7 @@
  *
  * This file provides python tuple type.
  */
-package std.ffi.python
+package ffi_python
 
 import std.collection.HashMap
 import std.collection.HashSet

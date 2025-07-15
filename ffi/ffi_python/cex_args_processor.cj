@@ -1,4 +1,4 @@
-package std.ffi.python
+package ffi_python
 
 var modName = CString(CPointer<UInt8>())
 var funcName1 = CString(CPointer<UInt8>())
