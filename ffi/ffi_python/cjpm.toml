@@ -1,0 +1,21 @@
+[dependencies]
+
+[package]
+  cjc-version = "0.53.21"
+  compile-option = ""
+  description = ""
+  link-option = ""
+  name = "ffi_python"
+  output-type = "dynamic"
+  src-dir = "."
+  target-dir = ""
+  version = "1.0.0"
+
+[profile]
+  [profile.build]
+    incremental = true
+    lto = ""
+  [profile.customized-option]
+    debug = "-g -Woff all"
+    release = "--fast-math -O2 -s -Woff all"
+  [profile.test]

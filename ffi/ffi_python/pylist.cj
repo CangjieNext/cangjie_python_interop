@@ -7,7 +7,7 @@
  *
  * This file provides python list types and related operations.
  */
-package std.ffi.python
+package ffi_python
 
 import std.collection.HashMap
 import std.collection.HashSet

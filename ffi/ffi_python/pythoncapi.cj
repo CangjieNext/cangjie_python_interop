@@ -6,7 +6,7 @@
  * This file declaring Interfaces from the Python Dynamic Library and initialize them.
  * Run cjcov should mask this file.
  */
-package std.ffi.python
+package ffi_python
 
 import std.collection.HashMap
 import std.collection.HashSet

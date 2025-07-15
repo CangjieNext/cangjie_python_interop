@@ -9,7 +9,7 @@
  *
  * @since 0.28.3
  */
-package std.ffi.python
+package ffi_python
 
 import std.collection.HashMap
 import std.collection.HashSet

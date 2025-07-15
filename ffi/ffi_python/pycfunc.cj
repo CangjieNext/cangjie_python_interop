@@ -8,7 +8,7 @@
  * This file provides python PyCFunc types and related operations.
  * Support regist cangjie @C func to Python, and callback from Python side.
  */
-package std.ffi.python
+package ffi_python
 
 import std.collection.HashMap
 import std.collection.HashSet
