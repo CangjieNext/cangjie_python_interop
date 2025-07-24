@@ -1,0 +1,24 @@
+// EXEC: %compiler %pyffi-link %f -o %output
+// EXEC: export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
+// ASSERT: regex-not failure
+// ASSERT: regex main
+
+internal import std.sync.sleep
+internal import std.time.Duration
+internal import std.ffi.python.*
+
+foreign func gettid(): Int32
+
+main() {
+    
+    let fut = spawn {
+        Python.load("/usr/bin/python3")
+        Python["print"](["failure"])
+        Python.unload()
+    }
+    sleep(Duration.second * 1)
+    Python.load()
+    Python["print"](["main"])
+    
+    0
+}

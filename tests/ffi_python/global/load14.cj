@@ -1,0 +1,19 @@
+// Test try catch `PythonException`.
+
+// EXEC: %compiler %pyffi-link %f -o %output
+// EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
+// ASSERT: scan PythonException: "/usr/lib/" does not exist or the file path is invalid.
+
+internal import std.ffi.python.*
+internal import std.log.*
+
+main(): Int64 {
+    try {
+        Python.load("/usr/lib/", loglevel: LogLevel.INFO)
+        print("${Python.getVersion()}\n")
+        Python.unload()
+    } catch(e: PythonException) {
+        print("${e}")
+    }
+    return 0
+}
