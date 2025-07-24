@@ -1,0 +1,33 @@
+// DEPENDENCE: cast.c
+// EXEC: clang -fstack-protector-all -fPIC -shared ./cast.c -o %cffi_output
+// EXEC: %compiler %pyffi-link -l%n -L./ %f -o %output
+// EXEC-PIPE: export cjStackSize=1MB && %run %run_opt %output %run_args
+
+internal import std.sync.sleep
+internal import std.time.Duration
+internal import std.ffi.python.*
+internal import std.log.*
+internal import std.collection.*
+
+@C
+func cfoo(a1: Bool): Int8 {
+    var f = spawn {sleep(Duration.second * 1);return 1}
+    f.get()
+    return 0
+}
+
+foreign func cast(f: CFunc<(Bool) -> Int8>): CPointer<Unit>
+
+main(): Int64 {
+    let fut = spawn {
+        var x = Python.load()
+        var f1 = PyCFunc(unsafe {cast(cfoo)}, 
+                argsTy: [PyCBool], 
+                retTy: PyCPointer)
+        f1([true])
+    }
+
+    fut.get()
+    
+    return 0
+}

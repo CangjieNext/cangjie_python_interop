@@ -1,0 +1,18 @@
+// EXEC: %compiler %pyffi-link %f -o %output
+// EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
+// ASSERT: scan ZeroDivisionError: division by zero
+// ASSERT: regex ZeroDivisionError: integer( division or)? modulo by zero
+
+internal import std.ffi.python.*
+ 
+main(): Int64 {
+    Python.load()
+    var a = PyLong(10)
+    var b = PyLong(0)
+    
+    a/b
+    a%b
+
+    Python.unload()
+    return 0
+}

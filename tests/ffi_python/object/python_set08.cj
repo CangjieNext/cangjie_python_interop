@@ -1,0 +1,41 @@
+// test del
+// DEPENDENCE: test01.py
+// EXEC: %compiler %pyffi-link %f -o %output
+// EXEC-PIPE: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
+// ASSERT: scan INFO: Found key 1 and del it success.
+// ASSERT: scan WARN: Not find key 0 and do nothing.
+// ASSERT: scan INFO: Found key PySet and del it success.
+// ASSERT: scan WARN: Not find key pySet and do nothing.
+// ASSERT: scan ERROR: Get Invailable value.
+
+
+internal import std.ffi.python.*
+internal import std.collection.*
+internal import std.log.*
+
+main() {
+    Python.load(loglevel: LogLevel.INFO)
+    
+    var a = PySet<Int64>(HashSet<Int64>([1, 2, 3]))
+
+    var b = match (Python.Eval("{'PySet', 'HashSet', 1, 1.1, True}")) {
+        case val: PySet<PyObj> => val
+        case _ => throw PythonException()
+    }
+   
+    var test = Python.Import("test01")
+    var e = match (test["pyset"]) {
+        case val: PySet<PyObj> => val
+        case _ => throw PythonException()
+    }
+
+    a.del(1)
+    a.del(0)
+
+    b.del("PySet".toPyObj())
+    b.del("pySet".toPyObj())
+
+    try {b.del(Python.Eval("a = 1"))} catch(e: PythonException) {}
+
+    Python.unload()
+}
