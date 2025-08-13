@@ -1,0 +1,31 @@
+version: '2.0'
+
+params:
+  - name: x86_cangjie_build_image
+    value: "kweecr04.his.huawei.com:80/ecr-build-arm-gzkunpeng/csinewtool_1666072416798:cangjie_formal_docker_suse_x86_gy202_v10.9"
+  - name: x86_docker
+    value: "kweecr04.his.huawei.com:80/ecr-build-arm-gzkunpeng/cangjiemaplangdockerubuntu20.04_gy202:v0.49"
+  - name: branch_cangjie
+    value: release_cangjie_1.2_tr5-2
+  - name: branch_stdx
+    value: release_cangjie_1.2_tr5-2
+  - name: branch_tools
+    value: release_cangjie_1.2_tr5-2
+  - name: branch_runtime
+    value: release_cangjie_1.2_tr5-2
+  - name: branch_llvm
+    value: release_cangjie_1.2_tr5-2
+
+env:
+  resource:
+    type: "docker"
+    image: ${x86_docker}
+    class: 16U32G
+    mode: toolbox
+
+buildflows:
+  - condition: buildType == 'build_interop'
+    jobs:
+      - job: build_cangjie_interop
+        condition: build_cangjie_interop == 'Y'
+        build_ref: .cloudbuild/compile/build_cangjie_interop.yml
