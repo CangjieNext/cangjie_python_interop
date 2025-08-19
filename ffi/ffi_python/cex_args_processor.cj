@@ -129,13 +129,13 @@ func PyInit_args_processor() : CPointer<Unit> {
 
 public func CJ_init_args_processor(): Int32 {
     unsafe {
-        modName = unsafe { LibC.mallocCString("args_processor") }
-        funcName1 = unsafe { LibC.mallocCString("process_list") }
-        funcDoc1 = unsafe { LibC.mallocCString("Process a list as PyObject*") }
-        funcName2 = unsafe { LibC.mallocCString("release_list") }
-        funcDoc2 = unsafe { LibC.mallocCString("Release a list") }
-        module_methods = unsafe { LibC.malloc<PyMethodDef>(count: 3) }
-        module_def = unsafe { LibC.malloc<PyModuleDef>() }
+        modName = LibC.mallocCString("args_processor")
+        funcName1 = LibC.mallocCString("process_list")
+        funcDoc1 = LibC.mallocCString("Process a list as PyObject*")
+        funcName2 = LibC.mallocCString("release_list")
+        funcDoc2 = LibC.mallocCString("Release a list")
+        module_methods = LibC.malloc<PyMethodDef>(count: 3)
+        module_def = LibC.malloc<PyModuleDef>()
         PyImport_AppendInittab(modName, CPointer<Unit>(PyInit_args_processor))
     }
 }

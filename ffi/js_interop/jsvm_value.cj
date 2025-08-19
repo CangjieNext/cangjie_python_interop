@@ -125,91 +125,91 @@ class JSVM_JSValue <: JSValueBase {
 
     public func asUndefined(): JSUndefined {
         if (!isUndefined()) {
-            throw Exception("require undefined type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require undefined type but get ${typeof().toString()}")
         }
         JSUndefined(JSValue(this))
     }
 
     public func asNull(): JSNull {
         if (!isNull()) {
-            throw Exception("require null type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require null type but get ${typeof().toString()}")
         }
         JSNull(JSValue(this))
     }
 
     public func asBoolean(): JSBoolean {
         if (!isBoolean()) {
-            throw Exception("require boolean type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require boolean type but get ${typeof().toString()}")
         }
         JSBoolean(JSValue(this))
     }
 
     public func asNumber(): JSNumber {
         if (!isNumber()) {
-            throw Exception("require number type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require number type but get ${typeof().toString()}")
         }
         JSNumber(JSValue(this))
     }
 
     public func asString(): JSVM_JSString {
         if (!isString()) {
-            throw Exception("require string")
+            throw IllegalArgumentException("require string")
         }
         JSVM_JSString(context_, this)
     }
 
     public func asSymbol(): JSSymbol {
         if (!isSymbol()) {
-            throw Exception("require symbol type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require symbol type but get ${typeof().toString()}")
         }
         JSSymbol(JSValue(this))
     }
 
     public func asObject(): JSVM_JSObject {
         if (!isObject()) {
-            throw Exception("require object type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require object type but get ${typeof().toString()}")
         }
         JSVM_JSObject(context_, this)
     }
 
     public func asFunction(): JSVM_JSFunction {
         if (!isFunction()) {
-            throw Exception("requires function type but get ${typeof().toString()}")
+            throw IllegalArgumentException("requires function type but get ${typeof().toString()}")
         }
         return JSVM_JSFunction(context_, this)
     }
 
     public func asExternal(): JSExternal {
         if (!isExternal()) {
-            throw Exception("require external type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require external type but get ${typeof().toString()}")
         }
         JSExternal(JSValue(this))
     }
 
     public func asBigInt(): JSBigInt {
         if (!isBigInt()) {
-            throw Exception("require bigint type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require bigint type but get ${typeof().toString()}")
         }
         JSBigInt(JSValue(this))
     }
 
     public func asArray(): JSVM_JSArray {
         if (!isFunction()) {
-            throw Exception("requires array type but get ${typeof().toString()}")
+            throw IllegalArgumentException("requires array type but get ${typeof().toString()}")
         }
         return JSVM_JSArray(context_, this)
     }
 
     public func asMap(): JSVM_JSMap {
         if (!isFunction()) {
-            throw Exception("requires map type but get ${typeof().toString()}")
+            throw IllegalArgumentException("requires map type but get ${typeof().toString()}")
         }
         return JSVM_JSMap(context_, this)
     }
 
     public func toBoolean(): Bool {
         if (!isBoolean()) {
-            throw Exception("require boolean type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require boolean type but get ${typeof().toString()}")
         }
         unsafe {
             var result = false
@@ -220,7 +220,7 @@ class JSVM_JSValue <: JSValueBase {
 
     public func toNumberInt32(): Int32 {
         if (!isNumber()) {
-            throw Exception("require number type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require number type but get ${typeof().toString()}")
         }
         unsafe {
             var result = Int32(0)
@@ -231,7 +231,7 @@ class JSVM_JSValue <: JSValueBase {
 
     public func toNumberUint32(): UInt32 {
         if (!isNumber()) {
-            throw Exception("require number type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require number type but get ${typeof().toString()}")
         }
         unsafe {
             var result = UInt32(0)
@@ -242,7 +242,7 @@ class JSVM_JSValue <: JSValueBase {
 
     public func toNumberInt64(): Int64 {
         if (!isNumber()) {
-            throw Exception("require number type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require number type but get ${typeof().toString()}")
         }
         unsafe {
             var result = 0
@@ -253,7 +253,7 @@ class JSVM_JSValue <: JSValueBase {
 
     public func toNumberFloat64(): Float64 {
         if (!isNumber()) {
-            throw Exception("require number type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require number type but get ${typeof().toString()}")
         }
         unsafe {
             var result = 0.0
@@ -265,7 +265,7 @@ class JSVM_JSValue <: JSValueBase {
     // TODO: misleading name, `toString` should convert anything to `String`.
     public func toString(): String {
         if (!isString()) {
-            throw Exception("require string type but get ${typeof().toString()}")
+            throw IllegalArgumentException("require string type but get ${typeof().toString()}")
         }
         return JSVM_JSString(context_, this).toString()
     }
