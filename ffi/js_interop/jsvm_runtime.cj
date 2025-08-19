@@ -38,10 +38,10 @@ class Once<T> {
 
 class JSVM_JSRuntime <: JSRuntimeBase {
     private var vm_: JSVM_VM
-    private var allContexts_: ArrayList<JSVM_JSContext>
+    private var allContexts_: ArrayList<JSVM_JSContext> = ArrayList<JSVM_JSContext>()
     private var uvLoop_: UvLoop
     private var scope_: JSVM_VMScope
-    private var destroyed: Bool
+    private var destroyed: Bool = false
 
     private static let JSVMGlobalInitTask = Once {
         var options = JSVM_InitOptions()
@@ -75,9 +75,6 @@ class JSVM_JSRuntime <: JSRuntimeBase {
         }
         vm_ = vm
         scope_ = scope
-
-        destroyed = false
-        allContexts_ = ArrayList<JSVM_JSContext>()
     }
 
     ~init() {
@@ -105,7 +102,7 @@ class JSVM_JSRuntime <: JSRuntimeBase {
 
     static func check(status: JSVM_Status): Unit {
         if (!status.isOk()) {
-            throw Exception(status.toString())
+            throw IllegalStateException(status.toString())
         }
     }
 
@@ -135,7 +132,7 @@ class JSVM_JSRuntime <: JSRuntimeBase {
                 }
             }
 
-            throw Exception(status.toString())
+            throw IllegalStateException(status.toString())
         }
     }
 

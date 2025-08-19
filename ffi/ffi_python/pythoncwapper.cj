@@ -42,20 +42,20 @@ let MAX_LINE_SIZE: Int32 = 1024
  */
 unsafe func cmdWithReturn(cmd: String): String {
     var output = ""
-    var cCmd = unsafe { LibC.mallocCString(cmd) }
+    var cCmd = LibC.mallocCString(cmd)
     var fstream: CPointer<Unit> = CPointer<Unit>()
 
     var permission = CString(CPointer<UInt8>())
     try {
-        permission = unsafe { LibC.mallocCString("r") }
+        permission = LibC.mallocCString("r")
         fstream = popen(cCmd, permission)
         if (fstream.isNull()) {
             PYLOG.warn("Exec \"${cmd}\" failed!")
             return ""
         }
     } finally {
-        unsafe { LibC.free(cCmd) }
-        unsafe { LibC.free(permission) }
+        LibC.free(cCmd)
+        LibC.free(permission)
     }
 
     PYLOG.info("Exec cmd: \"${cmd}\": ")

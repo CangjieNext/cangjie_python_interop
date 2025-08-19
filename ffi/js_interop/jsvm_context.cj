@@ -133,7 +133,7 @@ class JSVM_JSContext <: JSContextBase {
 
     func checkScope(): Unit {
         if (envScopeList_.isEmpty()) {
-            throw Exception("Create a scope first!")
+            throw NoneValueException("Create a scope first!")
         }
     }
 

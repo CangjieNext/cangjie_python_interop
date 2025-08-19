@@ -9,7 +9,7 @@ class JSVM_JSObject <: JSVM_JSHeapObject & JSObjectBase {
             case value: String => context.string(value).value_
             case value: Int64 => context.number(value).value_
             case jStr: JSVM_JSString => jStr.innerValue
-            case _ => throw Exception("unsupported key: ${key}")
+            case _ => throw IllegalArgumentException("unsupported key: ${key}")
         }
     }
 

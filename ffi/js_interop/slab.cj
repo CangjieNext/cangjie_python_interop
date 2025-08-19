@@ -36,7 +36,7 @@ protected struct Slab<T> {
 
     private func toId(index: Int64): Int64 {
         if (index > 0xFFFFFFFF) {
-            throw Exception("out of range: ${index}")
+            throw IndexOutOfBoundsException("out of range: ${index}")
         }
         slabId_ | index
     }
@@ -117,11 +117,7 @@ protected struct Slab<T> {
 
 protected struct SlabMT<T> {
     var slab_ = Slab<T>()
-    let mutex_: ReentrantMutex
-
-    public init() {
-        mutex_ = ReentrantMutex()
-    }
+    let mutex_: ReentrantMutex = ReentrantMutex()
 
     public mut func append(data: T): Int64 {
         synchronized(mutex_) {

@@ -178,7 +178,7 @@ public class PythonLogger {
         }
     }
 }
-public let PYLOG = PythonLogger()
+public let PYLOG : PythonLogger = PythonLogger()
 
 func getGIL(): Int32 {
     if (!envInit) {
@@ -309,11 +309,9 @@ public class PythonBuiltins {
 
             // Get built-in functions.
             builtins = PyDict<PyObj, PyObj>(pyGetBuiltins())
-        } catch (e: PythonException) {
+        } finally {
             initLock.unlock()
-            throw e
         }
-        initLock.unlock()
     }
 
     /**
@@ -356,11 +354,9 @@ public class PythonBuiltins {
             PYLOG.info("Python interpreter finalize success.")
             
             closeHandle()
-        } catch (e: PythonException) {
+        } finally {
             initLock.unlock()
-            throw e
         }
-        initLock.unlock()
     }
 
     /**
@@ -602,7 +598,7 @@ public class PythonBuiltins {
 
             var pChar = CString(CPointer<UInt8>())
             try {
-                pChar = unsafe { LibC.mallocCString(argv[i]) }
+                pChar = LibC.mallocCString(argv[i])
                 var pWchar: CPointer<Unit> = Py_DecodeLocale(pChar, pSize)
                 // pWchar store in ppWchar.
                 pArgv.write(i, pWchar)
@@ -659,4 +655,4 @@ public class PythonBuiltins {
         CJ_release_args_processor()
     }
 }
-public let Python = PythonBuiltins()
+public let Python : PythonBuiltins = PythonBuiltins()

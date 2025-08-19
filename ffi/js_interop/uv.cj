@@ -65,7 +65,7 @@ class UvLoop {
         var tid: uv_thread_t = 0
         let status = unsafe { uv_thread_create(inout tid, uvLoopRunStub, index) }
         if (status != 0) {
-            throw Exception("create uv_thread failed: ${status}")
+            throw IllegalStateException("create uv_thread failed: ${status}")
         }
         while (loop.runStatus_.load() == 0) {
             // wait init end
@@ -74,7 +74,7 @@ class UvLoop {
     }
 
     private let loop_: uv_loop
-    private var tid_: uv_thread_t
+    private var tid_: uv_thread_t = 0
     private let async_: uv_async
 
     // 0: Starting
@@ -89,13 +89,12 @@ class UvLoop {
     private var pendingTasks_ = SlabMT<() -> Unit>()
 
     init() {
-        tid_ = 0
         unsafe {
             loop_ = uv_loop_new()
             async_ = LibC.malloc<uv_async_t>()
             let status = uv_async_init(loop_, async_, uvLoopAsyncStub)
             if (status != 0) {
-                throw Exception("failed to init async: ${status}")
+                throw IllegalStateException("failed to init async: ${status}")
             }
         }
     }
@@ -111,7 +110,7 @@ class UvLoop {
 
         let currentTid = unsafe { uv_thread_self() }
         if (tid_ == currentTid) {
-            throw Exception("can't stop uv loop on it's running thread")
+            throw UnsupportedException("can't stop uv loop on it's running thread")
         }
         unsafe {
             uv_stop(loop_)
