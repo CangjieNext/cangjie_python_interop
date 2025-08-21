@@ -21,13 +21,18 @@ import std.io.*
 import std.sync.*
 /* Interface from dlfcn.h. */
 foreign func dlopen(c: CString, flag: Int32): CPointer<Unit>
+
 foreign func dlsym(handle: CPointer<Unit>, symbol: CString): CPointer<Unit>
+
 foreign func dlclose(handle: CPointer<Unit>): Int32
 
 /* system call. */
 foreign func popen(command: CString, permission: CString): CPointer<Unit>
+
 foreign func pclose(file: CPointer<Unit>): Int32
+
 foreign func memset_s(buf: CPointer<Unit>, size1: UIntNative, value: Int32, size2: UIntNative): CPointer<Unit>
+
 foreign func fgets(buf: CPointer<Unit>, size: Int32, file: CPointer<Unit>): CPointer<UInt8>
 
 let MAX_LINE_SIZE: Int32 = 1024
@@ -67,7 +72,7 @@ unsafe func cmdWithReturn(cmd: String): String {
     }
     memset_s(CPointer<Unit>(buf), UIntNative(MAX_LINE_SIZE), 0, UIntNative(MAX_LINE_SIZE))
 
-    var ret:Int32 = 0
+    var ret: Int32 = 0
     try {
         while (fgets(CPointer<Unit>(buf), MAX_LINE_SIZE, fstream).isNotNull()) {
             output += CString(buf).toString()
@@ -79,7 +84,7 @@ unsafe func cmdWithReturn(cmd: String): String {
 
     PYLOG.info("${output}")
     if (ret != 0) {
-        PYLOG.warn("Exec cmd failed, subprocess return value: ${ret>>8}")
+        PYLOG.warn("Exec cmd failed, subprocess return value: ${ret >> 8}")
         return ""
     }
 
@@ -197,16 +202,16 @@ unsafe func readApiPyObj(): Unit {
     Py_IncRef = CFunc<(CPointer<Unit>) -> Unit>(getPythonFunc("Py_IncRef"))
     Py_DecRef = CFunc<(CPointer<Unit>) -> Unit>(getPythonFunc("Py_DecRef"))
     PyObject_GetAttrString = CFunc<(CPointer<Unit>, CString) -> CPointer<Unit>>(getPythonFunc("PyObject_GetAttrString"))
-    PyObject_SetAttrString = CFunc<(CPointer<Unit>, CString, CPointer<Unit>) -> Int32>(getPythonFunc(
-            "PyObject_SetAttrString"))
+    PyObject_SetAttrString = CFunc<(CPointer<Unit>, CString, CPointer<Unit>) -> Int32>(
+        getPythonFunc("PyObject_SetAttrString"))
     PyObject_Str = CFunc<(CPointer<Unit>) -> CPointer<Unit>>(getPythonFunc("PyObject_Str"))
-    PyObject_Call = CFunc<(CPointer<Unit>, CPointer<Unit>, CPointer<Unit>) -> CPointer<Unit>>(getPythonFunc(
-            "PyObject_Call"))
-    PyRun_String = CFunc<(CString, Int32, CPointer<Unit>, CPointer<Unit>) -> CPointer<Unit>>(getPythonFunc(
-            "PyRun_String"))
+    PyObject_Call = CFunc<(CPointer<Unit>, CPointer<Unit>, CPointer<Unit>) -> CPointer<Unit>>(
+        getPythonFunc("PyObject_Call"))
+    PyRun_String = CFunc<(CString, Int32, CPointer<Unit>, CPointer<Unit>) -> CPointer<Unit>>(
+        getPythonFunc("PyRun_String"))
     PyObject_Hash = CFunc<(CPointer<Unit>) -> Int64>(getPythonFunc("PyObject_Hash"))
-    PyObject_RichCompareBool = CFunc<(CPointer<Unit>, CPointer<Unit>, Int32) -> Int32>(getPythonFunc(
-            "PyObject_RichCompareBool"))
+    PyObject_RichCompareBool = CFunc<(CPointer<Unit>, CPointer<Unit>, Int32) -> Int32>(
+        getPythonFunc("PyObject_RichCompareBool"))
     PyObject_GetIter = CFunc<(CPointer<Unit>) -> CPointer<Unit>>(getPythonFunc("PyObject_GetIter"))
     PyIter_Next = CFunc<(CPointer<Unit>) -> CPointer<Unit>>(getPythonFunc("PyIter_Next"))
     PyRun_SimpleString = CFunc<(CString) -> Int32>(getPythonFunc("PyRun_SimpleString"))
@@ -275,8 +280,8 @@ unsafe func readApiPyTuple(): Unit {
     PyTuple_GetItem = CFunc<(CPointer<Unit>, Int64) -> CPointer<Unit>>(getPythonFunc("PyTuple_GetItem"))
     PyTuple_Size = CFunc<(CPointer<Unit>) -> Int64>(getPythonFunc("PyTuple_Size"))
     PyTuple_GetSlice = CFunc<(CPointer<Unit>, Int64, Int64) -> CPointer<Unit>>(getPythonFunc("PyTuple_GetSlice"))
-    PyArg_ParseTuple = CFunc<(CPointer<Unit>, CString, CPointer<Unit>, CPointer<CPointer<Unit>>) -> Int32>(getPythonFunc(
-            "PyArg_ParseTuple"))
+    PyArg_ParseTuple = CFunc<(CPointer<Unit>, CString, CPointer<Unit>, CPointer<CPointer<Unit>>) -> Int32>(
+        getPythonFunc("PyArg_ParseTuple"))
 }
 
 unsafe func readApiPyList(): Unit {
@@ -300,7 +305,8 @@ unsafe func readApiPySet(): Unit {
 }
 
 unsafe func readApiPySlice(): Unit {
-    PySlice_New = CFunc<(CPointer<Unit>, CPointer<Unit>, CPointer<Unit>) -> CPointer<Unit>>(getPythonFunc("PySlice_New"))
-    PySlice_Unpack = CFunc<(CPointer<Unit>, CPointer<Int64>, CPointer<Int64>, CPointer<Int64>) -> Int32>(getPythonFunc(
-            "PySlice_Unpack"))
+    PySlice_New = CFunc<(CPointer<Unit>, CPointer<Unit>, CPointer<Unit>) -> CPointer<Unit>>(
+        getPythonFunc("PySlice_New"))
+    PySlice_Unpack = CFunc<(CPointer<Unit>, CPointer<Int64>, CPointer<Int64>, CPointer<Int64>) -> Int32>(
+        getPythonFunc("PySlice_Unpack"))
 }

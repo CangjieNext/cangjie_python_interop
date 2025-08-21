@@ -5,8 +5,8 @@ package ohos_app_cangjie_entry.js_interop
 
 import numeric.bigint.BigInt
 
-let ValueTypeNames = [
-    "undefined", "null", "boolean", "number", "string", "symbol", "object", "function", "external", "bigint"]
+let ValueTypeNames = ["undefined", "null", "boolean", "number", "string", "symbol", "object", "function", "external",
+    "bigint"]
 
 public struct ValueType {
     ValueType(let value: UInt32) {}
@@ -15,16 +15,16 @@ public struct ValueType {
         this(0)
     }
 
-    public static let UNDEFINED : ValueType = ValueType(0)
-    public static let NULL : ValueType = ValueType(1)
-    public static let BOOLEAN : ValueType = ValueType(2)
-    public static let NUMBER : ValueType = ValueType(3)
-    public static let STRING : ValueType = ValueType(4)
-    public static let SYMBOL : ValueType = ValueType(5)
-    public static let OBJECT : ValueType = ValueType(6)
-    public static let FUNCTION : ValueType = ValueType(7)
-    public static let EXTERNAL : ValueType = ValueType(8)
-    public static let BIGINT : ValueType = ValueType(9)
+    public static let UNDEFINED: ValueType = ValueType(0)
+    public static let NULL: ValueType = ValueType(1)
+    public static let BOOLEAN: ValueType = ValueType(2)
+    public static let NUMBER: ValueType = ValueType(3)
+    public static let STRING: ValueType = ValueType(4)
+    public static let SYMBOL: ValueType = ValueType(5)
+    public static let OBJECT: ValueType = ValueType(6)
+    public static let FUNCTION: ValueType = ValueType(7)
+    public static let EXTERNAL: ValueType = ValueType(8)
+    public static let BIGINT: ValueType = ValueType(9)
 
     public operator func ==(target: ValueType): Bool {
         return value == target.value

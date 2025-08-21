@@ -3,29 +3,64 @@
  */
 package ohos_app_cangjie_entry.js_interop
 
-@C struct JSVM_VM__ {}
+@C
+struct JSVM_VM__ {}
+
 type JSVM_VM = CPointer<JSVM_VM__>
-@C struct JSVM_VMScope__ {}
+
+@C
+struct JSVM_VMScope__ {}
+
 type JSVM_VMScope = CPointer<JSVM_VMScope__>
-@C struct JSVM_EnvScope__ {}
+
+@C
+struct JSVM_EnvScope__ {}
+
 type JSVM_EnvScope = CPointer<JSVM_EnvScope__>
-@C struct JSVM_Script__ {}
+
+@C
+struct JSVM_Script__ {}
+
 type JSVM_Script = CPointer<JSVM_Script__>
-@C struct JSVM_Env__ {}
+
+@C
+struct JSVM_Env__ {}
+
 type JSVM_Env = CPointer<JSVM_Env__>
-@C struct JSVM_CpuProfiler__ {}
+
+@C
+struct JSVM_CpuProfiler__ {}
+
 type JSVM_CpuProfiler = CPointer<JSVM_CpuProfiler__>
-@C struct JSVM_Value__ {}
+
+@C
+struct JSVM_Value__ {}
+
 type JSVM_Value = CPointer<JSVM_Value__>
-@C struct JSVM_Ref__ {}
+
+@C
+struct JSVM_Ref__ {}
+
 type JSVM_Ref = CPointer<JSVM_Ref__>
-@C struct JSVM_HandleScope__ {}
+
+@C
+struct JSVM_HandleScope__ {}
+
 type JSVM_HandleScope = CPointer<JSVM_HandleScope__>
-@C struct JSVM_EscapableHandleScope__ {}
+
+@C
+struct JSVM_EscapableHandleScope__ {}
+
 type JSVM_EscapableHandleScope = CPointer<JSVM_EscapableHandleScope__>
-@C struct JSVM_CallbackInfo__ {}
+
+@C
+struct JSVM_CallbackInfo__ {}
+
 type JSVM_CallbackInfo = CPointer<JSVM_CallbackInfo__>
-@C struct JSVM_Deferred__ {}
+
+@C
+struct JSVM_Deferred__ {}
+
 type JSVM_Deferred = CPointer<JSVM_Deferred__>
 
 @C
@@ -89,8 +124,17 @@ struct JSVM_ValueType {
 }
 
 let JSVM_TypedarrayTypeNames = [
-    "Int8Array", "Uint8Array", "Uint8ClampedArray", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array",
-    "Float32Array", "Float64Array", "Bigint64Array", "BigUint64Array"
+    "Int8Array",
+    "Uint8Array",
+    "Uint8ClampedArray",
+    "Int16Array",
+    "Uint16Array",
+    "Int32Array",
+    "Uint32Array",
+    "Float32Array",
+    "Float64Array",
+    "Bigint64Array",
+    "BigUint64Array"
 ]
 
 @C
@@ -119,12 +163,32 @@ struct JSVM_TypedarrayType {
 }
 
 let JSVM_StatusNames = [
-    "JSVM_OK", "JSVM_INVALID_ARG", "JSVM_OBJECT_EXPECTED", "JSVM_STRING_EXPECTED", "JSVM_NAME_EXPECTED", "JSVM_FUNCTION_EXPECTED",
-    "JSVM_NUMBER_EXPECTED", "JSVM_BOOLEAN_EXPECTED", "JSVM_ARRAY_EXPECTED", "JSVM_GENERIC_FAILURE", "JSVM_PENDING_EXCEPTION",
-    "JSVM_CANCELLED", "JSVM_ESCAPE_CALLED_TWICE", "JSVM_HANDLE_SCOPE_MISMATCH", "JSVM_CALLBACK_SCOPE_MISMATCH", "JSVM_QUEUE_FULL",
-    "JSVM_CLOSING", "JSVM_BIGINT_EXPECTED", "JSVM_DATE_EXPECTED", "JSVM_ARRAYBUFFER_EXPECTED", "JSVM_DETACHABLE_ARRAYBUFFER_EXPECTED",
-    "JSVM_WOULD_DEADLOCK", "JSVM_NO_EXTERNAL_BUFFERS_ALLOWED", "JSVM_CANNOT_RUN_JS", "JSVM_INVALID_TYPE"
-    ]
+    "JSVM_OK",
+    "JSVM_INVALID_ARG",
+    "JSVM_OBJECT_EXPECTED",
+    "JSVM_STRING_EXPECTED",
+    "JSVM_NAME_EXPECTED",
+    "JSVM_FUNCTION_EXPECTED",
+    "JSVM_NUMBER_EXPECTED",
+    "JSVM_BOOLEAN_EXPECTED",
+    "JSVM_ARRAY_EXPECTED",
+    "JSVM_GENERIC_FAILURE",
+    "JSVM_PENDING_EXCEPTION",
+    "JSVM_CANCELLED",
+    "JSVM_ESCAPE_CALLED_TWICE",
+    "JSVM_HANDLE_SCOPE_MISMATCH",
+    "JSVM_CALLBACK_SCOPE_MISMATCH",
+    "JSVM_QUEUE_FULL",
+    "JSVM_CLOSING",
+    "JSVM_BIGINT_EXPECTED",
+    "JSVM_DATE_EXPECTED",
+    "JSVM_ARRAYBUFFER_EXPECTED",
+    "JSVM_DETACHABLE_ARRAYBUFFER_EXPECTED",
+    "JSVM_WOULD_DEADLOCK",
+    "JSVM_NO_EXTERNAL_BUFFERS_ALLOWED",
+    "JSVM_CANNOT_RUN_JS",
+    "JSVM_INVALID_TYPE"
+]
 
 @C
 struct JSVM_Status {
@@ -268,21 +332,14 @@ struct JSVM_HeapStatistics {
     }
 
     func toString(): String {
-        return "JSHeapStatistics{" +
-               "totalHeapSize=" + totalHeapSize.toString() +
-               ", totalHeapSizeExecutable=" + totalHeapSizeExecutable.toString() +
-               ", totalPhysicalSize=" + totalPhysicalSize.toString() +
-               ", totalAvailableSize=" + totalAvailableSize.toString() +
-               ", usedHeapSize=" + usedHeapSize.toString() +
-               ", heapSizeLimit=" + heapSizeLimit.toString() +
-               ", mallocedMemory=" + mallocedMemory.toString() +
-               ", externalMemory=" + externalMemory.toString() +
-               ", peakMallocedMemory=" + peakMallocedMemory.toString() +
-               ", numberOfNativeContexts=" + numberOfNativeContexts.toString() +
-               ", numberOfDetachedContexts=" + numberOfDetachedContexts.toString() +
-               ", totalGlobalHandlesSize=" + totalGlobalHandlesSize.toString() +
-               ", usedGlobalHandlesSize=" + usedGlobalHandlesSize.toString() +
-               '}'
+        return "JSHeapStatistics{" + "totalHeapSize=" + totalHeapSize.toString() + ", totalHeapSizeExecutable=" +
+            totalHeapSizeExecutable.toString() + ", totalPhysicalSize=" + totalPhysicalSize.toString() +
+            ", totalAvailableSize=" + totalAvailableSize.toString() + ", usedHeapSize=" + usedHeapSize.toString() +
+            ", heapSizeLimit=" + heapSizeLimit.toString() + ", mallocedMemory=" + mallocedMemory.toString() +
+            ", externalMemory=" + externalMemory.toString() + ", peakMallocedMemory=" + peakMallocedMemory.toString() +
+            ", numberOfNativeContexts=" + numberOfNativeContexts.toString() + ", numberOfDetachedContexts=" +
+            numberOfDetachedContexts.toString() + ", totalGlobalHandlesSize=" + totalGlobalHandlesSize.toString() +
+            ", usedGlobalHandlesSize=" + usedGlobalHandlesSize.toString() + '}'
     }
 }
 
@@ -441,7 +498,9 @@ struct JSVM_MessageErrorLevel {
 }
 
 type JSVM_HandlerForOOMError = CFunc<(CString, CString, Bool) -> Unit>
+
 type JSVM_HandlerForFatalError = CFunc<(CString, CString) -> Unit>
+
 type JSVM_HandlerForPromiseReject = CFunc<(JSVM_Env, JSVM_PromiseRejectEvent, JSVM_Value) -> Unit>
 
 @C
@@ -500,97 +559,182 @@ foreign {
     // TODO: check all the int types.
     // Create VM and context.
     func OH_JSVM_Init(options: CPointer<JSVM_InitOptions>): JSVM_Status
+
     func OH_JSVM_CreateVM(options: CPointer<JSVM_CreateVMOptions>, result: CPointer<JSVM_VM>): JSVM_Status
+
     func OH_JSVM_DestroyVM(vm: JSVM_VM): JSVM_Status
+
     func OH_JSVM_OpenVMScope(vm: JSVM_VM, result: CPointer<JSVM_VMScope>): JSVM_Status
+
     func OH_JSVM_CloseVMScope(vm: JSVM_VM, scope: JSVM_VMScope): JSVM_Status
-    func OH_JSVM_CreateEnv(vm: JSVM_VM, propertyCount: Int64, properties: CPointer<JSVM_PropertyDescriptor>, result: CPointer<JSVM_Env>): JSVM_Status
+
+    func OH_JSVM_CreateEnv(vm: JSVM_VM, propertyCount: Int64, properties: CPointer<JSVM_PropertyDescriptor>,
+        result: CPointer<JSVM_Env>): JSVM_Status
+
     func OH_JSVM_DestroyEnv(vm: JSVM_Env): JSVM_Status
+
     func OH_JSVM_OpenEnvScope(env: JSVM_Env, result: CPointer<JSVM_EnvScope>): JSVM_Status
+
     func OH_JSVM_CloseEnvScope(env: JSVM_Env, scope: JSVM_EnvScope): JSVM_Status
+
     func OH_JSVM_OpenHandleScope(env: JSVM_Env, result: CPointer<JSVM_HandleScope>): JSVM_Status
+
     func OH_JSVM_CloseHandleScope(env: JSVM_Env, scope: JSVM_HandleScope): JSVM_Status
     // Handle exceptions.
     func OH_JSVM_ThrowError(env: JSVM_Env, code: CString, msg: CString): JSVM_Status
+
     func OH_JSVM_GetAndClearLastException(env: JSVM_Env, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_IsExceptionPending(env: JSVM_Env, result: CPointer<Bool>): JSVM_Status
     // Manage object lifetime.
     func OH_JSVM_CreateReference(env: JSVM_Env, value: JSVM_Value, initialRefCount: UInt32, result: CPointer<JSVM_Ref>): JSVM_Status
+
     func OH_JSVM_DeleteReference(env: JSVM_Env, ref: JSVM_Ref): JSVM_Status
+
     func OH_JSVM_ReferenceRef(env: JSVM_Env, ref: JSVM_Ref, result: CPointer<UInt32>): JSVM_Status
+
     func OH_JSVM_ReferenceUnref(env: JSVM_Env, ref: JSVM_Ref, result: CPointer<UInt32>): JSVM_Status
+
     func OH_JSVM_GetReferenceValue(env: JSVM_Env, ref: JSVM_Ref, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_ReleaseScript(env: JSVM_Env, script: JSVM_Script): JSVM_Status
     // Create JS types.
     func OH_JSVM_CreateArray(env: JSVM_Env, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_CreateArrayWithLength(env: JSVM_Env, length: Int64, result: CPointer<JSVM_Value>): JSVM_Status
-    func OH_JSVM_CreateArraybuffer(env: JSVM_Env, byteLength: Int64, data: CPointer<CPointer<Unit>>, result: CPointer<JSVM_Value>): JSVM_Status
+
+    func OH_JSVM_CreateArraybuffer(env: JSVM_Env, byteLength: Int64, data: CPointer<CPointer<Unit>>,
+        result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_CreateObject(env: JSVM_Env, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_CreateInt32(env: JSVM_Env, value: Int32, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_CreateUint32(env: JSVM_Env, value: UInt32, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_CreateInt64(env: JSVM_Env, value: Int64, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_CreateDouble(env: JSVM_Env, value: Float64, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_CreateStringUtf8(env: JSVM_Env, str: CString, length: Int64, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_CreateMap(env: JSVM_Env, result: CPointer<JSVM_Value>): JSVM_Status
     // Compile and run JS code.
-    func OH_JSVM_CompileScript(env: JSVM_Env, script: JSVM_Value, data: CPointer<UInt8>, cacheDataLength: UIntNative, eagerCompile: Bool, cacheRejected: CPointer<Bool>, result: CPointer<JSVM_Script>): JSVM_Status
-    func OH_JSVM_CompileScriptWithOptions(env: JSVM_Env, script: JSVM_Value, optionCount: Int64, options: CPointer<JSVM_CompileOptions>, result: CPointer<JSVM_Script>): JSVM_Status
-    func OH_JSVM_CreateCodeCache(env: JSVM_Env, script: JSVM_Script, data: CPointer<CPointer<UInt8>>, length: CPointer<UIntNative>): JSVM_Status
+    func OH_JSVM_CompileScript(env: JSVM_Env, script: JSVM_Value, data: CPointer<UInt8>, cacheDataLength: UIntNative,
+        eagerCompile: Bool, cacheRejected: CPointer<Bool>, result: CPointer<JSVM_Script>): JSVM_Status
+
+    func OH_JSVM_CompileScriptWithOptions(env: JSVM_Env, script: JSVM_Value, optionCount: Int64,
+        options: CPointer<JSVM_CompileOptions>, result: CPointer<JSVM_Script>): JSVM_Status
+
+    func OH_JSVM_CreateCodeCache(env: JSVM_Env, script: JSVM_Script, data: CPointer<CPointer<UInt8>>,
+        length: CPointer<UIntNative>): JSVM_Status
+
     func OH_JSVM_RunScript(env: JSVM_Env, script: JSVM_Script, result: CPointer<JSVM_Value>): JSVM_Status
     // Get C types/information directly or from JS types.
     func OH_JSVM_GetArrayLength(env: JSVM_Env, value: JSVM_Value, result: CPointer<UInt32>): JSVM_Status
+
     func OH_JSVM_GetValueBool(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_GetValueInt32(env: JSVM_Env, value: JSVM_Value, result: CPointer<Int32>): JSVM_Status
+
     func OH_JSVM_GetValueUint32(env: JSVM_Env, value: JSVM_Value, result: CPointer<UInt32>): JSVM_Status
+
     func OH_JSVM_GetValueInt64(env: JSVM_Env, value: JSVM_Value, result: CPointer<Int64>): JSVM_Status
+
     func OH_JSVM_GetValueDouble(env: JSVM_Env, value: JSVM_Value, result: CPointer<Float64>): JSVM_Status
-    func OH_JSVM_GetValueBigintWords(env: JSVM_Env, value: JSVM_Value, signBit: CPointer<Int>, wordCount: CPointer<UIntNative>, result: CPointer<UInt64>): JSVM_Status
-    func OH_JSVM_GetValueStringUtf8(env: JSVM_Env, value: JSVM_Value, buf: CPointer<UInt8>, bufSize: Int64, result: CPointer<Int64>): JSVM_Status
+
+    func OH_JSVM_GetValueBigintWords(env: JSVM_Env, value: JSVM_Value, signBit: CPointer<Int>,
+        wordCount: CPointer<UIntNative>, result: CPointer<UInt64>): JSVM_Status
+
+    func OH_JSVM_GetValueStringUtf8(env: JSVM_Env, value: JSVM_Value, buf: CPointer<UInt8>, bufSize: Int64,
+        result: CPointer<Int64>): JSVM_Status
+
     func OH_JSVM_GetGlobal(env: JSVM_Env, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_GetNull(env: JSVM_Env, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_GetUndefined(env: JSVM_Env, result: CPointer<JSVM_Value>): JSVM_Status
     // Check types.
     func OH_JSVM_Typeof(env: JSVM_Env, value: JSVM_Value, result: CPointer<JSVM_ValueType>): JSVM_Status
+
     func OH_JSVM_Instanceof(env: JSVM_Env, object: JSVM_Value, constructor: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsArray(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsArraybuffer(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsDate(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsTypedarray(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsDataview(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsCallable(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsUndefined(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsNull(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsNullOrUndefined(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsBoolean(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsNumber(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsString(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsSymbol(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsFunction(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsObject(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsBigInt(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_IsMap(env: JSVM_Env, value: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_StrictEquals(env: JSVM_Env, lhs: JSVM_Value, rhs: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_Equals(env: JSVM_Env, lhs: JSVM_Value, rhs: JSVM_Value, result: CPointer<Bool>): JSVM_Status
     // Operations of JS properties.
     func OH_JSVM_GetPropertyNames(env: JSVM_Env, object: JSVM_Value, result: CPointer<JSVM_Value>): JSVM_Status
-    func OH_JSVM_GetAllPropertyNames(env: JSVM_Env, object: JSVM_Value, keyMode: JSVM_KeyCollectionMode, keyFilter: JSVM_KeyFilter, keyConversion: JSVM_KeyConversion, result: CPointer<JSVM_Value>): JSVM_Status
+
+    func OH_JSVM_GetAllPropertyNames(env: JSVM_Env, object: JSVM_Value, keyMode: JSVM_KeyCollectionMode,
+        keyFilter: JSVM_KeyFilter, keyConversion: JSVM_KeyConversion, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_SetProperty(env: JSVM_Env, object: JSVM_Value, key: JSVM_Value, value: JSVM_Value): JSVM_Status
+
     func OH_JSVM_GetProperty(env: JSVM_Env, object: JSVM_Value, key: JSVM_Value, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_HasProperty(env: JSVM_Env, object: JSVM_Value, key: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_DeleteProperty(env: JSVM_Env, object: JSVM_Value, key: JSVM_Value, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_GetNamedProperty(env: JSVM_Env, object: JSVM_Value, name: CString, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_SetElement(env: JSVM_Env, object: JSVM_Value, index: UInt32, value: JSVM_Value): JSVM_Status
+
     func OH_JSVM_GetElement(env: JSVM_Env, object: JSVM_Value, index: UInt32, result: CPointer<JSVM_Value>): JSVM_Status
+
     func OH_JSVM_HasElement(env: JSVM_Env, object: JSVM_Value, index: UInt32, result: CPointer<Bool>): JSVM_Status
+
     func OH_JSVM_DeleteElement(env: JSVM_Env, object: JSVM_Value, index: UInt32, result: CPointer<Bool>): JSVM_Status
     // Operations of JS functions.
-    func OH_JSVM_CallFunction(env: JSVM_Env, thisArg: JSVM_Value, fun: JSVM_Value, argc: Int64, argv: CPointer<JSVM_Value>, result: CPointer<JSVM_Value>): JSVM_Status
-    func OH_JSVM_CreateFunction(env: JSVM_Env, name: CPointer<UInt8>, nameLen: Int64, callback: CPointer<JSVM_Callback>, result: CPointer<JSVM_Value>): JSVM_Status
-    func OH_JSVM_GetCbInfo(env: JSVM_Env, cbInfo: JSVM_CallbackInfo, argc: CPointer<Int64>, argv: CPointer<JSVM_Value>, thisArg: CPointer<JSVM_Value>, hint: CPointer<Int64>): JSVM_Status
+    func OH_JSVM_CallFunction(env: JSVM_Env, thisArg: JSVM_Value, fun: JSVM_Value, argc: Int64,
+        argv: CPointer<JSVM_Value>, result: CPointer<JSVM_Value>): JSVM_Status
+
+    func OH_JSVM_CreateFunction(env: JSVM_Env, name: CPointer<UInt8>, nameLen: Int64, callback: CPointer<JSVM_Callback>,
+        result: CPointer<JSVM_Value>): JSVM_Status
+
+    func OH_JSVM_GetCbInfo(env: JSVM_Env, cbInfo: JSVM_CallbackInfo, argc: CPointer<Int64>, argv: CPointer<JSVM_Value>,
+        thisArg: CPointer<JSVM_Value>, hint: CPointer<Int64>): JSVM_Status
+
     func OH_JSVM_GetNewTarget(env: JSVM_Env, cbInfo: JSVM_CallbackInfo, result: CPointer<JSVM_Value>): JSVM_Status
     // Wrap objects.
-    func OH_JSVM_AddFinalizer(env: JSVM_Env, object: JSVM_Value, data: CPointer<Unit>, callback: JSVM_Finalize, hint: Int64, result: CPointer<JSVM_Ref>): JSVM_Status
+    func OH_JSVM_AddFinalizer(env: JSVM_Env, object: JSVM_Value, data: CPointer<Unit>, callback: JSVM_Finalize,
+        hint: Int64, result: CPointer<JSVM_Ref>): JSVM_Status
     // Manage memory.
     func OH_JSVM_MemoryPressureNotification(env: JSVM_Env, level: JSVM_MemoryPressureLevel): JSVM_Status
+
     func OH_JSVM_GetHeapStatistics(vm: JSVM_VM, result: CPointer<JSVM_HeapStatistics>): JSVM_Status
 }

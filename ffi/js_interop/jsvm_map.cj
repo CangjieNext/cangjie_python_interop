@@ -33,8 +33,9 @@ class JSVM_JSMap <: JSVM_JSHeapObject & JSMapBase {
     public func keys(): JSVM_JSArray {
         unsafe {
             var result = JSVM_Value()
-            JSVM_JSRuntime.check(OH_JSVM_GetAllPropertyNames(context_.env, innerValue, JSVM_KeyCollectionMode.JSVM_KEY_OWN_ONLY,
-                JSVM_KeyFilter.ALL_PROPERTIES, JSVM_KeyConversion.JSVM_KEY_KEEP_NUMBERS, inout result))
+            JSVM_JSRuntime.check(
+                OH_JSVM_GetAllPropertyNames(context_.env, innerValue, JSVM_KeyCollectionMode.JSVM_KEY_OWN_ONLY,
+                    JSVM_KeyFilter.ALL_PROPERTIES, JSVM_KeyConversion.JSVM_KEY_KEEP_NUMBERS, inout result))
             return JSVM_JSArray(context_, JSVM_JSValue(context_, result))
         }
     }

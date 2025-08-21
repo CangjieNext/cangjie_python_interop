@@ -20,7 +20,7 @@ class JSVM_JSString <: JSVM_JSHeapObject & JSStringBase {
         unsafe {
             var size = 0
             JSVM_JSRuntime.check(OH_JSVM_GetValueStringUtf8(context_.env, innerValue, CPointer<UInt8>(), 0, inout size))
-            size++  // Increase one because the null terminator is excluded.
+            size++ // Increase one because the null terminator is excluded.
             let buffer = Array<UInt8>(size, item: 0)
             let handle = acquireArrayRawData(buffer)
             JSVM_JSRuntime.check(OH_JSVM_GetValueStringUtf8(context_.env, innerValue, handle.pointer, size, inout size))

@@ -8,9 +8,9 @@ interface JSArrayBase <: JSHeapObject {
 
     func deleteAt(index: Int64): Bool
 
-    operator func[](index: Int64): JSValueBase
+    operator func [](index: Int64): JSValueBase
 
-    operator func[](index: Int64, value!: ToJSValue): Unit
+    operator func [](index: Int64, value!: ToJSValue): Unit
 }
 
 public class JSArray <: ToJSValue {
@@ -26,11 +26,11 @@ public class JSArray <: ToJSValue {
         return array.deleteAt(index)
     }
 
-    public operator func[](index: Int64): JSValue {
+    public operator func [](index: Int64): JSValue {
         return JSValue(array[index])
     }
 
-    public operator func[](index: Int64, value!: ToJSValue): Unit {
+    public operator func [](index: Int64, value!: ToJSValue): Unit {
         array[index] = value
     }
 

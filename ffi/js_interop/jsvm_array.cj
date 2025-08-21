@@ -33,7 +33,7 @@ class JSVM_JSArray <: JSVM_JSHeapObject & JSArrayBase {
         }
     }
 
-    public operator func[](index: Int64): JSVM_JSValue {
+    public operator func [](index: Int64): JSVM_JSValue {
         if (index < 0) {
             throw IndexOutOfBoundsException("Invalid index: array index can not be negative!")
         }
@@ -47,7 +47,7 @@ class JSVM_JSArray <: JSVM_JSHeapObject & JSArrayBase {
         }
     }
 
-    public operator func[](index: Int64, value!: ToJSValue): Unit {
+    public operator func [](index: Int64, value!: ToJSValue): Unit {
         if (index < 0) {
             throw IndexOutOfBoundsException("Invalid index: array index can not be negative!")
         }
