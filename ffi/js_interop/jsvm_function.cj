@@ -2,6 +2,7 @@
  * Created on 2025/3/6
  */
 package ohos_app_cangjie_entry.js_interop
+
 import ohos.hilog.Hilog
 
 class JSVM_JSCallInfo <: JSCallInfoBase {
@@ -35,7 +36,7 @@ class JSVM_JSCallInfo <: JSCallInfoBase {
 
     public prop args: Array<JSValueBase> {
         get() {
-            return Array<JSValueBase>(args_.size) { idx => args_[idx] }
+            return Array<JSValueBase>(args_.size) {idx => args_[idx]}
         }
     }
 
@@ -101,7 +102,9 @@ class JSVM_JSFunction <: JSVM_JSHeapObject & JSFunctionBase {
             var callback = LibC.malloc<JSVM_Callback>()
             callback.write(cb)
             JSVM_JSRuntime.check(OH_JSVM_CreateFunction(context.env, CPointer<UInt8>(), 0, callback, inout result))
-            JSVM_JSRuntime.check(OH_JSVM_AddFinalizer(context.env, result, CPointer<Unit>(callback), jsFunctionFinalizerStub, lambdaId, CPointer<JSVM_Ref>()))
+            JSVM_JSRuntime.check(
+                OH_JSVM_AddFinalizer(context.env, result, CPointer<Unit>(callback), jsFunctionFinalizerStub, lambdaId,
+                    CPointer<JSVM_Ref>()))
             return JSVM_JSFunction(context, JSVM_JSValue(context, result))
         }
     }
@@ -114,17 +117,21 @@ class JSVM_JSFunction <: JSVM_JSHeapObject & JSFunctionBase {
             var result = JSVM_Value()
             var callback = LibC.malloc<JSVM_Callback>()
             callback.write(cb)
-            JSVM_JSRuntime.check(OH_JSVM_CreateFunction(context.env, handle.pointer, handle.array.size, callback, inout result))
-            JSVM_JSRuntime.check(OH_JSVM_AddFinalizer(context.env, result, CPointer<Unit>(callback), jsFunctionFinalizerStub, lambdaId, CPointer<JSVM_Ref>()))
+            JSVM_JSRuntime.check(
+                OH_JSVM_CreateFunction(context.env, handle.pointer, handle.array.size, callback, inout result))
+            JSVM_JSRuntime.check(
+                OH_JSVM_AddFinalizer(context.env, result, CPointer<Unit>(callback), jsFunctionFinalizerStub, lambdaId,
+                    CPointer<JSVM_Ref>()))
             releaseArrayRawData(handle)
             return JSVM_JSFunction(context, JSVM_JSValue(context, result))
         }
     }
 
     public func call(thisArg: JSValueBase, args: Array<ToJSValue>): JSValueBase {
-        let result = innerCall((thisArg.toJSValue(JSContext(context_)).value as JSVM_JSValue).getOrThrow().value_, Array<JSVM_Value>(args.size) {
-            idx => (args[idx].toJSValue(JSContext(context_)).value as JSVM_JSValue).getOrThrow().value_
-        })
+        let result = innerCall((thisArg.toJSValue(JSContext(context_)).value as JSVM_JSValue).getOrThrow().value_,
+            Array<JSVM_Value>(args.size) {
+                idx => (args[idx].toJSValue(JSContext(context_)).value as JSVM_JSValue).getOrThrow().value_
+            })
         return JSVM_JSValue(context_, result)
     }
 
@@ -136,10 +143,16 @@ class JSVM_JSFunction <: JSVM_JSHeapObject & JSFunctionBase {
         unsafe {
             var result = JSVM_Value()
             if (args.isEmpty()) {
-                JSVM_JSRuntime.checkAndHandleError(context_, OH_JSVM_CallFunction(context_.env, thisArg, (toJSValue(JSContext(context_)).value as JSVM_JSValue).getOrThrow().value_, 0, CPointer<JSVM_Value>(), inout result))
+                JSVM_JSRuntime.checkAndHandleError(context_,
+                    OH_JSVM_CallFunction(context_.env, thisArg,
+                        (toJSValue(JSContext(context_)).value as JSVM_JSValue).getOrThrow().value_, 0,
+                        CPointer<JSVM_Value>(), inout result))
             } else {
                 let handle = acquireArrayRawData(args)
-                JSVM_JSRuntime.checkAndHandleError(context_, OH_JSVM_CallFunction(context_.env, thisArg, (toJSValue(JSContext(context_)).value as JSVM_JSValue).getOrThrow().value_, args.size, handle.pointer, inout result))
+                JSVM_JSRuntime.checkAndHandleError(context_,
+                    OH_JSVM_CallFunction(context_.env, thisArg,
+                        (toJSValue(JSContext(context_)).value as JSVM_JSValue).getOrThrow().value_, args.size,
+                        handle.pointer, inout result))
                 releaseArrayRawData(handle)
             }
 

@@ -7,15 +7,19 @@ import std.sync.*
 
 type uv_thread_t = UIntNative
 
-@C struct uv_loop_t {}
+@C
+struct uv_loop_t {}
+
 type uv_loop = CPointer<uv_loop_t>
 
-@C struct uv_async_t {
+@C
+struct uv_async_t {
     uv_async_t(
         let data: UIntNative,
         let reserved: VArray<UInt8, $120>
     ) {}
 }
+
 type uv_async = CPointer<uv_async_t>
 
 @C
@@ -29,12 +33,19 @@ struct uv_run_mode {
 
 foreign {
     func uv_thread_create(tid: CPointer<uv_thread_t>, entry: CFunc<(Int64) -> Unit>, hint: Int64): Int32
+
     func uv_thread_self(): uv_thread_t
+
     func uv_thread_join(tid: CPointer<uv_thread_t>): Int32
+
     func uv_loop_new(): uv_loop
+
     func uv_run(loop: uv_loop, mode: uv_run_mode): Int32
+
     func uv_stop(loop: uv_loop): Unit
+
     func uv_async_init(loop: uv_loop, async: uv_async, callback: CFunc<(uv_async) -> Unit>): Int32
+
     func uv_async_send(async: uv_async): Int32
 }
 

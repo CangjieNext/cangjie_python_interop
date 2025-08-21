@@ -29,31 +29,24 @@ public struct HeapStatistics {
     }
 
     public func toString(): String {
-        return "JSHeapStatistics{" +
-               "totalHeapSize=" + totalHeapSize.toString() +
-               ", totalHeapSizeExecutable=" + totalHeapSizeExecutable.toString() +
-               ", totalPhysicalSize=" + totalPhysicalSize.toString() +
-               ", totalAvailableSize=" + totalAvailableSize.toString() +
-               ", usedHeapSize=" + usedHeapSize.toString() +
-               ", heapSizeLimit=" + heapSizeLimit.toString() +
-               ", mallocedMemory=" + mallocedMemory.toString() +
-               ", externalMemory=" + externalMemory.toString() +
-               ", peakMallocedMemory=" + peakMallocedMemory.toString() +
-               ", numberOfNativeContexts=" + numberOfNativeContexts.toString() +
-               ", numberOfDetachedContexts=" + numberOfDetachedContexts.toString() +
-               ", totalGlobalHandlesSize=" + totalGlobalHandlesSize.toString() +
-               ", usedGlobalHandlesSize=" + usedGlobalHandlesSize.toString() +
-               '}'
+        return "JSHeapStatistics{" + "totalHeapSize=" + totalHeapSize.toString() + ", totalHeapSizeExecutable=" +
+            totalHeapSizeExecutable.toString() + ", totalPhysicalSize=" + totalPhysicalSize.toString() +
+            ", totalAvailableSize=" + totalAvailableSize.toString() + ", usedHeapSize=" + usedHeapSize.toString() +
+            ", heapSizeLimit=" + heapSizeLimit.toString() + ", mallocedMemory=" + mallocedMemory.toString() +
+            ", externalMemory=" + externalMemory.toString() + ", peakMallocedMemory=" + peakMallocedMemory.toString() +
+            ", numberOfNativeContexts=" + numberOfNativeContexts.toString() + ", numberOfDetachedContexts=" +
+            numberOfDetachedContexts.toString() + ", totalGlobalHandlesSize=" + totalGlobalHandlesSize.toString() +
+            ", usedGlobalHandlesSize=" + usedGlobalHandlesSize.toString() + '}'
     }
 }
 
 public enum Engine {
-    | JSVM/** | V8 | QuickJS*/
+    | JSVM /** | V8 | QuickJS*/
 }
 
 abstract class JSRuntimeBase {
     static func create(engine: Engine): JSRuntimeBase {
-        match(engine) {
+        match (engine) {
             case JSVM => return JSVM_JSRuntime.create()
             // case V8 => return V8_JSRuntime.create()
             case _ => return JSVM_JSRuntime.create()
@@ -94,7 +87,7 @@ public class JSRuntime {
 
     public prop getAllContexts: Array<JSContext> {
         get() {
-            return Array<JSContext>(runtime.getAllContexts.size) { idx => JSContext(runtime.getAllContexts[idx]) }
+            return Array<JSContext>(runtime.getAllContexts.size) {idx => JSContext(runtime.getAllContexts[idx])}
         }
     }
 

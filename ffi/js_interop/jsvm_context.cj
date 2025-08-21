@@ -78,14 +78,15 @@ class JSVM_JSContext <: JSContextBase {
             toDeleteRefs_.clear()
             result
         }
-        newScope { JSVM_JSHeapObject.releaseRefs(env, refs) }
+        newScope {JSVM_JSHeapObject.releaseRefs(env, refs)}
     }
 
     private func startAsync(): Unit {
         newScope {
             // missing global func setInterval, startAsync is not available.
             let setInterval = global["setInterval"].asFunction()
-            let callback = function { _, callInfo =>
+            let callback = function {
+                _, callInfo =>
                 doAsyncTask()
                 JSValue(undefined())
             }
@@ -269,7 +270,8 @@ class JSVM_JSContext <: JSContextBase {
         var result = CPointer<UInt8>()
         var length = UIntNative(0)
         unsafe {
-            JSVM_JSRuntime.checkAndHandleError(this, OH_JSVM_CompileScript(env, code.value_, CPointer<UInt8>(), 0, true, inout rejected, inout script))
+            JSVM_JSRuntime.checkAndHandleError(this,
+                OH_JSVM_CompileScript(env, code.value_, CPointer<UInt8>(), 0, true, inout rejected, inout script))
             if (rejected) {
                 return JSCodeCache()
             }
@@ -288,7 +290,9 @@ class JSVM_JSContext <: JSContextBase {
         var script = JSVM_Script()
         var result = JSVM_Value()
         unsafe {
-            JSVM_JSRuntime.checkAndHandleError(this, OH_JSVM_CompileScript(env, code.value_, codeCache.data, codeCache.length, true, inout rejected, inout script))
+            JSVM_JSRuntime.checkAndHandleError(this,
+                OH_JSVM_CompileScript(env, code.value_, codeCache.data, codeCache.length, true, inout rejected,
+                    inout script))
             if (rejected) {
                 return undefined()
             }

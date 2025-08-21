@@ -14,6 +14,7 @@ import std.collection.HashSet
 import std.fs.*
 import std.io.*
 import std.sync.*
+
 public class PySlice<T> <: PyObj where T <: Countable<T> & Comparable<T> & Equatable<T> & CjObj {
     init(ref: Reference) {
         super(ref, "PySlice")
@@ -80,7 +81,7 @@ public class PySlice<T> <: PyObj where T <: Countable<T> & Comparable<T> & Equat
             unsafe { PyErr_Print() }
         }
         releaseGIL(gstate)
-        
+
         var start = unsafe { pStart.read(0) }
         var stop = unsafe { pStop.read(0) }
         var step = unsafe { pStep.read(0) }
