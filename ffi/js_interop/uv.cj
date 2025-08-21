@@ -7,15 +7,19 @@ import std.sync.*
 
 type uv_thread_t = UIntNative
 
-@C struct uv_loop_t {}
+@C
+struct uv_loop_t {}
+
 type uv_loop = CPointer<uv_loop_t>
 
-@C struct uv_async_t {
+@C
+struct uv_async_t {
     uv_async_t(
         let data: UIntNative,
         let reserved: VArray<UInt8, $120>
     ) {}
 }
+
 type uv_async = CPointer<uv_async_t>
 
 @C
@@ -29,12 +33,19 @@ struct uv_run_mode {
 
 foreign {
     func uv_thread_create(tid: CPointer<uv_thread_t>, entry: CFunc<(Int64) -> Unit>, hint: Int64): Int32
+
     func uv_thread_self(): uv_thread_t
+
     func uv_thread_join(tid: CPointer<uv_thread_t>): Int32
+
     func uv_loop_new(): uv_loop
+
     func uv_run(loop: uv_loop, mode: uv_run_mode): Int32
+
     func uv_stop(loop: uv_loop): Unit
+
     func uv_async_init(loop: uv_loop, async: uv_async, callback: CFunc<(uv_async) -> Unit>): Int32
+
     func uv_async_send(async: uv_async): Int32
 }
 
@@ -65,7 +76,7 @@ class UvLoop {
         var tid: uv_thread_t = 0
         let status = unsafe { uv_thread_create(inout tid, uvLoopRunStub, index) }
         if (status != 0) {
-            throw Exception("create uv_thread failed: ${status}")
+            throw IllegalStateException("create uv_thread failed: ${status}")
         }
         while (loop.runStatus_.load() == 0) {
             // wait init end
@@ -74,7 +85,7 @@ class UvLoop {
     }
 
     private let loop_: uv_loop
-    private var tid_: uv_thread_t
+    private var tid_: uv_thread_t = 0
     private let async_: uv_async
 
     // 0: Starting
@@ -89,13 +100,12 @@ class UvLoop {
     private var pendingTasks_ = SlabMT<() -> Unit>()
 
     init() {
-        tid_ = 0
         unsafe {
             loop_ = uv_loop_new()
             async_ = LibC.malloc<uv_async_t>()
             let status = uv_async_init(loop_, async_, uvLoopAsyncStub)
             if (status != 0) {
-                throw Exception("failed to init async: ${status}")
+                throw IllegalStateException("failed to init async: ${status}")
             }
         }
     }
@@ -111,7 +121,7 @@ class UvLoop {
 
         let currentTid = unsafe { uv_thread_self() }
         if (tid_ == currentTid) {
-            throw Exception("can't stop uv loop on it's running thread")
+            throw UnsupportedException("can't stop uv loop on it's running thread")
         }
         unsafe {
             uv_stop(loop_)

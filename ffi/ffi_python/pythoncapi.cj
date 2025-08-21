@@ -14,14 +14,14 @@ import std.fs.*
 import std.io.*
 import std.sync.*
 /* Python interpreter Initialization, Finalization, and GIL. */
-var Py_Initialize: CFunc<() -> Unit> = { => PYLOG.error("Py_Initialize UnImplemented")}
+var Py_Initialize: CFunc<() -> Unit> = {=> PYLOG.error("Py_Initialize UnImplemented")}
 var Py_IsInitialized: CFunc<() -> Int32> = {
-     =>
+    =>
     PYLOG.error("Py_IsInitialized UnImplemented")
     0
 }
 var Py_FinalizeEx: CFunc<() -> Int32> = {
-     =>
+    =>
     PYLOG.error("Py_FinalizeEx UnImplemented")
     0
 }
@@ -34,8 +34,7 @@ var PyGILState_Ensure: CFunc<() -> Int32> = {
     0
 }
 var PyGILState_Release: CFunc<(Int32) -> Unit> = {
-    _: Int32 =>
-    PYLOG.error("PyGILState_Release UnImplemented")
+    _: Int32 => PYLOG.error("PyGILState_Release UnImplemented")
 }
 var PyEval_SaveThread: CFunc<() -> CPointer<Unit>> = {
     =>
@@ -43,19 +42,18 @@ var PyEval_SaveThread: CFunc<() -> CPointer<Unit>> = {
     CPointer<Unit>()
 }
 var PyEval_RestoreThread: CFunc<(CPointer<Unit>) -> Unit> = {
-    _: CPointer<Unit> =>
-    PYLOG.error("PyEval_RestoreThread UnImplemented")
+    _: CPointer<Unit> => PYLOG.error("PyEval_RestoreThread UnImplemented")
 }
 
 /* Builtin */
-var PyErr_Print: CFunc<() -> Unit> = { => PYLOG.error("PyErr_Print UnImplemented")}
+var PyErr_Print: CFunc<() -> Unit> = {=> PYLOG.error("PyErr_Print UnImplemented")}
 var PyErr_Occurred: CFunc<() -> CPointer<Unit>> = {
-     =>
+    =>
     PYLOG.error("PyErr_Print UnImplemented");
     CPointer<Unit>()
 }
 var PyEval_GetBuiltins: CFunc<() -> CPointer<Unit>> = {
-     =>
+    =>
     PYLOG.error("PyEval_GetBuiltins UnImplemented")
     CPointer<Unit>()
 }
@@ -68,7 +66,7 @@ var Py_DecodeLocale: CFunc<(CString, CPointer<UIntNative>) -> CPointer<Unit>> = 
 }
 var PyMem_RawFree: CFunc<(CPointer<Unit>) -> Unit> = {_: CPointer<Unit> => PYLOG.error("PyMem_RawFree UnImplemented")}
 var PyGILState_Check: CFunc<() -> Int32> = {
-     =>
+    =>
     PYLOG.error("PyGILState_Check UnImplemented")
     0
 }
@@ -151,7 +149,7 @@ var PyModule_Create: CFunc<(CPointer<PyModuleDef>, Int32) -> CPointer<Unit>> = {
 
 /* Dictionary */
 var PyDict_New: CFunc<() -> CPointer<Unit>> = {
-     =>
+    =>
     PYLOG.error("PyDict_New UnImplemented")
     CPointer<Unit>()
 }

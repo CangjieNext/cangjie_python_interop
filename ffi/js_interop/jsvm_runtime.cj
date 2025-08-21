@@ -38,10 +38,10 @@ class Once<T> {
 
 class JSVM_JSRuntime <: JSRuntimeBase {
     private var vm_: JSVM_VM
-    private var allContexts_: ArrayList<JSVM_JSContext>
+    private var allContexts_: ArrayList<JSVM_JSContext> = ArrayList<JSVM_JSContext>()
     private var uvLoop_: UvLoop
     private var scope_: JSVM_VMScope
-    private var destroyed: Bool
+    private var destroyed: Bool = false
 
     private static let JSVMGlobalInitTask = Once {
         var options = JSVM_InitOptions()
@@ -75,13 +75,12 @@ class JSVM_JSRuntime <: JSRuntimeBase {
         }
         vm_ = vm
         scope_ = scope
-
-        destroyed = false
-        allContexts_ = ArrayList<JSVM_JSContext>()
     }
 
     ~init() {
-        if (destroyed) { return }
+        if (destroyed) {
+            return
+        }
         unsafe {
             check(OH_JSVM_CloseVMScope(vm_, scope_))
             check(OH_JSVM_DestroyVM(vm_))
@@ -90,7 +89,9 @@ class JSVM_JSRuntime <: JSRuntimeBase {
     }
 
     public func destroy(): Unit {
-        if (destroyed) { return }
+        if (destroyed) {
+            return
+        }
         unsafe {
             check(OH_JSVM_CloseVMScope(vm_, scope_))
             check(OH_JSVM_DestroyVM(vm_))
@@ -105,7 +106,7 @@ class JSVM_JSRuntime <: JSRuntimeBase {
 
     static func check(status: JSVM_Status): Unit {
         if (!status.isOk()) {
-            throw Exception(status.toString())
+            throw IllegalStateException(status.toString())
         }
     }
 
@@ -113,11 +114,9 @@ class JSVM_JSRuntime <: JSRuntimeBase {
         if (!status.isOk()) {
             unsafe {
                 var isPending = false
-                if (OH_JSVM_IsExceptionPending(context.env, inout isPending).isOk() && isPending)
-                {
+                if (OH_JSVM_IsExceptionPending(context.env, inout isPending).isOk() && isPending) {
                     var error = JSVM_Value()
-                    if (OH_JSVM_GetAndClearLastException(context.env, inout error).isOk())
-                    {
+                    if (OH_JSVM_GetAndClearLastException(context.env, inout error).isOk()) {
                         // 获取异常堆栈
                         var stack = JSVM_Value()
                         let stackStr = LibC.mallocCString("stack")
@@ -135,14 +134,14 @@ class JSVM_JSRuntime <: JSRuntimeBase {
                 }
             }
 
-            throw Exception(status.toString())
+            throw IllegalStateException(status.toString())
         }
     }
 
     private func createContext(): JSVM_JSContext {
         var env = JSVM_Env()
-//        Hilog.info(0, "vm_", vm_.toUIntNative().toString())
-//        vm_
+        //        Hilog.info(0, "vm_", vm_.toUIntNative().toString())
+        //        vm_
         unsafe {
             check(OH_JSVM_CreateEnv(vm_, 0, CPointer<JSVM_PropertyDescriptor>(), inout env))
         }
@@ -159,7 +158,7 @@ class JSVM_JSRuntime <: JSRuntimeBase {
 
     public prop getAllContexts: Array<JSContextBase> {
         get() {
-            return Array<JSContextBase>(allContexts_.size) { idx => allContexts_[idx] }
+            return Array<JSContextBase>(allContexts_.size) {idx => allContexts_[idx]}
         }
     }
 
@@ -180,6 +179,6 @@ class JSVM_JSRuntime <: JSRuntimeBase {
             result.numberOfDetachedContexts,
             result.totalGlobalHandlesSize,
             result.usedGlobalHandlesSize
-            )
+        )
     }
 }

@@ -9,7 +9,7 @@ class JSVM_JSObject <: JSVM_JSHeapObject & JSObjectBase {
             case value: String => context.string(value).value_
             case value: Int64 => context.number(value).value_
             case jStr: JSVM_JSString => jStr.innerValue
-            case _ => throw Exception("unsupported key: ${key}")
+            case _ => throw IllegalArgumentException("unsupported key: ${key}")
         }
     }
 
@@ -42,8 +42,9 @@ class JSVM_JSObject <: JSVM_JSHeapObject & JSObjectBase {
     public func getPropertyNames(): JSVM_JSArray {
         unsafe {
             var result = JSVM_Value()
-            JSVM_JSRuntime.check(OH_JSVM_GetAllPropertyNames(context_.env, innerValue, JSVM_KeyCollectionMode.JSVM_KEY_OWN_ONLY,
-                JSVM_KeyFilter.ALL_PROPERTIES, JSVM_KeyConversion.JSVM_KEY_KEEP_NUMBERS, inout result))
+            JSVM_JSRuntime.check(
+                OH_JSVM_GetAllPropertyNames(context_.env, innerValue, JSVM_KeyCollectionMode.JSVM_KEY_OWN_ONLY,
+                    JSVM_KeyFilter.ALL_PROPERTIES, JSVM_KeyConversion.JSVM_KEY_KEEP_NUMBERS, inout result))
             return JSVM_JSArray(context_, JSVM_JSValue(context_, result))
         }
     }

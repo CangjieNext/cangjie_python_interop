@@ -17,23 +17,23 @@ import std.io.*
 import std.sync.*
 /* Enum type of module `ctypes`. */
 public enum PyCType {
-    PyCBool |
-    PyCChar |
-    PyCWchar |
-    PyCByte |
-    PyCUbyte |
-    PyCShort |
-    PyCUshort |
-    PyCInt |
-    PyCUint |
-    PyCLonglong |
-    PyCUlonglong |
-    PyCFloat |
-    PyCDouble |
-    PyCPointer |
-    PyCCpointer |
-    PyCWcpointer |
-    PyCVoid
+    PyCBool
+    | PyCChar
+    | PyCWchar
+    | PyCByte
+    | PyCUbyte
+    | PyCShort
+    | PyCUshort
+    | PyCInt
+    | PyCUint
+    | PyCLonglong
+    | PyCUlonglong
+    | PyCFloat
+    | PyCDouble
+    | PyCPointer
+    | PyCCpointer
+    | PyCWcpointer
+    | PyCVoid
 }
 
 public class PyCFunc <: PyObj {

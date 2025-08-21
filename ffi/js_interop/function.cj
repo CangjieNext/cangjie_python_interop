@@ -2,6 +2,7 @@
  * Created on 2025/3/6
  */
 package ohos_app_cangjie_entry.js_interop
+
 import ohos.hilog.Hilog
 
 interface JSCallInfoBase {
@@ -25,7 +26,7 @@ public class JSCallInfo {
 
     public prop args: Array<JSValue> {
         get() {
-            return Array<JSValue>(callInfo.args.size) { idx => JSValue(callInfo.args[idx]) }
+            return Array<JSValue>(callInfo.args.size) {idx => JSValue(callInfo.args[idx])}
         }
     }
 

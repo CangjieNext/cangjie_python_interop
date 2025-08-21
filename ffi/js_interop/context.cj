@@ -100,7 +100,7 @@ public class JSContext {
     }
 
     public prop global: JSObject {
-        get () {
+        get() {
             return JSObject(context.global)
         }
     }

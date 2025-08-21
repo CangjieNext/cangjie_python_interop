@@ -20,6 +20,7 @@ import std.env.*
 
 /* dopra schedule.h */
 foreign func CJ_BindOSThread(): Int32
+
 foreign func CJ_UnbindOSThread(): Int32
 
 /* This value indicates whether it has been initialized. */
@@ -33,12 +34,10 @@ var handle: CPointer<Unit> = CPointer<Unit>()
  * and unload of global resources.
  */
 let initLock = ReentrantMutex()
-
 @When[os == "Linux" || os == "HarmonyOS"]
 let cmdExeDep = "ldd $(which python3)"
 @When[os == "macOS"]
 let cmdExeDep = "otool -L $(which python3)"
-
 @When[os == "Linux" || os == "HarmonyOS"]
 let suffixOfDy = "so"
 @When[os == "macOS"]
@@ -83,6 +82,7 @@ public struct Version <: ToString {
         return major.toString() + "." + minor.toString() + "." + micro.toString()
     }
 }
+
 var version = Option<Version>.None
 
 public class PythonException <: Exception {
@@ -178,7 +178,8 @@ public class PythonLogger {
         }
     }
 }
-public let PYLOG = PythonLogger()
+
+public let PYLOG: PythonLogger = PythonLogger()
 
 func getGIL(): Int32 {
     if (!envInit) {
@@ -309,11 +310,9 @@ public class PythonBuiltins {
 
             // Get built-in functions.
             builtins = PyDict<PyObj, PyObj>(pyGetBuiltins())
-        } catch (e: PythonException) {
+        } finally {
             initLock.unlock()
-            throw e
         }
-        initLock.unlock()
     }
 
     /**
@@ -354,13 +353,11 @@ public class PythonBuiltins {
             }
             releaseCExModule()
             PYLOG.info("Python interpreter finalize success.")
-            
+
             closeHandle()
-        } catch (e: PythonException) {
+        } finally {
             initLock.unlock()
-            throw e
         }
-        initLock.unlock()
     }
 
     /**
@@ -497,7 +494,8 @@ public class PythonBuiltins {
             return path
         }
 
-        PYLOG.info("Can\'t find \"libpythonX.Y.${suffixOfDy}\" from executable file path, try to find it from system lib path.")
+        PYLOG.info(
+            "Can\'t find \"libpythonX.Y.${suffixOfDy}\" from executable file path, try to find it from system lib path.")
         path = getPythonPathBySysLib()
         if (!path.isEmpty()) {
             return path
@@ -561,7 +559,7 @@ public class PythonBuiltins {
         let output = outputs.split(" ", removeEmpty: true)
         for (libPathStr in output where libPathStr.contains("/libpython")) {
             var libPath: String = libPathStr
-	        if (!libPath.startsWith("/")) {
+            if (!libPath.startsWith("/")) {
                 libPath = libPath[(libPath.indexOf("/") ?? libPath.size)..libPath.size]
             }
             PYLOG.info("Found lib: ${libPath}.")
@@ -592,7 +590,7 @@ public class PythonBuiltins {
             // String to wchar_t*
             let pSize = LibC.malloc<UIntNative>()
             if (pSize.isNull()) {
-                for (j in 0..i-1) {
+                for (j in 0..i - 1) {
                     PyMem_RawFree(pArgv.read(j))
                 }
                 LibC.free(pArgv)
@@ -602,7 +600,7 @@ public class PythonBuiltins {
 
             var pChar = CString(CPointer<UInt8>())
             try {
-                pChar = unsafe { LibC.mallocCString(argv[i]) }
+                pChar = LibC.mallocCString(argv[i])
                 var pWchar: CPointer<Unit> = Py_DecodeLocale(pChar, pSize)
                 // pWchar store in ppWchar.
                 pArgv.write(i, pWchar)
@@ -659,4 +657,5 @@ public class PythonBuiltins {
         CJ_release_args_processor()
     }
 }
-public let Python = PythonBuiltins()
+
+public let Python: PythonBuiltins = PythonBuiltins()

@@ -33,9 +33,9 @@ class JSVM_JSArray <: JSVM_JSHeapObject & JSArrayBase {
         }
     }
 
-    public operator func[](index: Int64): JSVM_JSValue {
+    public operator func [](index: Int64): JSVM_JSValue {
         if (index < 0) {
-            throw Exception("Invalid index: array index can not be negative!")
+            throw IndexOutOfBoundsException("Invalid index: array index can not be negative!")
         }
         if (index >= size) {
             return context_.undefined()
@@ -47,9 +47,9 @@ class JSVM_JSArray <: JSVM_JSHeapObject & JSArrayBase {
         }
     }
 
-    public operator func[](index: Int64, value!: ToJSValue): Unit {
+    public operator func [](index: Int64, value!: ToJSValue): Unit {
         if (index < 0) {
-            throw Exception("Invalid index: array index can not be negative!")
+            throw IndexOutOfBoundsException("Invalid index: array index can not be negative!")
         }
         let jsVal = (value.toJSValue(JSContext(context_)).value as JSVM_JSValue).getOrThrow().value_
         unsafe { JSVM_JSRuntime.check(OH_JSVM_SetElement(context_.env, innerValue, UInt32(index), jsVal)) }
