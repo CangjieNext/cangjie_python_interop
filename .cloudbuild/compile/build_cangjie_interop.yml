@@ -88,7 +88,7 @@ steps:
           export PATH=${WORKSPACE}/tools/cpm/output:${WORKSPACE}/tools/cjcov/output/bin:${WORKSPACE}/tools/codecheck/output/bin:${WORKSPACE}/cangjie/output/bin:${HOME}/.cjpm/bin:$PATH
           export LD_LIBRARY_PATH=${WORKSPACE}/tools/cpm/lib/:${WORKSPACE}/cangjie/output/runtime/lib/linux_x86_64_llvm:${WORKSPACE}/cangjie/output/third_party/llvm/lib:${LD_LIBRARY_PATH}
           
-          cd ${WORKSPACE}/Cangjie-Interop/ffi
+          cd ${WORKSPACE}/Cangjie-Interop/build
           chmod +x build.sh
           bash build.sh
         check:
@@ -96,7 +96,7 @@ steps:
   POST_BUILD:
     - sh:
         command: |
-          cd ${WORKSPACE}/Cangjie-Interop/ffi/ffi_python/target/
+          cd ${WORKSPACE}/Cangjie-Interop/target/
           tar -zcf ${WORKSPACE}/cangjie_interop_python_ffi.tar.gz ./*
 
     - artget:
