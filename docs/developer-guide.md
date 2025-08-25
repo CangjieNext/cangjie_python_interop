@@ -1,4 +1,4 @@
-# 仓颉-Python 互操作
+# 仓颉-Python 互操作开发指南
 
 为了兼容强大的计算和 AI 生态，仓颉支持与 Python 语言的互操作调用。Python 的互操作通过 ffi_python 库为用户提供能力。
 
