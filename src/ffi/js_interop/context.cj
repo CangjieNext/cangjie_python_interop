@@ -4,7 +4,6 @@
 //
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
-
 package ohos_app_cangjie_entry.js_interop
 
 import ohos.file_fs.*

@@ -4,7 +4,6 @@
 //
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
-
 package ffi_python
 
 var modName = CString(CPointer<UInt8>())
