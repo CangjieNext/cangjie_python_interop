@@ -10,7 +10,7 @@ public func parseCallBackArgsList(ptr: CPointer<Unit>): PyList<PyObj>
 
 参数：
 
-- ptr: [CPointer](https://developer.huawei.com/consumer/cn/doc/cangjie-guides-V5/core_package_intrinsics-V5#cpointert)\<Unit> - 传入回调函数的参数指针。
+- ptr: [CPointer](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_intrinsics.html#cpointert)\<Unit> - 传入回调函数的参数指针。
 
 返回值：
 
