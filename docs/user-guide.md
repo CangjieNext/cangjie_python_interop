@@ -12,8 +12,6 @@
 
 ```
 cd build
-```
-```
 ./build.sh
 ```
 
@@ -21,16 +19,14 @@ cd build
 
 编译后输出 release 文件夹，以下为内部结构：
 
-- `release`
-    - `ffi_python-cache`
-        - `incremental-cache.json`
-        - `libffi_python.so`
-        - `ffi_python.cjo`
-    - `ffi_python`
-        - `ffi_python.cjo`
-        - `ffi_python.cjo`
-    - `.build-logs`
-        - `ffi_python`
-            - `ffi_python.errlog`
-            - `ffi_python.outlog`
-    - `bin`
+release/
+|--ffi_python-cache
+`--ffi_python
+    |--incremental-cache.json
+    |--libffi_python.so
+    |--ffi_python.cjo
+`--.build-logs
+    `--ffi_python
+        |--ffi_python.errlog
+        |--ffi_python.outlog
+`--bin
