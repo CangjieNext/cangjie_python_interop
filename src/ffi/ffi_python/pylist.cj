@@ -134,7 +134,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
     private func getVPyObj(value: T): PyObj {
         let ret = getPyObj<T>(value)
         if (!ret.isAvailable()) {
-            PYLOG.error("Invailable value.")
+            throw PythonException("Invailable value.")
         }
         return ret
     }
@@ -143,9 +143,9 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PyList_New(size) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
             releaseGIL(gstate)
-            PYLOG.error("List create failed.")
+            throw PythonException("List create failed.")
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -155,7 +155,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PyList_SetItem(handle.getPtr(), index, value.getPtr()) }
         if (ret != 0) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return ret
@@ -165,7 +165,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PyList_GetItem(handle.getPtr(), index) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
             PYLOG.warn("List elem at ${index} is null.")
         }
         releaseGIL(gstate)
@@ -183,7 +183,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PyList_Insert(handle.getPtr(), index, value.getPtr()) }
         if (ret != 0) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return ret
@@ -193,7 +193,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PyList_Append(handle.getPtr(), item.getPtr()) }
         if (ret != 0) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return ret
@@ -203,7 +203,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PyList_GetSlice(handle.getPtr(), begin, end) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return Reference(ret)

@@ -176,7 +176,7 @@ public class PyLong <: PyObj {
         let ret = unsafe { PyLong_AsLongLong(handle.getPtr()) }
         if (ret == ERRCODE_INT) {
             if (pyErrOccurred()) {
-                unsafe { PyErr_Print() }
+                PYLOG.printPythonErr()
                 PYLOG.warn("Number out of range of Int64, return ${ERRCODE_INT}")
             }
         }
@@ -189,7 +189,7 @@ public class PyLong <: PyObj {
         let ret = unsafe { PyLong_AsUnsignedLongLong(handle.getPtr()) }
         if (ret == ERRCODE_UINT) {
             if (pyErrOccurred()) {
-                unsafe { PyErr_Print() }
+                PYLOG.printPythonErr()
                 PYLOG.warn("Number out of range of UInt64, return ${ERRCODE_UINT}")
             }
         }

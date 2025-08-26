@@ -22,7 +22,7 @@ func getPyObj<T>(v: T): PyObj {
         case val: CjObj => val.toPyObj()
         case val: PyObj => val
         case _ =>
-            PYLOG.error("Unknow type.")
+            throw PythonException("Unknow type.")
             PyObj()
     }
 }
@@ -141,7 +141,7 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
     private func getVPyObj(value: T): PyObj {
         let ret = getPyObj<T>(value)
         if (!ret.isAvailable()) {
-            PYLOG.error("Get Invailable value.")
+            throw PythonException("Get Invailable value.")
         }
         return ret
     }
@@ -151,7 +151,7 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
         let ret = unsafe { PySet_New(CPointer<Unit>()) }
         releaseGIL(gstate)
         if (ret.isNull()) {
-            PYLOG.error("Set create failed.")
+            throw PythonException("Set create failed.")
         }
         return Reference(ret)
     }
@@ -160,7 +160,7 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PySet_Add(handle.getPtr(), key.getPtr()) }
         if (ret != 0) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return ret
@@ -177,7 +177,7 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PySet_Contains(handle.getPtr(), key.getPtr()) }
         if (ret == -1) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return ret
@@ -187,7 +187,7 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PySet_Pop(handle.getPtr()) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
             PYLOG.warn("Set pop elem failed, return unavailable object.")
         }
         releaseGIL(gstate)
@@ -198,7 +198,7 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PySet_Discard(handle.getPtr(), key.getPtr()) }
         if (ret == -1) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return ret
@@ -208,7 +208,7 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PySet_Clear(handle.getPtr()) }
         if (ret != 0) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return ret
