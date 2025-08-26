@@ -6,7 +6,7 @@
 
 // will be abort, python ffi can't avoid.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 foreign func malloc(size: UIntNative): CPointer<Unit>
 

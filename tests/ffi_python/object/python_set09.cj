@@ -6,9 +6,9 @@
 
 // EXEC: %compiler %pyffi-link %f -o %output
 // EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
-// ASSERT: scan ERROR: Unknow type.
+// ASSERT: scan Unknow type.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
 
 class A <: PyFFIType  & Hashable & Equatable<A> {
@@ -23,7 +23,7 @@ class A <: PyFFIType  & Hashable & Equatable<A> {
 
 main() {
     Python.load()
-    try { var a = PySet<A>(HashSet<A>([A()])) } catch(e: PythonException) {}
+    try { var a = PySet<A>(HashSet<A>([A()])) } catch(e: PythonException) { println(e) }
 
     Python.unload()
 }

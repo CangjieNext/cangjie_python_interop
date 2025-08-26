@@ -17,7 +17,7 @@
 // ASSERT: scan f is 3
 // ASSERT: scan g is 4
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
 
 main(): Int64 {

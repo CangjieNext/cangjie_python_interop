@@ -13,7 +13,7 @@
 // ASSERT: scan ('j', 'l', 'n')
 // ASSERT: scan ('j', 'l', 'n')
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
 
 main() {

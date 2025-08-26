@@ -12,7 +12,7 @@
 // ASSERT: scan d size: 0
 // ASSERT: scan e size: 0
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 func printTuple(tup: PyTuple): Unit {
     print("size: ${tup.size()}\n")

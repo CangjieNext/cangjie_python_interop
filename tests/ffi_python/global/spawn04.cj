@@ -7,14 +7,14 @@
 // EXEC: %compiler %pyffi-link %f -o %output
 // EXEC: export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
 // ASSERT: regex false
-// ASSERT: regex ERROR: Unbind OS Thread failed.
+// ASSERT: regex PythonException: Unbind OS Thread failed.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main() {
     Python.load()
     let fut = spawn {
-        try {Python.unload()} catch(e: PythonException) { }
+        try {Python.unload()} catch(e: PythonException) { println(e) }
     }
     fut.get()
     println(Python.isLoad())

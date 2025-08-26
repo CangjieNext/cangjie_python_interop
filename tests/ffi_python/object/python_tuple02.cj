@@ -12,7 +12,7 @@
 // ASSERT: scan 2 is PyLong
 // ASSERT: scan 3 is PyFloat
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 func printTuple(tup: PyTuple): Unit {
     for (i in 0..tup.size()) {

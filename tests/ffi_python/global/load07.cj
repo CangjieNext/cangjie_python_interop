@@ -12,8 +12,7 @@
 // ASSERT: scan INFO: Libpython has loaded.
 // ASSERT: regex version: 3\..*\..*
 
-internal import std.ffi.python.*
-internal import std.log.*
+internal import ffi_python.*
 
 main(): Int64 {
     var path = getPythonPathBySysLib(directories)

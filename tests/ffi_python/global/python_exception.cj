@@ -9,7 +9,7 @@
 // ASSERT: scan catched PythonException
 // ASSERT: scan catched Exception PythonException: test PythonException
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     try {

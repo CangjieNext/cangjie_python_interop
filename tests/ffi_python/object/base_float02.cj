@@ -14,7 +14,7 @@
 // ASSERT: scan true
 // ASSERT: scan true
 // ASSERT: scan true
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     Python.load()

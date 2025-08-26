@@ -4,7 +4,7 @@
 //
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     Python.load()

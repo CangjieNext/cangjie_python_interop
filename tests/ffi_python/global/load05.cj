@@ -12,7 +12,7 @@
 // ASSERT: scan true
 // ASSERT: scan false
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     print("${Python.isLoad()}\n")

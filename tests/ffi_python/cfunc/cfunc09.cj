@@ -20,7 +20,7 @@
 // ASSERT: scan 1 : 5 : 2
 
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 foreign func cast(f: CFunc<(CPointer<Unit>) -> CPointer<Unit>>): CPointer<Unit>
 

@@ -8,7 +8,7 @@
 // EXEC: export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
 // ASSERT: scan WARN: [Eval] Python is not initialized. Please load it first.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     Python.Eval("123")

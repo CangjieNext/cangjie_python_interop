@@ -9,7 +9,7 @@
 // ASSERT: scan testA pass.
 // ASSERT: scan testB pass.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 func testA(): Unit {
     Python.load()

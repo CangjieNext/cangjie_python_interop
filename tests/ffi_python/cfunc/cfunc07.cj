@@ -12,7 +12,7 @@
 // ASSERT: scan cfoo called.
 // ASSERT: scan true, 10, 40
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 foreign func cast(f: CFunc<(Bool, Int32, Int64) -> CPointer<Unit>>): CPointer<Unit>
 

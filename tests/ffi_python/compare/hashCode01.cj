@@ -11,7 +11,7 @@
 // ASSERT: scan-not TypeError: unhashable type: 'tuple'
 // ASSERT: scan TypeError: unhashable type: 'list'
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
 
 var x = Python.load()

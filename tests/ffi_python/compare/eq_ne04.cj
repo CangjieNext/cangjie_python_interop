@@ -9,7 +9,7 @@
 // ASSERT: scan success01
 // ASSERT: scan success02
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
 
 main(): Int64 {

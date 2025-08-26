@@ -9,9 +9,9 @@
 // EXEC: clang -fPIC -shared ./cast.c -o %cffi_output
 // EXEC: %compiler %pyffi-link -l%n -L./ %f -o %output
 // EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
-// ASSERT: scan ERROR: [PyCFunc] Python is not initialized. Please load it first.
+// ASSERT: scan [PyCFunc] Python is not initialized. Please load it first.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 foreign func cast(f: CFunc<(Bool, Int32, Int64) -> CPointer<Unit>>): CPointer<Unit>
 

@@ -18,7 +18,7 @@
 // ASSERT: scan OverflowError: int too big to convert
 // ASSERT: scan WARN: Number out of range of Int64, return -1
 // ASSERT: scan -1
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     Python.load()

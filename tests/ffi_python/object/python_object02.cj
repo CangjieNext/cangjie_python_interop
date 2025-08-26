@@ -11,11 +11,11 @@
 // ASSERT: scan b update to PyBool
 // ASSERT: scan c update to PyString
 // ASSERT: scan d is PyLong
-// ASSERT: scan SyntaxError: invalid syntax
+// ASSERT: scan SyntaxError: ('invalid syntax'
 // ASSERT: scan WARN: Set value is unavailable, attribute "d" will be delete.
 // ASSERT: scan AttributeError: module 'test01' has no attribute 'd'
 // ASSERT: scan d is unavailable
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main() {
     Python.load()

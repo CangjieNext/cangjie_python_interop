@@ -11,7 +11,7 @@
 // ASSERT: scan WARN: Get item at -1 failed, return unavailable object.
 // ASSERT: scan WARN: Get item at 4 failed, return unavailable object.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 func printTuple(tup: PyTuple): Unit {
     for (i in 0..tup.size()) {

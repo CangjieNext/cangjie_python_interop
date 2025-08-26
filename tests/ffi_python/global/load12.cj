@@ -11,7 +11,7 @@
 // ASSERT: regex 3\..*\..*
 // ASSERT: regex 3\..*\..*
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     Python.load()

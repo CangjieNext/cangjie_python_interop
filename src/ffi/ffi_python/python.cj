@@ -163,23 +163,29 @@ public class PythonLogger {
         log(LogLevel.ERROR, msg)
     }
 
-    public func printPythonErr(): Unit {
+    protected func printPythonErr(): Unit {
         unsafe {
             let pType = LibC.malloc<CPointer<Unit>>()
             if (pType.isNull()) {
-                throw PythonException("Failed to malloc memory in func printPythonErr.")
+                log(LogLevel.ERROR, "Failed to malloc memory in func printPythonErr.")
+                return
             }
             let pValue = LibC.malloc<CPointer<Unit>>()
             if (pValue.isNull()) {
                 LibC.free<CPointer<Unit>>(pType)
-                throw PythonException("Failed to malloc memory in func printPythonErr.")
+                log(LogLevel.ERROR, "Failed to malloc memory in func printPythonErr.")
+                return
             }
             let pTraceback = LibC.malloc<CPointer<Unit>>()
             if (pTraceback.isNull()) {
                 LibC.free<CPointer<Unit>>(pType)
                 LibC.free<CPointer<Unit>>(pValue)
-                throw PythonException("Failed to malloc memory in func printPythonErr.")
+                log(LogLevel.ERROR, "Failed to malloc memory in func printPythonErr.")
+                return
             }
+            pType.write(CPointer<Unit>())
+            pValue.write(CPointer<Unit>())
+            pTraceback.write(CPointer<Unit>())
 
             let gstate = getGIL()
 
@@ -337,10 +343,10 @@ public class PythonLogger {
             return
         }
         match (level) {
-            case LogLevel.ERROR => Hilog.error(0, "FfiPythonLog", msg)
-            case LogLevel.WARN => Hilog.warn(0, "FfiPythonLog", msg)
-            case LogLevel.INFO => Hilog.info(0, "FfiPythonLog", msg)
-            case LogLevel.DEBUG => Hilog.debug(0, "FfiPythonLog", msg)
+            case LogLevel.ERROR => Hilog.error(0, "FFIPythonLog", msg)
+            case LogLevel.WARN => Hilog.warn(0, "FFIPythonLog", msg)
+            case LogLevel.INFO => Hilog.info(0, "FFIPythonLog", msg)
+            case LogLevel.DEBUG => Hilog.debug(0, "FFIPythonLog", msg)
         }
     }
 }

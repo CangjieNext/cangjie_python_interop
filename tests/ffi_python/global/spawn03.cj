@@ -9,7 +9,7 @@
 // ASSERT: regex ---main---
 // ASSERT: regex ---fut---
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main() {
     Python.load()

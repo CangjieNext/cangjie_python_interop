@@ -9,7 +9,7 @@
 // ASSERT: scan-not failed
 // ASSERT: scan success
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 let builtin_function: Array<String> = [
     "abs",

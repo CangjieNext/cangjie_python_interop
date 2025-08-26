@@ -13,9 +13,8 @@
 // ASSERT: scan success12
 // ASSERT: scan success22
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
-internal import std.log.*
 
 main() {
     Python.load(loglevel: LogLevel.INFO)

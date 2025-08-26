@@ -7,10 +7,10 @@
 // EXEC: %compiler %pyffi-link %f -o %output
 // EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
 // ASSERT: scan WARN: List set elem 4 at 3 failed.
-// ASSERT: scan ERROR: Invailable value.
+// ASSERT: scan Invailable value.
 // ASSERT: scan 3
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main() {
     Python.load()

@@ -14,7 +14,7 @@
 // ASSERT: scan a: , b: , true
 // ASSERT: scan a: 65432, b: 65432, true
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
 
 func compare(range: Range<Int64>): Bool {

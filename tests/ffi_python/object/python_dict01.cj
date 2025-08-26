@@ -19,12 +19,12 @@
 // ASSERT: scan b.b is 1
 // ASSERT: scan b.c is 2
 // ASSERT: scan WARN: Dict key "d" not found!
-// ASSERT: scan KeyError: 'e'
+// ASSERT: scan KeyError: ('e',)
 // ASSERT: scan WARN: An error happend in dict del key "e".
 // ASSERT: scan a size is 2
 // ASSERT: scan b size is 3
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
 
 main() {
