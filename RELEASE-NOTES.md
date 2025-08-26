@@ -1,1 +1,0 @@
-Release x.x.x-SNAPSHOT
