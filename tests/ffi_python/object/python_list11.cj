@@ -18,7 +18,7 @@
 // ASSERT: scan 1 2 3 4 5 6 7 8 
 // ASSERT: scan size: 0
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 func printPyList<T>(list: PyList<T>): Unit where T <: PyFFIType {
     print("size: ${list.size()}\n")

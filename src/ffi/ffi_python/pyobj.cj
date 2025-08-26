@@ -70,7 +70,7 @@ func isInstance(handle: Reference, pType: CPointer<Unit>): Bool {
 
 public func parseCallBackArgsList(ptr: CPointer<Unit>): PyList<PyObj> {
     if (!isInstance(Reference(ptr), PyList_Type)) {
-        PYLOG.error("callback arguments list type error!")
+        throw PythonException("callback arguments list type error!")
     }
     PyList<PyObj>(Reference(ptr))
 }
@@ -248,7 +248,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
     /* Get member property by member name. */
     public open operator func [](key: String): PyObj {
         if (!isAvailable()) {
-            PYLOG.error("Obj is unavailable.")
+            throw PythonException("Obj is unavailable.")
         }
         let ret = pyObjectGetAttrString(ref, key)
         return instance(ret)
@@ -257,7 +257,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
     /* Set member property by member name. */
     public open operator func [](key: String, value!: PyObj): Unit {
         if (!isAvailable()) {
-            PYLOG.error("Obj is unavailable.")
+            throw PythonException("Obj is unavailable.")
         }
         if (!value.isAvailable()) {
             PYLOG.warn("Set value is unavailable, attribute \"${key}\" will be delete.")
@@ -342,7 +342,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
     /* PyObj to String type. */
     public open func toString(): String {
         if (!isAvailable()) {
-            PYLOG.error("Obj is unavailable.")
+            throw PythonException("Obj is unavailable.")
         }
         var strObj = PyString(pyObjectStr(getRef()))
         if (!strObj.isAvailable()) {
@@ -354,7 +354,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
 
     public func hashCode(): Int64 {
         if (!isAvailable()) {
-            PYLOG.error("PyObj is unavailable.")
+            throw PythonException("PyObj is unavailable.")
         }
         let gstate = getGIL()
         let hash = unsafe { PyObject_Hash(getRef().getPtr()) }
@@ -424,7 +424,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
         let ret = unsafe { PyObject_SetAttrString(handle.getPtr(), cName, value.getPtr()) }
         unsafe { LibC.free(cName) }
         if (ret != 0) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
             PYLOG.warn("Set ${name} failed.")
         }
         releaseGIL(gstate)
@@ -434,7 +434,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
         let gstate = getGIL()
         let ret = unsafe { PyObject_Str(handle.getPtr()) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -446,7 +446,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
         kargs!: Reference = Reference()
     ): Reference {
         if (handle.isNull()) {
-            PYLOG.error("Empty PyObj called.")
+            throw PythonException("Empty PyObj called.")
         }
         let gstate = getGIL()
         let ret = try {
@@ -459,7 +459,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
             throw PythonException("Throw exception when PyObj call: ${e}")
         }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -467,10 +467,10 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
 
     private func pyObjectRichCompareBool(left: Reference, right: Reference, op: Int32): Bool {
         if (left.isNull()) {
-            PYLOG.error("The left PyObj to be compared is unavailable.")
+            throw PythonException("The left PyObj to be compared is unavailable.")
         }
         if (right.isNull()) {
-            PYLOG.error("The right PyObj to be compared is unavailable.")
+            throw PythonException("The right PyObj to be compared is unavailable.")
         }
         let gstate = getGIL()
         let ret = unsafe { PyObject_RichCompareBool(left.getPtr(), right.getPtr(), op) }
@@ -478,7 +478,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
             releaseGIL(gstate)
             true
         } else {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
             releaseGIL(gstate)
             false
         }
@@ -523,14 +523,14 @@ public class PyObjIterator <: Iterator<PyObj> {
 
     private func pyObjectGetIter(obj: Reference): Reference {
         if (obj.isNull()) {
-            PYLOG.error("Unavailable PyObj given.")
+            throw PythonException("Unavailable PyObj given.")
         }
         let gstate = getGIL()
         let ret = unsafe { PyObject_GetIter(obj.getPtr()) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
             releaseGIL(gstate)
-            PYLOG.error("PyObj cannot obtain the iterator.")
+            throw PythonException("PyObj cannot obtain the iterator.")
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -540,7 +540,7 @@ public class PyObjIterator <: Iterator<PyObj> {
         let gstate = getGIL()
         let ret = unsafe { PyIter_Next(handle.getPtr()) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return Reference(ret)

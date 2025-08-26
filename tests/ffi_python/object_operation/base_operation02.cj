@@ -19,7 +19,7 @@
 // ASSERT: scan WARN: Unsupported operation between PyString and PyLong, or operation is forbiden.
 // ASSERT: scan WARN: Unsupported operation between PyString and PyFloat, or operation is forbiden.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
  
 main(): Int64 {
     Python.load()

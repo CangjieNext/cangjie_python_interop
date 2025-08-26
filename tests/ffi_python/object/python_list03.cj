@@ -9,7 +9,7 @@
 // ASSERT: scan WARN: List elem at 3 is null.
 // ASSERT: scan WARN: List elem at -1 is null.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main() {
     Python.load()

@@ -9,7 +9,7 @@
 // ASSERT: scan WARN: [Import] Python is not initialized. Please load it first.
 // ASSERT: scan PythonException: Obj is unavailable.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     var sys = Python.Import("sys")

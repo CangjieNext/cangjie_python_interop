@@ -78,7 +78,7 @@ public class PyTuple <: PyObj {
         let ret = unsafe { PyTuple_New(args.size) }
         if (ret.isNull()) {
             releaseGIL(gstate)
-            PYLOG.error("Create tuple failed. Size is ${args.size}.")
+            throw PythonException("Create tuple failed. Size is ${args.size}.")
         }
 
         // Need set elems before ref count add. Tuple elems cant be modified after ref count > 1.
@@ -86,11 +86,11 @@ public class PyTuple <: PyObj {
         for (arg in args) {
             if (!arg.isAvailable()) {
                 releaseGIL(gstate)
-                PYLOG.error("Index ${count} is unavailable.")
+                throw PythonException("Index ${count} is unavailable.")
             }
             if (pyTupleSetItem(ret, count, arg.getRef()) != 0) {
                 releaseGIL(gstate)
-                PYLOG.error("Index ${count} out of range.")
+                throw PythonException("Index ${count} out of range.")
             }
             if (arg.isNeedRef()) {
                 unsafe { Py_IncRef(arg.getRef().getPtr()) }
@@ -105,7 +105,7 @@ public class PyTuple <: PyObj {
         let gstate = getGIL()
         let ret = unsafe { PyTuple_SetItem(handle, pos, v.getPtr()) }
         if (ret != 0) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
             PYLOG.warn("Set item at ${pos} failed.")
         }
         releaseGIL(gstate)
@@ -116,7 +116,7 @@ public class PyTuple <: PyObj {
         let gstate = getGIL()
         let ret = unsafe { PyTuple_GetItem(handle.getPtr(), pos) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
             PYLOG.warn("Get item at ${pos} failed, return unavailable object.")
         }
         releaseGIL(gstate)

@@ -16,14 +16,14 @@ let suffixOfDy = ".so"
 @When[os == "macOS"]
 let suffixOfDy = ".dylib"
 
-var directories = ["/lib", "/usr/lib", "/usr/local/lib"]
+var directories = ["/lib/", "/usr/lib/", "/usr/local/lib/"]
 
 func getPythonPathBySysLib(dirs: Array<String>): String {
     for (directory in dirs) {
-        if (!Directory.exists(directory)) {
+        if (!exists(directory)) {
             continue
         }
-        var fileList = Directory(directory).entryList()
+        var fileList = Directory.readFrom(directory)
         var dstName = "libpython3."
         var minor = 20
         while (minor > 0) {

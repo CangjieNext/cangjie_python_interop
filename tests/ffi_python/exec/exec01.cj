@@ -8,7 +8,7 @@
 // EXEC: export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
 // ASSERT: scan result: 579
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main() {
     Python.load()

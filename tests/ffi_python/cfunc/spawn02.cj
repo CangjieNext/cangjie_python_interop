@@ -9,10 +9,9 @@
 // EXEC: %compiler %pyffi-link -l%n -L./ %f -o %output
 // EXEC-PIPE: export cjStackSize=1MB && %run %run_opt %output %run_args
 
-internal import std.sync.sleep
-internal import std.time.Duration
-internal import std.ffi.python.*
-internal import std.log.*
+internal import std.core.sleep
+internal import std.core.Duration
+internal import ffi_python.*
 internal import std.collection.*
 
 @C

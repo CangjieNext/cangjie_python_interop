@@ -16,7 +16,7 @@
 // ASSERT: scan e size pass
 // ASSERT: scan f size pass
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
 
 func testCjObj<T>(set: PySet<T>): Unit where T <: Hashable & Equatable<T> & PyFFIType {

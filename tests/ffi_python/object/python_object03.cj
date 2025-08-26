@@ -13,7 +13,7 @@
 // ASSERT: scan ret: helloworld
 // ASSERT: scan ret: 20.3
 // ASSERT: scan ret: helloworld
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main() {
     Python.load()

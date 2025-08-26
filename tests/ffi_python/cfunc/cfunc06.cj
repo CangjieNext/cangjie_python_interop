@@ -12,7 +12,7 @@
 // ASSERT: scan true, 97, a, 98, 99, 100, 101, 102, 103, 104, 104, 105.099998, 106.200000
 // ASSERT: scan false, 97, a, 98, 99, 100, 101, 102, 103, 104, 104, 105.099998, 106.200000
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 foreign func cast(f: CFunc<(Bool, Int8, UInt32, Int8, UInt8, Int16, UInt16, Int32, UInt32, Int64, UInt64, Float32, Float64) -> Unit>): CPointer<Unit>
 

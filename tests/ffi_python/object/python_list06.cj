@@ -10,7 +10,7 @@
 // ASSERT: scan A class
 // ASSERT: scan B class
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main() {
     Python.load()

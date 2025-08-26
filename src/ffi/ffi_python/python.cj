@@ -19,7 +19,8 @@ import std.fs.*
 import std.io.*
 import std.sync.*
 import std.env.*
-//
+@When[ffi_python_plat == "ohos"]
+import ohos.hilog.*
 
 /* dopra schedule.h */
 foreign func CJ_BindOSThread(): Int32
@@ -107,7 +108,6 @@ public enum LogLevel <: ToString {
     | WARN
     | INFO
     | DEBUG
-    | TRACE
 
     public func level(): Int32 {
         let num = match (this) {
@@ -115,7 +115,6 @@ public enum LogLevel <: ToString {
             case WARN => 1
             case INFO => 2
             case DEBUG => 3
-            case TRACE => 4
         }
         return Int32(num)
     }
@@ -126,7 +125,6 @@ public enum LogLevel <: ToString {
             case WARN => "WARN"
             case INFO => "INFO"
             case DEBUG => "DEBUG"
-            case TRACE => "TRACE"
         }
     }
 }
@@ -148,10 +146,6 @@ public class PythonLogger {
         output.flush()
     }
 
-    public func trace(msg: String): Unit {
-        log(LogLevel.TRACE, msg)
-    }
-
     public func debug(msg: String): Unit {
         log(LogLevel.DEBUG, msg)
     }
@@ -169,15 +163,190 @@ public class PythonLogger {
         log(LogLevel.ERROR, msg)
     }
 
-    /*
-     * @throws PythonException if the argument level is not larger than LogLevel.ERROR
-     */
+    protected func printPythonErr(): Unit {
+        unsafe {
+            let pType = LibC.malloc<CPointer<Unit>>()
+            if (pType.isNull()) {
+                log(LogLevel.ERROR, "Failed to malloc memory in func printPythonErr.")
+                return
+            }
+            let pValue = LibC.malloc<CPointer<Unit>>()
+            if (pValue.isNull()) {
+                LibC.free<CPointer<Unit>>(pType)
+                log(LogLevel.ERROR, "Failed to malloc memory in func printPythonErr.")
+                return
+            }
+            let pTraceback = LibC.malloc<CPointer<Unit>>()
+            if (pTraceback.isNull()) {
+                LibC.free<CPointer<Unit>>(pType)
+                LibC.free<CPointer<Unit>>(pValue)
+                log(LogLevel.ERROR, "Failed to malloc memory in func printPythonErr.")
+                return
+            }
+            pType.write(CPointer<Unit>())
+            pValue.write(CPointer<Unit>())
+            pTraceback.write(CPointer<Unit>())
+
+            let gstate = getGIL()
+
+            PyErr_Fetch(pType, pValue, pTraceback)
+
+            // print error message of python
+            var ttype = pType.read()
+            if (ttype.isNull()) {
+                LibC.free<CPointer<Unit>>(pType)
+                LibC.free<CPointer<Unit>>(pValue)
+                LibC.free<CPointer<Unit>>(pTraceback)
+                releaseGIL(gstate)
+                return
+            }
+
+            var cName = unsafe { LibC.mallocCString("__name__") }
+            let name = PyObject_GetAttrString(ttype, cName)
+            LibC.free(cName)
+
+            if (name.isNotNull()) {
+                Py_DecRef(ttype)
+                ttype = name
+            }
+
+            var errMsg = ""
+
+            //get message of type
+            let typeStr = PyObject_Str(ttype)
+            if (typeStr.isNotNull()) {
+                errMsg += PyUnicode_AsUTF8(typeStr).toString()
+            }
+
+            //get message of value
+            var value = pValue.read()
+            var valueStr = PyObject_Str(value)
+            if (valueStr.isNotNull()) {
+                errMsg +=  (": " + PyUnicode_AsUTF8(valueStr).toString())
+            } else {
+                cName = unsafe { LibC.mallocCString("args") }
+                let args = PyObject_GetAttrString(value, cName)
+                LibC.free(cName)
+
+                if(args.isNotNull() && PyObject_IsInstance(args, PyTuple_Type) == 1 && PyTuple_Size(args) > 0) {
+                    let msg = PyTuple_GetItem(args, 0)
+                    Py_IncRef(msg)
+                    Py_DecRef(value)
+                    Py_DecRef(args)
+                    value = msg
+                }
+
+                valueStr = PyObject_Str(value)
+                if (valueStr.isNotNull()) {
+                    errMsg +=  (": " + PyUnicode_AsUTF8(valueStr).toString())
+                }
+            }
+
+            log(LogLevel.ERROR, errMsg)
+
+            Py_DecRef(typeStr)
+            Py_DecRef(valueStr)
+            Py_DecRef(ttype)
+            Py_DecRef(value)
+            LibC.free<CPointer<Unit>>(pType)
+            LibC.free<CPointer<Unit>>(pValue)
+
+            // print traceback of python
+            let traceback = pTraceback.read()
+            if (traceback.isNull()) {
+                LibC.free<CPointer<Unit>>(pTraceback)
+                releaseGIL(gstate)
+                return
+            }
+            LibC.free<CPointer<Unit>>(pTraceback)
+
+            var tbModule = CPointer<Unit>()
+            var formatFunc = CPointer<Unit>()
+            var tbArgs = CPointer<Unit>()
+            var tbList = CPointer<Unit>()
+
+            cName = unsafe { LibC.mallocCString("traceback") }
+            tbModule = PyImport_ImportModule(cName)
+            LibC.free(cName)
+            if (tbModule.isNull()) {
+                log(LogLevel.WARN, "Error importing python traceback module.")
+                Py_DecRef(traceback)
+                releaseGIL(gstate)
+                return
+            }
+
+            cName = unsafe { LibC.mallocCString("format_tb") }
+            formatFunc = PyObject_GetAttrString(tbModule, cName)
+            LibC.free(cName)
+            if (formatFunc.isNull()) {
+                log(LogLevel.WARN, "Error getting 'format_func' function.")
+                Py_DecRef(tbModule)
+                Py_DecRef(traceback)
+                releaseGIL(gstate)
+                return
+            }
+
+            tbArgs = PyTuple_New(1)
+            if (tbArgs.isNull()) {
+                log(LogLevel.WARN, "Error creating args tuple.")
+                Py_DecRef(tbModule)
+                Py_DecRef(formatFunc)
+                Py_DecRef(traceback)
+                releaseGIL(gstate)
+                return
+            }
+            if (PyTuple_SetItem(tbArgs, 0, traceback) != 0) {
+                log(LogLevel.WARN, "Set item failed.")
+                Py_DecRef(tbModule)
+                Py_DecRef(formatFunc)
+                Py_DecRef(tbArgs)
+                Py_DecRef(traceback)
+                releaseGIL(gstate)
+                return
+            }
+
+            tbList = PyObject_Call(formatFunc, tbArgs, CPointer<Unit>())
+            if (tbList.isNull() || PyObject_IsInstance(tbList, PyList_Type) != 1) {
+                Py_DecRef(tbModule)
+                Py_DecRef(formatFunc)
+                Py_DecRef(tbArgs)
+                Py_DecRef(tbList)
+                Py_DecRef(traceback)
+                releaseGIL(gstate)
+                return
+            }
+
+            for (i in 0..PyList_Size(tbList)) {
+                let errMsg = PyUnicode_AsUTF8(PyList_GetItem(tbList, i)).toString()
+                log(LogLevel.ERROR, "  " + errMsg)
+            }
+
+            Py_DecRef(tbModule)
+            Py_DecRef(formatFunc)
+            Py_DecRef(tbArgs)
+            Py_DecRef(tbList)
+            Py_DecRef(traceback)
+            releaseGIL(gstate)
+        }
+    }
+
+    @When[ffi_python_plat == "Linux"]
     public func log(level: LogLevel, msg: String): Unit {
         if (this.level_.level() >= level.level()) {
             print("${level}: ${msg}\n")
         }
-        if (LogLevel.ERROR.level() >= level.level()) {
-            throw PythonException(msg)
+    }
+
+    @When[ffi_python_plat == "ohos"]
+    public func log(level: LogLevel, msg: String): Unit {
+        if (this.level_.level() < level.level()) {
+            return
+        }
+        match (level) {
+            case LogLevel.ERROR => Hilog.error(0, "FFIPythonLog", msg)
+            case LogLevel.WARN => Hilog.warn(0, "FFIPythonLog", msg)
+            case LogLevel.INFO => Hilog.info(0, "FFIPythonLog", msg)
+            case LogLevel.DEBUG => Hilog.debug(0, "FFIPythonLog", msg)
         }
     }
 }
@@ -186,14 +355,14 @@ public let PYLOG: PythonLogger = PythonLogger()
 
 func getGIL(): Int32 {
     if (!envInit) {
-        PYLOG.error("Python is not initialized. Please load it first.")
+        throw PythonException("Python is not initialized. Please load it first.")
     }
     return unsafe { PyGILState_Ensure() }
 }
 
 func releaseGIL(gstate: Int32): Unit {
     if (!envInit) {
-        PYLOG.error("Python is not initialized. Please load it first.")
+        throw PythonException("Python is not initialized. Please load it first.")
     }
     unsafe { PyGILState_Release(gstate) }
 }
@@ -218,6 +387,7 @@ public class PythonBuiltins {
 
     // Equal to macro Py_eval_input.
     private let pyEvalInput: Int32 = 258
+    private let PyFileInput: Int32 = 257
 
     // Top version of python.
     private let TOP_MOJOR_VERSION: Int64 = 3
@@ -275,18 +445,18 @@ public class PythonBuiltins {
 
         try {
             if (!exists(trimPath)) {
-                PYLOG.error("\"${trimPath}\" does not exist or the file path is invalid.")
+                throw PythonException("\"${trimPath}\" does not exist or the file path is invalid.")
             }
 
             // Bind OS thread. If the current thread is not created by the cangjie runtime,
             // CJ_BindOSThread and CJ_UnbindOSThread may fail.
             if (unsafe { CJ_BindOSThread() != 0 }) {
-                PYLOG.error("Bind OS Thread failed.")
+                throw PythonException("Bind OS Thread failed.")
             }
 
             // Load python dymic lib.
             if (!loadSo(trimPath)) {
-                PYLOG.error("\"${trimPath}\" cannot be loaded.")
+                throw PythonException("\"${trimPath}\" cannot be loaded.")
             }
             PYLOG.info("Load ${suffixOfDy} \"${trimPath}\" success.")
 
@@ -346,7 +516,7 @@ public class PythonBuiltins {
 
             // Unbind Os Thread.
             if (unsafe { CJ_UnbindOSThread() != 0 }) {
-                PYLOG.error("Unbind OS Thread failed.")
+                throw PythonException("Unbind OS Thread failed.")
             }
 
             unsafe {
@@ -408,7 +578,7 @@ public class PythonBuiltins {
             return PyObj()
         }
         let local = PyDict<PyObj, PyObj>()
-        let ret = pyRunString(cmd, moduleDict.getRef(), local.getRef())
+        let ret = pyRunString(cmd, pyEvalInput, moduleDict.getRef(), local.getRef())
         return instance(ret)
     }
 
@@ -417,16 +587,14 @@ public class PythonBuiltins {
             PYLOG.warn("[exec] Python is not initialized. Please load it first.")
             return
         }
-
-        let gstate = getGIL()
-        var cStr = unsafe { LibC.mallocCString(code) }
-        let ret = unsafe { PyRun_SimpleString(cStr) }
-        unsafe { LibC.free(cStr) }
-        releaseGIL(gstate)
-
-        if (ret == -1) {
-            PYLOG.error("exec python code failed.")
+        let moduleDict = PyModule("__main__").getDict()
+        if (!moduleDict.isAvailable()) {
+            PYLOG.warn("Cant get dictionary in \"__main__\", return null PyObj.")
+            return
         }
+        let local = PyDict<PyObj, PyObj>()
+        pyRunString(code, PyFileInput, moduleDict.getRef(), local.getRef())
+        return
     }
 
     /**
@@ -438,7 +606,7 @@ public class PythonBuiltins {
      */
     public operator func [](attr: String): PyObj {
         if (!builtins.isAvailable()) {
-            PYLOG.error("Builtins is unavailable.")
+            throw PythonException("Builtins is unavailable.")
         }
         return builtins.getItem(attr.toPyObj())
     }
@@ -504,7 +672,7 @@ public class PythonBuiltins {
             return path
         }
 
-        PYLOG.error("Can\'t find \"libpythonX.Y.${suffixOfDy}\" from system lib path, load exit.")
+        throw PythonException("Can\'t find \"libpythonX.Y.${suffixOfDy}\" from system lib path, load exit.")
         return ""
     }
 
@@ -585,7 +753,7 @@ public class PythonBuiltins {
     private unsafe func pySetArgv(argc: Int64, argv: Array<String>): Unit {
         var pArgv = LibC.malloc<CPointer<Unit>>(count: argc)
         if (pArgv.isNull()) {
-            PYLOG.error("Malloc size ${argc * 8} failed.")
+            throw PythonException("Malloc size ${argc * 8} failed.")
         }
 
         let gstate = getGIL()
@@ -598,7 +766,7 @@ public class PythonBuiltins {
                 }
                 LibC.free(pArgv)
                 releaseGIL(gstate)
-                PYLOG.error("Malloc size of UIntNative failed.")
+                throw PythonException("Malloc size of UIntNative failed.")
             }
 
             var pChar = CString(CPointer<UInt8>())
@@ -628,19 +796,19 @@ public class PythonBuiltins {
         let gstate = getGIL()
         let ret = unsafe { PyEval_GetBuiltins() }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return Reference(ret)
     }
 
-    private func pyRunString(str: String, module: Reference, local: Reference): Reference {
+    private func pyRunString(str: String, mode: Int32, module: Reference, local: Reference): Reference {
         let gstate = getGIL()
         var cStr = unsafe { LibC.mallocCString(str) }
-        let obj = unsafe { PyRun_String(cStr, pyEvalInput, module.getPtr(), local.getPtr()) }
+        let obj = unsafe { PyRun_String(cStr, mode, module.getPtr(), local.getPtr()) }
         unsafe { LibC.free(cStr) }
-        if (obj.isNull()) {
-            unsafe { PyErr_Print() }
+        if (pyErrOccurred()) {
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return Reference(obj)

@@ -12,9 +12,8 @@
 // ASSERT: scan false
 // ASSERT: scan 5
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
-internal import std.log.*
 
 func printDict<K, V>(dict: PyDict<K, V>) where K <: Hashable & Equatable<K> & PyFFIType {
     print("size: ${dict.size()}\n")
