@@ -15,9 +15,9 @@
 // ASSERT: scan success04
 // ASSERT: scan success05
 // ASSERT: scan success06
-// ASSERT: scan ERROR: Get Invailable value.
+// ASSERT: scan Get Invailable value.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
 
 main() {
@@ -66,7 +66,7 @@ main() {
     }
     println(e)
 
-    try {e.add(Python.Eval("a = 1"))}catch (x: PythonException) {}
+    try {e.add(Python.Eval("a = 1"))}catch (x: PythonException) {println(x)}
 
     Python.unload()
 }

@@ -15,7 +15,7 @@
 // ASSERT: scan 1 2 3 4 
 // ASSERT: scan 1 2 3
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
 
 main() {

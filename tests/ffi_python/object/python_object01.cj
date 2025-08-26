@@ -16,7 +16,7 @@
 // ASSERT: scan d is PyString
 // ASSERT: scan d update to cangjie string
 // ASSERT: scan AttributeError: module 'test01' has no attribute 'e'
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main() {
     Python.load()

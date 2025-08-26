@@ -30,7 +30,7 @@
 // ASSERT: scan 6: true
 // ASSERT: scan 7: true
 // ASSERT: scan 8: true
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     Python.load()

@@ -11,7 +11,7 @@
 // ASSERT: scan WARN: Unsupported operation between external-type and PyLong, or operation is forbiden.
 // ASSERT: scan WARN: Unsupported operation between PyLong and external-type, or operation is forbiden.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
  
 main(): Int64 {
     Python.load()

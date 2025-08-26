@@ -10,8 +10,7 @@
 // ASSERT: regex INFO: Exec cmd: "(ldd)?(otool -L)? \$\(which python3\)":
 // ASSERT: regex INFO: Found lib:
 
-internal import std.ffi.python.*
-internal import std.log.*
+internal import ffi_python.*
 
 main(): Int64 {
     Python.load(loglevel: LogLevel.INFO)

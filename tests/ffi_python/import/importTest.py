@@ -7,4 +7,11 @@
 def func():
     print("xxxx")
 
+def func1():
+    x = None
+    return x[0]
+
+def func2():
+    func1()
+
 a = 10

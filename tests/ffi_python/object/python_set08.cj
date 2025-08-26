@@ -12,12 +12,11 @@
 // ASSERT: scan WARN: Not find key 0 and do nothing.
 // ASSERT: scan INFO: Found key PySet and del it success.
 // ASSERT: scan WARN: Not find key pySet and do nothing.
-// ASSERT: scan ERROR: Get Invailable value.
+// ASSERT: scan Get Invailable value.
 
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
-internal import std.log.*
 
 main() {
     Python.load(loglevel: LogLevel.INFO)
@@ -41,7 +40,7 @@ main() {
     b.del("PySet".toPyObj())
     b.del("pySet".toPyObj())
 
-    try {b.del(Python.Eval("a = 1"))} catch(e: PythonException) {}
+    try {b.del(Python.Eval("a = 1"))} catch(e: PythonException) {println(e)}
 
     Python.unload()
 }

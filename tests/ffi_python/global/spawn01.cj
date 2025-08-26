@@ -9,9 +9,9 @@
 // ASSERT: regex-not failure
 // ASSERT: regex main
 
-internal import std.sync.sleep
-internal import std.time.Duration
-internal import std.ffi.python.*
+internal import std.core.sleep
+internal import std.core.Duration
+internal import ffi_python.*
 
 foreign func gettid(): Int32
 

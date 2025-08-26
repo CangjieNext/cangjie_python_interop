@@ -9,9 +9,8 @@
 // ASSERT: scan 1 success
 // ASSERT: scan 2 success
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
-internal import std.log.*
 
 main() {
     Python.load(loglevel: LogLevel.WARN)

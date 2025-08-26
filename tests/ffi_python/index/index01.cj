@@ -11,7 +11,7 @@
 // ASSERT: scan success03
 // ASSERT: scan success04
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     Python.load()

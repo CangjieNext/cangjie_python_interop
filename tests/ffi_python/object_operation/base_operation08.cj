@@ -9,7 +9,7 @@
 // ASSERT: scan ZeroDivisionError: division by zero
 // ASSERT: regex ZeroDivisionError: integer( division or)? modulo by zero
 
-internal import std.ffi.python.*
+internal import ffi_python.*
  
 main(): Int64 {
     Python.load()

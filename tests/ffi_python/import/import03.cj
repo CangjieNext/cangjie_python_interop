@@ -9,7 +9,7 @@
 // ASSERT: scan ModuleNotFoundError: No module named 'xxxx'
 // ASSERT: scan PythonException: Obj is unavailable.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     Python.load()

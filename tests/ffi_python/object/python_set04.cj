@@ -16,7 +16,7 @@
 // ASSERT: scan e contains Array true
 // ASSERT: scan e contains array false
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
 
 main() {

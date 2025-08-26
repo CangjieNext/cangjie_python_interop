@@ -17,7 +17,7 @@
 // ASSERT: scan 2000.000000: true
 // ASSERT: scan 0.240000: true
 // ASSERT: scan 12.300000: true
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     Python.load()

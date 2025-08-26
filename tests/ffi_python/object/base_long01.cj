@@ -16,7 +16,7 @@
 // ASSERT: scan OverflowError: can't convert negative int to unsigned
 // ASSERT: scan success08
 // ASSERT: scan success09
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     Python.load()

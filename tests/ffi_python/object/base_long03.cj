@@ -7,7 +7,7 @@
 // EXEC: %compiler %pyffi-link %f -o %output
 // EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args | compare %f
 // ASSERT: scan-not false
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 func getPyLong(str: String): PyLong {
     return match (Python.Eval(str)) {

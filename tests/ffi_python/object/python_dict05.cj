@@ -13,11 +13,10 @@
 // ASSERT: scan c: size: 1
 // ASSERT: scan 0: 5, 
 // ASSERT: scan d: size: 1
-// ASSERT: scan ERROR: PyObj is unavailable.
+// ASSERT: scan PyObj is unavailable.
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
-internal import std.log.*
 
 func printDict<K, V>(dict: PyDict<K, V>) where K <: Hashable & Equatable<K> & PyFFIType {
     print("size: ${dict.size()}\n")
@@ -51,7 +50,7 @@ main() {
     print("d: ")
     printDict(d)
 
-    try {var e = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("a = 1"), 5), (Python.Eval("0"), 5)]))}catch (e: PythonException) {}
+    try {var e = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("a = 1"), 5), (Python.Eval("0"), 5)]))}catch (e: PythonException) {println(e)}
 
     Python.unload()
 }

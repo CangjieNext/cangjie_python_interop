@@ -9,7 +9,7 @@
 // ASSERT: scan WARN: Dict key "print1" not found!
 // ASSERT: scan PythonException: Empty PyObj called
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 
 main(): Int64 {
     Python.load()

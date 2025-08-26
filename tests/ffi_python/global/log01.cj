@@ -13,8 +13,7 @@
 // ASSERT: scan WARN: loglevel warn
 // ASSERT: scan ERROR: loglevel error
 
-internal import std.ffi.python.*
-internal import std.log.*
+internal import ffi_python.*
 
 main(): Int64 {
     PYLOG.level = LogLevel.INFO

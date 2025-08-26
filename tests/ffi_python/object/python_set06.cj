@@ -12,7 +12,7 @@
 // ASSERT: scan success02
 // ASSERT: scan success03
 
-internal import std.ffi.python.*
+internal import ffi_python.*
 internal import std.collection.*
 
 
