@@ -54,7 +54,7 @@ public class PySlice<T> <: PyObj where T <: Countable<T> & Comparable<T> & Equat
         let ret = unsafe { PySlice_New(start.getPtr(), stop.getPtr(), step.getPtr()) }
 
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -63,24 +63,24 @@ public class PySlice<T> <: PyObj where T <: Countable<T> & Comparable<T> & Equat
     private func pySliceUnpack(handle: Reference): (Int64, Int64, Int64) {
         var pStart = unsafe { LibC.malloc<Int64>() }
         if (pStart.isNull()) {
-            PYLOG.error("Malloc Size of Int64 failed!")
+            throw PythonException("Malloc Size of Int64 failed!")
         }
         var pStop = unsafe { LibC.malloc<Int64>() }
         if (pStop.isNull()) {
             unsafe { LibC.free(pStart) }
-            PYLOG.error("Malloc Size of Int64 failed!")
+            throw PythonException("Malloc Size of Int64 failed!")
         }
         var pStep = unsafe { LibC.malloc<Int64>() }
         if (pStep.isNull()) {
             unsafe { LibC.free(pStart) }
             unsafe { LibC.free(pStop) }
-            PYLOG.error("Malloc Size of Int64 failed!")
+            throw PythonException("Malloc Size of Int64 failed!")
         }
 
         let gstate = getGIL()
         let ret = unsafe { PySlice_Unpack(handle.getPtr(), pStart, pStop, pStep) }
         if (ret == -1) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
 

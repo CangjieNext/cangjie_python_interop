@@ -110,7 +110,7 @@ func py_release_list(self: CPointer<Unit>, args: CPointer<Unit>): CPointer<Unit>
 func PyInit_args_processor(): CPointer<Unit> {
     if (modName.isNull() || funcName1.isNull() || funcDoc1.isNull() || funcName2.isNull() || funcDoc2.isNull() ||
         module_methods.isNull() || module_def.isNull()) {
-        PYLOG.error("Failed to create pointer in cex_args_processor, failed to malloc memory.")
+        throw PythonException("Failed to create pointer in cex_args_processor, failed to malloc memory.")
     }
     unsafe {
         module_methods.write(0, PyMethodDef(funcName1, CPointer<Unit>(py_process_list), 1, funcDoc1))

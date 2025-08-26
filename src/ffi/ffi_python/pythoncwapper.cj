@@ -22,6 +22,7 @@ import std.fs.*
 import std.io.*
 import std.sync.*
 /* Interface from dlfcn.h. */
+@FastNative
 foreign func dlopen(c: CString, flag: Int32): CPointer<Unit>
 
 foreign func dlsym(handle: CPointer<Unit>, symbol: CString): CPointer<Unit>
@@ -70,7 +71,7 @@ unsafe func cmdWithReturn(cmd: String): String {
     let buf = LibC.malloc<UInt8>(count: Int64(MAX_LINE_SIZE))
     if (buf.isNull()) {
         pclose(fstream)
-        PYLOG.error("Malloc size ${MAX_LINE_SIZE} failed.")
+        throw PythonException("Malloc size ${MAX_LINE_SIZE} failed.")
     }
     memset_s(CPointer<Unit>(buf), UIntNative(MAX_LINE_SIZE), 0, UIntNative(MAX_LINE_SIZE))
 
@@ -157,7 +158,7 @@ func getPythonFunc(funcName: String): CPointer<Unit> {
     let ret = unsafe { dlsym(handle, cFuncName) }
     unsafe { LibC.free(cFuncName) }
     if (ret.isNull()) {
-        PYLOG.error("get ${funcName} failed!")
+        throw PythonException("get ${funcName} failed!")
     }
     return ret
 }
@@ -172,7 +173,7 @@ func getPythonFunc(funcName: String): CPointer<Unit> {
 func closeHandle(): Unit {
     let err = unsafe { dlclose(handle) }
     if (err != 0) {
-        PYLOG.error("dlclose failed!\n")
+        throw PythonException("dlclose failed!\n")
     }
     handle = CPointer<Unit>()
 }
@@ -197,6 +198,8 @@ unsafe func readApiPythonResources(): Unit {
 unsafe func readApiBuiltin(): Unit {
     PyErr_Print = CFunc<() -> Unit>(getPythonFunc("PyErr_Print"))
     PyErr_Occurred = CFunc<() -> CPointer<Unit>>(getPythonFunc("PyErr_Occurred"))
+    PyErr_Fetch = CFunc<(CPointer<CPointer<Unit>>, CPointer<CPointer<Unit>>,
+            CPointer<CPointer<Unit>>) -> Unit>(getPythonFunc("PyErr_Fetch"))
     PyEval_GetBuiltins = CFunc<() -> CPointer<Unit>>(getPythonFunc("PyEval_GetBuiltins"))
 }
 

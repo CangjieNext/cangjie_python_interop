@@ -62,13 +62,13 @@ public class PyCFunc <: PyObj {
 
     private func setFuncPtr(f: CPointer<Unit>): Reference {
         if (!envInit) {
-            PYLOG.error("[PyCFunc] Python is not initialized. Please load it first.")
+            throw PythonException("[PyCFunc] Python is not initialized. Please load it first.")
         }
         m_ctypes = PyModule("_ctypes")
         mctypes = PyModule("ctypes")
 
         if (f.isNull()) {
-            PYLOG.error("Null CPointer given.")
+            throw PythonException("Null CPointer given.")
         }
         var funcName = PyString("PyFuncPtr")
         var bases = PyTuple([m_ctypes["CFuncPtr"]])
@@ -85,7 +85,7 @@ public class PyCFunc <: PyObj {
             i: Int64 =>
             let ret = matchType(args[i])
             if (!ret.isAvailable()) {
-                PYLOG.error("Args cannot be a PyCVoid.")
+                throw PythonException("Args cannot be a PyCVoid.")
             }
             return ret
         }

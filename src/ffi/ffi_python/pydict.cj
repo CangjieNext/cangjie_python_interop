@@ -85,7 +85,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
             var tupleItem = match (item) {
                 case val: PyTuple => val
                 case _ =>
-                    PYLOG.error("Dict item type is not tuple.")
+                    throw PythonException("Dict item type is not tuple.")
                     PyTuple()
             }
             ret.add(tupleItem[0], tupleItem[1])
@@ -184,7 +184,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
     private func getKPyObj(key: K): PyObj {
         let ret = getPyObj<K>(key)
         if (!ret.isAvailable()) {
-            PYLOG.error("Get Invailable key.")
+            throw PythonException("Get Invailable key.")
         }
         return ret
     }
@@ -192,7 +192,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
     private func getVPyObj(value: V): PyObj {
         let ret = getPyObj<V>(value)
         if (!ret.isAvailable()) {
-            PYLOG.error("Get Invailable value.")
+            throw PythonException("Get Invailable value.")
         }
         return ret
     }
@@ -202,9 +202,9 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
         let ret = unsafe { PyDict_New() }
 
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
             releaseGIL(gstate)
-            PYLOG.error("Create dictionary failed.")
+            throw PythonException("Create dictionary failed.")
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -214,7 +214,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
         let gstate = getGIL()
         let ret = unsafe { PyDict_GetItem(handle.getPtr(), key.getPtr()) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -224,7 +224,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
         let gstate = getGIL()
         let ret = unsafe { PyDict_SetItem(handle.getPtr(), key.getPtr(), value.getPtr()) }
         if (ret != 0) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return ret
@@ -241,7 +241,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
         let gstate = getGIL()
         let ret = unsafe { PyDict_Copy(handle.getPtr()) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -251,7 +251,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
         let gstate = getGIL()
         let ret = unsafe { PyDict_DelItem(handle.getPtr(), key.getPtr()) }
         if (ret == -1) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return ret
@@ -268,7 +268,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
         let gstate = getGIL()
         let ret = unsafe { PyDict_Items(handle.getPtr()) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
             PYLOG.warn("Dict get items list failed, return null array.")
         }
         releaseGIL(gstate)
@@ -285,7 +285,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
         let gstate = getGIL()
         let ret = unsafe { PyDict_Keys(handle.getPtr()) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
             PYLOG.warn("Dict get keys list failed.")
         }
         releaseGIL(gstate)
@@ -296,7 +296,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
         let gstate = getGIL()
         let ret = unsafe { PyDict_Values(handle.getPtr()) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
             PYLOG.warn("Dict get values list failed.")
         }
         releaseGIL(gstate)

@@ -31,7 +31,7 @@ class PyModule <: PyObj {
 
     func getDict(): PyDict<PyObj, PyObj> {
         if (!isAvailable()) {
-            PYLOG.error("Dictionary is unavailable.")
+            throw PythonException("Dictionary is unavailable.")
         }
         let ret = pyModuleGetDict(getRef())
         return PyDict<PyObj, PyObj>(ret)
@@ -43,7 +43,7 @@ class PyModule <: PyObj {
         let ret = unsafe { PyImport_ImportModule(cName) }
         unsafe { LibC.free(cName) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -53,7 +53,7 @@ class PyModule <: PyObj {
         let gstate = getGIL()
         let ret = unsafe { PyModule_GetDict(handle.getPtr()) }
         if (ret.isNull()) {
-            unsafe { PyErr_Print() }
+            PYLOG.printPythonErr()
         }
         releaseGIL(gstate)
         return Reference(ret)
