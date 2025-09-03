@@ -44,12 +44,12 @@ public class PyBool <: PyObj {
     }
 
     private func pyBoolNew(bool: Bool): Reference {
-        let gstate = getGIL()
         let value: Int32 = if (bool) {
             1
         } else {
             0
         }
+        let gstate = getGIL()
         let ret = unsafe { PyBool_FromLong(value) }
         releaseGIL(gstate)
         return Reference(ret)
@@ -174,11 +174,10 @@ public class PyLong <: PyObj {
     private func pyToInt(handle: Reference): Int64 {
         let gstate = getGIL()
         let ret = unsafe { PyLong_AsLongLong(handle.getPtr()) }
-        if (ret == ERRCODE_INT) {
-            if (pyErrOccurred()) {
-                PYLOG.printPythonErr()
-                PYLOG.warn("Number out of range of Int64, return ${ERRCODE_INT}")
-            }
+        if (ret == ERRCODE_INT && pyErrOccurred()) {
+            let errMsg = PYLOG.getPythonErr()
+            releaseGIL(gstate)
+            throw PythonException("Number out of range of Int64, return ${ERRCODE_INT}\n${errMsg}")
         }
         releaseGIL(gstate)
         return ret
@@ -187,11 +186,10 @@ public class PyLong <: PyObj {
     private func pyToUInt(handle: Reference): UInt64 {
         let gstate = getGIL()
         let ret = unsafe { PyLong_AsUnsignedLongLong(handle.getPtr()) }
-        if (ret == ERRCODE_UINT) {
-            if (pyErrOccurred()) {
-                PYLOG.printPythonErr()
-                PYLOG.warn("Number out of range of UInt64, return ${ERRCODE_UINT}")
-            }
+        if (ret == ERRCODE_UINT && pyErrOccurred()) {
+            let errMsg = PYLOG.getPythonErr()
+            releaseGIL(gstate)
+            throw PythonException("Number out of range of UInt64, return ${ERRCODE_UINT}\n${errMsg}")
         }
         releaseGIL(gstate)
         return ret

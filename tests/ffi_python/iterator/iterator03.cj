@@ -12,7 +12,8 @@ internal import ffi_python.*
 
 main() {
     Python.load()
-    var obj = Python.Eval("a = 1")
+    //get a PyObj is not available
+    var obj = PyLong(0) + PyString("")
     try { var iter = PyObjIterator(obj) } catch(e: PythonException) {println(e)}
     0
 }

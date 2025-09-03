@@ -24,29 +24,39 @@ main(): Int64 {
     var test = Python.Import("test")
 
     // Without b.
-    test["function02"](HashMap<String, PyObj>([("c", 2.toPyObj())]))
+    try {
+        test["function02"](HashMap<String, PyObj>([("c", 2.toPyObj())]))
+    } catch (e: PythonException) {println(e)}
 
     // With unavailable b.
     try {
-        test["function02"]([Python.Eval("a = 1")], HashMap<String, PyObj>([("c", 2.toPyObj())]))
+        //get a PyObj is not available
+        var unavaileObj = PyLong(0) + PyString("")
+        test["function02"]([unavaileObj], HashMap<String, PyObj>([("c", 2.toPyObj())]))
     } catch(e: PythonException) {println(e)}
 
     // With unavailable c.
     try {
-        test["function02"]([1], HashMap<String, PyObj>([("c", Python.Eval("a = 1"))]))
+        //get a PyObj is not available
+        var unavaileObj = PyLong(0) + PyString("")
+        test["function02"]([1], HashMap<String, PyObj>([("c", unavaileObj)]))
     } catch(e: PythonException) {println(e)}
 
     // Without c.
     test["function02"]([1])
 
     // With nonexistent d.
-    test["function02"]([1], HashMap<String, PyObj>([("d", Python.Eval("1"))]))
+    try {
+        test["function02"]([1], HashMap<String, PyObj>([("d", Python.Eval("1"))]))
+    } catch(e: PythonException) {println(e)}
 
     // b and c are named argument.
     test["function02"](HashMap<String, PyObj>([("b", Python.Eval("1")), ("c", Python.Eval("2"))]))
 
     // b assigned twice.
-    test["function02"]([0], HashMap<String, PyObj>([("b", Python.Eval("1")), ("c", Python.Eval("2"))]))
+    try {
+        test["function02"]([0], HashMap<String, PyObj>([("b", Python.Eval("1")), ("c", Python.Eval("2"))]))
+    } catch(e: PythonException) {println(e)}
 
     0
 }

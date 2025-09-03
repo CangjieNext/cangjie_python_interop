@@ -40,7 +40,9 @@ main() {
     b.del("PySet".toPyObj())
     b.del("pySet".toPyObj())
 
-    try {b.del(Python.Eval("a = 1"))} catch(e: PythonException) {println(e)}
+    //get a PyObj is not available
+    var unavaileObj = PyLong(0) + PyString("")
+    try {b.del(unavaileObj)} catch(e: PythonException) {println(e)}
 
     Python.unload()
 }

@@ -12,8 +12,9 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    var unavaileObj = Python.Eval("a=10")
-    unavaileObj["a"]
+    //get a PyObj is not available
+    var unavaileObj = PyLong(0) + PyString("")
+    try { unavaileObj["a"] } catch (e: PythonException) { println(e) }
 
     Python.unload()
     return 0

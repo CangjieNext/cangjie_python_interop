@@ -34,9 +34,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
         var idx = 0
         for (arg in args) {
             var a = getVPyObj(arg)
-            if (pyListSetItem(getRef(), idx, a.getRef()) != 0) {
-                PYLOG.warn("List set elem ${a} at ${idx} failed.")
-            }
+            pyListSetItem(getRef(), idx, a.getRef())
             if (a.isNeedRef()) {
                 let gstate = getGIL()
                 unsafe {
@@ -67,9 +65,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
      */
     public operator func [](key: Int64, value!: T): Unit {
         let v = getVPyObj(value)
-        if (pyListSetItem(getRef(), key, v.getRef()) != 0) {
-            PYLOG.warn("List set elem ${v} at ${key} failed.")
-        }
+        pyListSetItem(getRef(), key, v.getRef())
     }
 
     /**
@@ -114,9 +110,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
      */
     public func append(item: T): Unit {
         let v = getVPyObj(item)
-        if (pyListAppend(getRef(), v.getRef()) != 0) {
-            PYLOG.warn("List append item ${v} failed.")
-        }
+        pyListAppend(getRef(), v.getRef())
     }
 
     /**
@@ -143,30 +137,31 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PyList_New(size) }
         if (ret.isNull()) {
-            PYLOG.printPythonErr()
+            let errMsg = PYLOG.getPythonErr()
             releaseGIL(gstate)
-            throw PythonException("List create failed.")
+            throw PythonException("List create failed.\n${errMsg}")
         }
         releaseGIL(gstate)
         return Reference(ret)
     }
 
-    private func pyListSetItem(handle: Reference, index: Int64, value: Reference): Int32 {
+    private func pyListSetItem(handle: Reference, index: Int64, value: Reference): Unit {
         let gstate = getGIL()
         let ret = unsafe { PyList_SetItem(handle.getPtr(), index, value.getPtr()) }
         if (ret != 0) {
-            PYLOG.printPythonErr()
+            let errMsg = PYLOG.getPythonErr()
+            releaseGIL(gstate)
+            throw PythonException("List set elem at ${index} failed.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return ret
+        return
     }
 
     private func pyListGetItem(handle: Reference, index: Int64): Reference {
         let gstate = getGIL()
         let ret = unsafe { PyList_GetItem(handle.getPtr(), index) }
         if (ret.isNull()) {
-            PYLOG.printPythonErr()
-            PYLOG.warn("List elem at ${index} is null.")
+            PYLOG.warn("List elem at ${index} is null.\n" + PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -183,27 +178,29 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
         let gstate = getGIL()
         let ret = unsafe { PyList_Insert(handle.getPtr(), index, value.getPtr()) }
         if (ret != 0) {
-            PYLOG.printPythonErr()
+            PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
         return ret
     }
 
-    private func pyListAppend(handle: Reference, item: Reference): Int32 {
+    private func pyListAppend(handle: Reference, item: Reference): Unit {
         let gstate = getGIL()
         let ret = unsafe { PyList_Append(handle.getPtr(), item.getPtr()) }
         if (ret != 0) {
-            PYLOG.printPythonErr()
+            let errMsg = PYLOG.getPythonErr()
+            releaseGIL(gstate)
+            throw PythonException("PyList append failed.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return ret
+        return
     }
 
     private func pyListGetSlice(handle: Reference, begin: Int64, end: Int64): Reference {
         let gstate = getGIL()
         let ret = unsafe { PyList_GetSlice(handle.getPtr(), begin, end) }
         if (ret.isNull()) {
-            PYLOG.printPythonErr()
+            PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
         return Reference(ret)
