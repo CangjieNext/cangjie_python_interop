@@ -14,7 +14,7 @@ main() {
                "    return x[0]\n" +
                "    print(f'result: {a + b}')\n" +
                "p()\n"
-    Python.exec(code)
+    try { Python.exec(code) } catch (e: PythonException) { println(e) }
 
     Python.unload()
     0

@@ -13,7 +13,9 @@ internal import ffi_python.*
 main() {
     Python.load()
 
-    try {PyTuple([Python.Eval("a=3")])} catch(e: PythonException) { println(e) }
+    //get a PyObj is not available
+    var unavaileObj = PyLong(0) + PyString("")
+    try {PyTuple([unavaileObj])} catch(e: PythonException) { println(e) }
     
     Python.unload()
 }

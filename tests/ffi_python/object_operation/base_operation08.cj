@@ -16,8 +16,8 @@ main(): Int64 {
     var a = PyLong(10)
     var b = PyLong(0)
     
-    a/b
-    a%b
+    try { a/b }catch (e: PythonException) {println(e)}
+    try { a%b }catch (e: PythonException) {println(e)}
 
     Python.unload()
     return 0

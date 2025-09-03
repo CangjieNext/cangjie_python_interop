@@ -14,10 +14,11 @@ internal import std.collection.*
 
 main(): Int64 {
     Python.load()
-    var a = Python.Eval("a = 1")
-    var b = Python.Eval("1")
-    try { a == b } catch (e: PythonException) {println(e)}
-    try { b == a } catch (e: PythonException) {println(e)}
+    //get a PyObj is not available
+    var unavaileObj = PyLong(0) + PyString("")
+    var a = Python.Eval("1")
+    try { a == unavaileObj } catch (e: PythonException) {println(e)}
+    try { unavaileObj == a } catch (e: PythonException) {println(e)}
 
     Python.unload()
     return 0

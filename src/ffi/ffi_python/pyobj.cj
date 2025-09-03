@@ -156,12 +156,12 @@ class Reference {
      * @return cangjie class.
      */
     init(ptr: CPointer<Unit>) {
-        let gstate = getGIL()
         this.ptr = ptr
         if (envInit) {
+            let gstate = getGIL()
             unsafe { Py_IncRef(this.ptr) }
+            releaseGIL(gstate)
         }
-        releaseGIL(gstate)
     }
 
     /* Whether the pointer is null */
@@ -178,11 +178,10 @@ class Reference {
     }
 
     ~init() {
-        if (envInit) {
-            unsafe {
-                // Destructor is called by GC thread, it cannot hold GIL. `getGIL` cannot be invoked here.
-                Py_DecRef(ptr)
-            }
+        if (envInit && ptr.isNotNull()) {
+            let gstate = getGIL()
+            unsafe { Py_DecRef(ptr) }
+            releaseGIL(gstate)
         }
         ptr = CPointer<Unit>()
     }
@@ -381,7 +380,11 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
 
     private func binaryOperation(b: PyObj, opt: String, opt1: String): PyObj {
         PYLOG.info("Binary operation: ${this.refType} ${opt} ${b.refType}")
-        var funcOpt = this[opt]
+        var funcOpt = try {
+            this[opt]
+        } catch (e: PythonException) {
+            PyObj()
+        }
         if (funcOpt.isAvailable()) {
             let ret = funcOpt([b])
             if (ret.isAvailable()) {
@@ -391,7 +394,11 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
             }
         }
         PYLOG.info("Unsupported operation, try ${b.refType} ${opt1} ${this.refType}")
-        funcOpt = b[opt1]
+        funcOpt = try {
+            b[opt1]
+        } catch (e: PythonException) { 
+            PyObj()
+        }
         if (funcOpt.isAvailable()) {
             let ret = funcOpt([this])
             if (ret.isAvailable()) {
@@ -410,9 +417,9 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
         let ret = unsafe { PyObject_GetAttrString(handle.getPtr(), cName) }
         unsafe { LibC.free(cName) }
         if (ret.isNull()) {
-            unsafe {
-                PyErr_Print()
-            }
+            let errMsg = PYLOG.getPythonErr()
+            releaseGIL(gstate)
+            throw PythonException("Get attribute \"${name}\" failed.\n${errMsg}")
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -424,8 +431,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
         let ret = unsafe { PyObject_SetAttrString(handle.getPtr(), cName, value.getPtr()) }
         unsafe { LibC.free(cName) }
         if (ret != 0) {
-            PYLOG.printPythonErr()
-            PYLOG.warn("Set ${name} failed.")
+            PYLOG.warn("Set ${name} failed.\n" + PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
     }
@@ -434,7 +440,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
         let gstate = getGIL()
         let ret = unsafe { PyObject_Str(handle.getPtr()) }
         if (ret.isNull()) {
-            PYLOG.printPythonErr()
+            PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -459,7 +465,9 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
             throw PythonException("Throw exception when PyObj call: ${e}")
         }
         if (ret.isNull()) {
-            PYLOG.printPythonErr()
+            let errMsg = PYLOG.getPythonErr()
+            releaseGIL(gstate)
+            throw PythonException("PyObject call function failed.\n${errMsg}")
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -477,9 +485,13 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
         return if (ret == 1) {
             releaseGIL(gstate)
             true
-        } else {
-            PYLOG.printPythonErr()
+        } else if (ret == 0) {
             releaseGIL(gstate)
+            false
+        } else {
+            let errMsg = PYLOG.getPythonErr()
+            releaseGIL(gstate)
+            throw PythonException("PyObject compare failed.\n${errMsg}")
             false
         }
     }
@@ -528,7 +540,7 @@ public class PyObjIterator <: Iterator<PyObj> {
         let gstate = getGIL()
         let ret = unsafe { PyObject_GetIter(obj.getPtr()) }
         if (ret.isNull()) {
-            PYLOG.printPythonErr()
+            PYLOG.error(PYLOG.getPythonErr())
             releaseGIL(gstate)
             throw PythonException("PyObj cannot obtain the iterator.")
         }
@@ -539,8 +551,8 @@ public class PyObjIterator <: Iterator<PyObj> {
     private func pyIterNext(handle: Reference): Reference {
         let gstate = getGIL()
         let ret = unsafe { PyIter_Next(handle.getPtr()) }
-        if (ret.isNull()) {
-            PYLOG.printPythonErr()
+        if (ret.isNull() && pyErrOccurred()) {
+            PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
         return Reference(ret)
