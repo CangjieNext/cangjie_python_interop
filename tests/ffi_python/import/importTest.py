@@ -15,3 +15,15 @@ def func2():
     func1()
 
 a = 10
+
+class Point:
+   def __init__( self, x=0, y=0):
+      self.x = x
+      self.y = y
+
+   def set(self, x, y):
+      self.x = x
+      self.y = y
+
+   def print(self):
+      print(f"x = {self.x}, y = {self.y}")

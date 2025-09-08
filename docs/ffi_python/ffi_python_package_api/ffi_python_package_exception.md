@@ -12,4 +12,4 @@ public class PythonException <: Exception
 
 父类型：
 
-- [Exception](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_exceptions.html#class-exception)
+- Exception
