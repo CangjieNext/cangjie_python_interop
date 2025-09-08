@@ -39,16 +39,16 @@ ffi_python 包提供仓颉与 Python 语言互操作调用的能力，以兼容�
 
 |              函数名             |               功能             |
 | ------------------------------ | ------------------------------ |
-| [parseCallBackArgsList](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgsList) | 将回调函数的入参，解析为一个 PyList\<PyObj> 类型的参数列表。 |
-| [parseCallBackArgAsPyLong](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyLong) | 会判断回调函数的某个入参是否为 PyLong 类型。如果是则返回一个 PyLong 对象；如果不是则抛出 PythonException 异常。 |
-| [parseCallBackArgAsPyFloat](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyFloat) | 会判断回调函数的某个入参是否为 PyFloat 类型。如果是则返回一个 PyFloat 对象；如果不是则抛出 PythonException 异常。 |
-| [parseCallBackArgAsPyString](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyString) | 会判断回调函数的某个入参是否为 PyString 类型。如果是则返回一个 PyString 对象；如果不是则抛出 PythonException 异常。 |
-| [parseCallBackArgAsPyBool](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyBool) | 会判断回调函数的某个入参是否为 PyBool 类型。如果是则返回一个 PyBool 对象；如果不是则抛出 PythonException 异常。 |
-| [parseCallBackArgAsPyTuple](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyTuple) | 会判断回调函数的某个入参是否为 PyTuple 类型。如果是则返回一个 PyTuple 对象；如果不是则抛出 PythonException 异常。 |
-| [parseCallBackArgAsPyDict](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyDict) | 会判断回调函数的某个入参是否为 PyDict 类型。如果是则返回一个 PyDict 对象；如果不是则抛出 PythonException 异常。 |
-| [parseCallBackArgAsPyList](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyList) | 会判断回调函数的某个入参是否为 PyList 类型。如果是则返回一个 PyList 对象；如果不是则抛出 PythonException 异常。 |
-| [parseCallBackArgAsPySet](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPySet) | 会判断回调函数的某个入参是否为 PySet 类型。如果是则返回一个 PySet 对象；如果不是则抛出 PythonException 异常。 |
-| [parseCallBackArgAsPySlice](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPySlice) | 会判断回调函数的某个入参是否为 PySlice 类型。如果是则返回一个 PySlice 对象；如果不是则抛出 PythonException 异常。 |
+| [parseCallBackArgsList(CPointer\<Unit>)](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgsList) | 将回调函数的入参，解析为一个 PyList\<PyObj> 类型的参数列表。 |
+| [parseCallBackArgAsPyLong(PyObj)](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyLong) | 会判断回调函数的某个入参是否为 PyLong 类型。如果是则返回一个 PyLong 对象；如果不是则抛出 PythonException 异常。 |
+| [parseCallBackArgAsPyFloat(PyObj)](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyFloat) | 会判断回调函数的某个入参是否为 PyFloat 类型。如果是则返回一个 PyFloat 对象；如果不是则抛出 PythonException 异常。 |
+| [parseCallBackArgAsPyString(PyObj)](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyString) | 会判断回调函数的某个入参是否为 PyString 类型。如果是则返回一个 PyString 对象；如果不是则抛出 PythonException 异常。 |
+| [parseCallBackArgAsPyBool(PyObj)](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyBool) | 会判断回调函数的某个入参是否为 PyBool 类型。如果是则返回一个 PyBool 对象；如果不是则抛出 PythonException 异常。 |
+| [parseCallBackArgAsPyTuple(PyObj)](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyTuple) | 会判断回调函数的某个入参是否为 PyTuple 类型。如果是则返回一个 PyTuple 对象；如果不是则抛出 PythonException 异常。 |
+| [parseCallBackArgAsPyDict(PyObj)](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyDict) | 会判断回调函数的某个入参是否为 PyDict 类型。如果是则返回一个 PyDict 对象；如果不是则抛出 PythonException 异常。 |
+| [parseCallBackArgAsPyList(PyObj)](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPyList) | 会判断回调函数的某个入参是否为 PyList 类型。如果是则返回一个 PyList 对象；如果不是则抛出 PythonException 异常。 |
+| [parseCallBackArgAsPySet(PyObj)](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPySet) | 会判断回调函数的某个入参是否为 PySet 类型。如果是则返回一个 PySet 对象；如果不是则抛出 PythonException 异常。 |
+| [parseCallBackArgAsPySlice(PyObj)](./ffi_python_package_api/ffi_python_package_funcs.md#parseCallBackArgAsPySlice) | 会判断回调函数的某个入参是否为 PySlice 类型。如果是则返回一个 PySlice 对象；如果不是则抛出 PythonException 异常。 |
 
 ### 接口
 

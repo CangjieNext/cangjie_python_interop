@@ -3,29 +3,27 @@
 // with Runtime Library Exception.
 //
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
+ 
+// EXEC: %compiler %pyffi-link %f -o %output
+// EXEC-PIPE: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
+// ASSERT: scan module 'sys'
+// ASSERT: scan module 'os'
 
-package samples
-
-internal import python.*
+internal import ffi_python.*
 
 /**
  * Test function, print the string with python print function.
  */
 main(): Int64 {
+    Python.load()
     /* Initialize python environment */
-    var python = LoadPython()
-    var sys = python.Import("sys")
-    var os = python.Import("os")
-    /* need install numpy first. */
-    var np = python.Import("numpy")
-    var prt = python.GetBuiltin("print")
-    var str = python.GetBuiltin("str")
-
-    prt.Call(str.Call(sys))
-    prt.Call(str.Call(os))
-    prt.Call(str.Call(np))
-
+    var sys = Python.Import("sys")
+    var os = Python.Import("os")
+    var prt = Python["print"]
+    var str = Python["str"]
+    prt(str(sys))
+    prt(str(os))
     /* unload python lib and clean environment */
-    UnloadPython()
+    Python.unload()
     return 0
 }
