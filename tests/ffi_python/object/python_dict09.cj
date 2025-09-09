@@ -10,7 +10,7 @@
 internal import ffi_python.*
 internal import std.collection.*
 
-class A <: PyFFIType  & Hashable & Equatable<A> {
+class A <: CjObj & Hashable & Equatable<A> {
     init() {}
 
     public func hashCode() : Int64 {0}
@@ -18,6 +18,10 @@ class A <: PyFFIType  & Hashable & Equatable<A> {
     public operator func ==(right: A) : Bool {false}
 
     public operator func !=(right : A) : Bool {true}
+
+    public func toPyObj(): PyObj {
+        return PyLong(0)
+    }
 }
 
 main() {

@@ -34,16 +34,16 @@ main() {
     var b = a.copy()
 
     // getItem
-    print("a is ${a.getItem("a")}\n")
-    print("b is ${a.getItem("b")}\n")
-    print("c is ${a.getItem("c")}\n")
+    print("a is ${a.getItem("a").getOrThrow()}\n")
+    print("b is ${a.getItem("b").getOrThrow()}\n")
+    print("c is ${a.getItem("c").getOrThrow()}\n")
     a.getItem("d")
 
     // setItem
     a.setItem("b", 10)
-    print("b is ${a.getItem("b")}\n")
+    print("b is ${a.getItem("b").getOrThrow()}\n")
     a.setItem("d", 20)
-    print("d is ${a.getItem("d")}\n")
+    print("d is ${a.getItem("d").getOrThrow()}\n")
 
     // contains
     print("a exist: ${a.contains("a")}\n")
@@ -51,9 +51,9 @@ main() {
     print("e exist: ${a.contains("e")}\n")
 
     // copy
-    print("b.a is ${b.getItem("a")}\n")
-    print("b.b is ${b.getItem("b")}\n")
-    print("b.c is ${b.getItem("c")}\n")
+    print("b.a is ${b.getItem("a").getOrThrow()}\n")
+    print("b.b is ${b.getItem("b").getOrThrow()}\n")
+    print("b.c is ${b.getItem("c").getOrThrow()}\n")
     b.getItem("d")
 
     // del

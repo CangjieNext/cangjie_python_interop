@@ -13,8 +13,6 @@
  */
 package ffi_python
 
-import std.collection.HashMap
-import std.collection.HashSet
 import std.fs.*
 import std.io.*
 import std.sync.*
@@ -416,7 +414,9 @@ public class PythonBuiltins {
 
         PYLOG.level = loglevel
 
-        load(getPythonPath(), loglevel: loglevel)
+        let trimPath = getPythonPath().trimAscii()
+
+        load(trimPath, loglevel: loglevel)
     }
 
     /**
@@ -440,11 +440,9 @@ public class PythonBuiltins {
 
         PYLOG.level = loglevel
 
-        let trimPath = path.trimAscii()
-
         try {
-            if (!exists(trimPath)) {
-                throw PythonException("\"${trimPath}\" does not exist or the file path is invalid.")
+            if (!exists(path)) {
+                throw PythonException("\"${path}\" does not exist or the file path is invalid.")
             }
 
             // Bind OS thread. If the current thread is not created by the cangjie runtime,
@@ -454,10 +452,10 @@ public class PythonBuiltins {
             }
 
             // Load python dymic lib.
-            if (!loadSo(trimPath)) {
-                throw PythonException("\"${trimPath}\" cannot be loaded.")
+            if (!loadSo(path)) {
+                throw PythonException("\"${path}\" cannot be loaded.")
             }
-            PYLOG.info("Load ${suffixOfDy} \"${trimPath}\" success.")
+            PYLOG.info("Load ${suffixOfDy} \"${path}\" success.")
 
             // Read Symbol.
             readSym()
@@ -496,7 +494,10 @@ public class PythonBuiltins {
      * @return true means loaded, otherwise means unload.
      */
     public func isLoad(): Bool {
-        return envInit
+        initLock.lock()
+        let envInit_ = envInit
+        initLock.unlock()
+        return envInit_
     }
 
     /**
@@ -574,6 +575,10 @@ public class PythonBuiltins {
             PYLOG.warn("[Eval] Python is not initialized. Please load it first.")
             return PyObj()
         }
+        if (cmd.isEmpty() || cmd.size > 1000) {
+            PYLOG.warn("cmd is empty or size to large.")
+            return PyObj()
+        }
         let moduleDict = PyModule(module).getDict()
         if (!moduleDict.isAvailable()) {
             PYLOG.warn("Cant get dictionary in ${module}, return null PyObj.")
@@ -581,12 +586,16 @@ public class PythonBuiltins {
         }
         let local = PyDict<PyObj, PyObj>()
         let ret = pyRunString(cmd, pyEvalInput, moduleDict.getRef(), local.getRef())
-        return instance(ret)
+        return referenceToPyObj(ret)
     }
 
     public func exec(code: String): Unit {
         if (!envInit) {
             PYLOG.warn("[exec] Python is not initialized. Please load it first.")
+            return
+        }
+        if (code.isEmpty() || code.size > 1000) {
+            PYLOG.warn("cmd is empty or size to large.")
             return
         }
         let moduleDict = PyModule("__main__").getDict()
@@ -606,7 +615,7 @@ public class PythonBuiltins {
      *
      * @return Python Object. If object is unavailable, `isAvailable()` get false
      */
-    public operator func [](attr: String): PyObj {
+    public operator func [](attr: String): Option<PyObj> {
         if (!builtins.isAvailable()) {
             throw PythonException("Builtins is unavailable.")
         }
@@ -654,7 +663,8 @@ public class PythonBuiltins {
     private func getPythonPath(): String {
         PYLOG.info("Try to get libpython path.")
         var path = getPythonPathByEnv()
-        if (!path.isEmpty()) {
+
+        if (!path.isEmpty() && exists(path)) {
             PYLOG.info("Found PYTHON_DYNLIB value: ${path}")
             return path
         }
@@ -662,7 +672,7 @@ public class PythonBuiltins {
         PYLOG.info(
             "Can't find \"libpythonX.Y.${suffixOfDy}\" from environment PYTHON_DYNLIB, try to find it from executable file path.")
         path = getPythonPathByExec()
-        if (!path.isEmpty()) {
+        if (!path.isEmpty() && exists(path)) {
             PYLOG.info("Found exec dependency: ${path}")
             return path
         }
@@ -670,12 +680,11 @@ public class PythonBuiltins {
         PYLOG.info(
             "Can\'t find \"libpythonX.Y.${suffixOfDy}\" from executable file path, try to find it from system lib path.")
         path = getPythonPathBySysLib()
-        if (!path.isEmpty()) {
+        if (!path.isEmpty() && exists(path)) {
             return path
         }
 
         throw PythonException("Can\'t find \"libpythonX.Y.${suffixOfDy}\" from system lib path, load exit.")
-        return ""
     }
 
     /*

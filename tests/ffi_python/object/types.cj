@@ -37,7 +37,7 @@ main(): Int64 {
     /* Initialize python environment */
     Python.load()
     /* Get build-in function print */
-    var prt = Python["print"]
+    var prt = Python["print"].getOrThrow()
  
     /* string type interop. */
     var valStr = PyString("Cangjie: Hello, Python!")
@@ -90,7 +90,7 @@ main(): Int64 {
     pyDic.setItem(PyString("key"), PyString("map"))
     pyDic.setItem(PyString("key1"), PyString("map"))
     pyDic.setItem(PyString("key2"), PyString("map"))
-    var val1 = pyDic.getItem(PyString("key"))
+    var val1 = pyDic.getItem(PyString("key")).getOrThrow()
     prt(val1)
     pyDic.del(PyString("key"))
     prt(pyDic)
@@ -101,7 +101,7 @@ main(): Int64 {
     pyDic2.setItem(PyString("key2"), PyString("map2"))
     pyDic2.setItem(PyString("key3"), PyString("map3"))
     pyDic2.setItem(PyString("key4"), PyString("map4"))
-    pyDic.empty()
+    pyDic.clear()
     prt(pyDic)
 
     var pySet = PySet(HashSet<PyObj>([PyString("key2"), PyString("key3"), PyString("key4")]))

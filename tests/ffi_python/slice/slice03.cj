@@ -13,7 +13,7 @@ internal import std.collection.*
 
 main() {
     Python.load()
-    var slice = match (Python["slice"]([0, 6, 2])) {
+    var slice = match (Python["slice"].getOrThrow()([0, 6, 2])) {
         case val: PySlice<Int64> => val
         case _ => throw PythonException()
     }

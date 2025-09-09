@@ -13,9 +13,6 @@ package ffi_python
 
 import std.collection.HashMap
 import std.collection.HashSet
-import std.fs.*
-import std.io.*
-import std.sync.*
 
 public interface CjObj <: PyFFIType {
     func toPyObj(): PyObj
@@ -105,7 +102,7 @@ extend<T> Array<T> <: CjObj where T <: PyFFIType {
     }
 }
 
-extend<K, V> HashMap<K, V> <: CjObj where K <: Hashable & Equatable<K> & PyFFIType {
+extend<K, V> HashMap<K, V> <: CjObj where K <: Hashable & Equatable<K> & PyFFIType, V <: PyFFIType {
     public func toPyObj(): PyDict<K, V> {
         return PyDict<K, V>(this)
     }

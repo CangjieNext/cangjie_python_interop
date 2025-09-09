@@ -19,7 +19,7 @@
 internal import ffi_python.*
 internal import std.collection.*
 
-func printDict<K, V>(dict: PyDict<K, V>) where K <: Hashable & Equatable<K> & PyFFIType {
+func printDict<K, V>(dict: PyDict<K, V>) where K <: Hashable & Equatable<K> & PyFFIType, V <: PyFFIType {
     print("size: ${dict.size()}\n")
     var map = dict.toCjObj()
     for((key, value) in map) {

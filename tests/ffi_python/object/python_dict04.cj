@@ -15,7 +15,7 @@
 internal import ffi_python.*
 internal import std.collection.*
 
-func printDict<K, V>(dict: PyDict<K, V>) where K <: Hashable & Equatable<K> & PyFFIType {
+func printDict<K, V>(dict: PyDict<K, V>) where K <: Hashable & Equatable<K> & PyFFIType, V <: PyFFIType {
     print("size: ${dict.size()}\n")
     var map = dict.toCjObj()
     for((key, value) in map) {
@@ -29,13 +29,16 @@ main() {
     var hashmap = HashMap<PyObj, Int64>([(1.toPyObj(), 3), (2.toPyObj(), 4), (Python.Eval("1"), 5), ("1".toPyObj(), 6)])
     var a = PyDict<PyObj, Int64>(hashmap)
     
-    println(a.getItem(1.toPyObj()))
+    println(a.getItem(1.toPyObj()).getOrThrow())
 
-    println(a.getItem("1".toPyObj()))
+    println(a.getItem("1".toPyObj()).getOrThrow())
 
-    println(a.getItem("2".toPyObj()).isAvailable())
+    println(match (a.getItem("2".toPyObj())) {
+                case Some(v) => true
+                case None => false
+            })
 
-    println(a.getItem(Python.Eval("1")))
+    println(a.getItem(Python.Eval("1")).getOrThrow())
 
     Python.unload()
 }

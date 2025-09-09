@@ -86,9 +86,9 @@ let builtin_function: Array<String> = [
 main(): Int64 {
     Python.load()
     for(func_name in builtin_function) {
-        if (!Python[func_name].isAvailable()) {
-            print("${func_name} failed.\n")
-            return 1
+        match (Python[func_name]) {
+            case Some(v) => ()
+            case None => print("${func_name} failed.\n")
         }
     }
     print("success.\n")

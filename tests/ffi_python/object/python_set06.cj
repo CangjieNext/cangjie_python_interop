@@ -33,17 +33,17 @@ main() {
         case _ => throw PythonException()
     }
 
-    a.empty()
+    a.clear()
     if (a.size() == 0) {
         print("success01\n")
     }
 
-    b.empty()
+    b.clear()
     if (b.size() == 0) {
         print("success02\n")
     }
 
-    e.empty()
+    e.clear()
     if (e.size() == 0) {
         print("success03\n")
     }
