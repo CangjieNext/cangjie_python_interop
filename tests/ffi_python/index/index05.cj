@@ -12,7 +12,7 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    var pyType = Python["type"]
+    var pyType = Python["type"].getOrThrow()
     pyType()
     Python.unload()
     return 0

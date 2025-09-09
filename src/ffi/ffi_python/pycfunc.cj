@@ -13,10 +13,6 @@
 package ffi_python
 
 import std.collection.HashMap
-import std.collection.HashSet
-import std.fs.*
-import std.io.*
-import std.sync.*
 /* Enum type of module `ctypes`. */
 public enum PyCType {
     PyCBool
@@ -75,7 +71,7 @@ public class PyCFunc <: PyObj {
         var namespace = PyDict(HashMap<String, PyObj>([("_flags_", m_ctypes["FUNCFLAG_CDECL"])]))
 
         // simulate python code: type("PyFuncPtr", (_ctypes.CFuncPtr), {"_flags_" : flags})
-        var funcPtr = Python["type"]([funcName, bases, namespace])
+        var funcPtr = Python["type"].getOrThrow()([funcName, bases, namespace])
         return funcPtr([Int64(f.toUIntNative())]).getRef()
     }
 

@@ -15,17 +15,21 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    if (Python["type"].isAvailable()) {
-        print("success01\n")
+    match (Python["type"]) {
+        case Some(v) => print("success01\n")
+        case None => ()
     }
-    if (!Python["type1"].isAvailable()) {
-        print("success02\n")
+    match (Python["type1"]) {
+        case Some(v) => ()
+        case None => print("success02\n")
     }
-    if (!Python[""].isAvailable()) {
-        print("success03\n")
+    match (Python[""]) {
+        case Some(v) => ()
+        case None => print("success03\n")
     }
-    if (!Python["   "].isAvailable()) {
-        print("success04\n")
+    match (Python["   "]) {
+        case Some(v) => ()
+        case None => print("success04\n")
     }
     Python.unload()
     return 0

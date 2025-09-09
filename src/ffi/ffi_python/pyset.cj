@@ -11,19 +11,14 @@
  */
 package ffi_python
 
-import std.collection.HashMap
 import std.collection.HashSet
-import std.fs.*
-import std.io.*
-import std.sync.*
 
-func getPyObj<T>(v: T): PyObj {
+func getPyObj<T>(v: T): PyObj where T <: PyFFIType {
     return match (v) {
         case val: CjObj => val.toPyObj()
         case val: PyObj => val
         case _ =>
             throw PythonException("Unknow type.")
-            PyObj()
     }
 }
 
@@ -103,7 +98,7 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
      * @return key value by PyObj type.
      */
     public func pop(): PyObj {
-        return instance(pySetPop(getRef()))
+        return referenceToPyObj(pySetPop(getRef()))
     }
 
     /**
@@ -132,9 +127,9 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
     /**
      * Remove all elems of set.
      */
-    public func empty(): Unit {
+    public func clear(): Unit {
         if (pySetClear(getRef()) != 0) {
-            PYLOG.warn("Set empty failed.")
+            PYLOG.warn("Set clear failed.")
         }
     }
 

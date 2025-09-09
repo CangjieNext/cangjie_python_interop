@@ -14,12 +14,8 @@
 package ffi_python
 
 import std.collection.HashMap
-import std.collection.HashSet
-import std.fs.*
-import std.io.*
-import std.sync.*
 /*
- * Global function instance. Visible only in the package.
+ * Global function referenceToPyObj. Visible only in the package.
  * Instance CPointer to cangjie class.
  *
  * @param CPointer Reference.
@@ -27,7 +23,7 @@ import std.sync.*
  * @return cangjie class.
  * Default return base class `PyObj`.
  */
-func instance(handle: Reference): PyObj {
+func referenceToPyObj(handle: Reference): PyObj {
     if (handle.isNull()) {
         return PyObj()
     }
@@ -193,7 +189,7 @@ class Reference {
  * This interface should be modified by the `sealed`, but is not supported currently.
  * Empty interface, nothing to do, for generic constraints.
  */
-public interface PyFFIType {}
+sealed interface PyFFIType {}
 
 /**
  * Python Object class.
@@ -250,7 +246,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
             throw PythonException("Obj is unavailable.")
         }
         let ret = pyObjectGetAttrString(ref, key)
-        return instance(ret)
+        return referenceToPyObj(ret)
     }
 
     /* Set member property by member name. */
@@ -297,26 +293,26 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
 
     /* Call callable object without parameter. */
     public operator func ()(): PyObj {
-        return instance(pyObjectCall(getRef()))
+        return referenceToPyObj(pyObjectCall(getRef()))
     }
 
     /* Call callable object without parameter but with kargs. */
     public operator func ()(kargs: HashMap<String, PyObj>): PyObj {
         let refKArgs = PyDict(kargs).getRef()
-        return instance(pyObjectCall(getRef(), kargs: refKArgs))
+        return referenceToPyObj(pyObjectCall(getRef(), kargs: refKArgs))
     }
 
     /* Call callable object with python type parameter. */
     public operator func ()(args: Array<PyObj>): PyObj {
         let refArgs = PyTuple(args).getRef()
-        return instance(pyObjectCall(getRef(), args: refArgs))
+        return referenceToPyObj(pyObjectCall(getRef(), args: refArgs))
     }
 
     /* Call callable object with python type parameter and with kargs. */
     public operator func ()(args: Array<PyObj>, kargs: HashMap<String, PyObj>): PyObj {
         let refArgs = PyTuple(args).getRef()
         let refKArgs = PyDict(kargs).getRef()
-        return instance(pyObjectCall(getRef(), args: refArgs, kargs: refKArgs))
+        return referenceToPyObj(pyObjectCall(getRef(), args: refArgs, kargs: refKArgs))
     }
 
     /* Call callable object with cangjie type parameter. */
@@ -325,7 +321,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
             i: Int64 => return args[i].toPyObj()
         }
         let refArgs = PyTuple(Array<PyObj>(args.size, insertArgs)).getRef()
-        return instance(pyObjectCall(getRef(), args: refArgs))
+        return referenceToPyObj(pyObjectCall(getRef(), args: refArgs))
     }
 
     /* Call callable object with cangjie type parameter and with kargs. */
@@ -335,7 +331,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
         }
         let refArgs = PyTuple(Array<PyObj>(args.size, insertArgs)).getRef()
         let refKArgs = PyDict(kargs).getRef()
-        return instance(pyObjectCall(getRef(), args: refArgs, kargs: refKArgs))
+        return referenceToPyObj(pyObjectCall(getRef(), args: refArgs, kargs: refKArgs))
     }
 
     /* PyObj to String type. */
@@ -530,7 +526,7 @@ public class PyObjIterator <: Iterator<PyObj> {
             PYLOG.info("End of iterator.")
             return None
         }
-        return Some<PyObj>(instance(ret))
+        return Some<PyObj>(referenceToPyObj(ret))
     }
 
     private func pyObjectGetIter(obj: Reference): Reference {

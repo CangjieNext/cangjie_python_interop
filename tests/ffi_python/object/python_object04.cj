@@ -12,7 +12,7 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    Python["print"]([1])
+    Python["print"].getOrThrow()([1])
     Python.unload()
     return 0
 }

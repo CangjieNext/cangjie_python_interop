@@ -14,7 +14,7 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    var pyPrint = Python["print"]
+    var pyPrint = Python["print"].getOrThrow()
     var a = Python.Eval("\"hello world\"")
     pyPrint([a])
     pyPrint()

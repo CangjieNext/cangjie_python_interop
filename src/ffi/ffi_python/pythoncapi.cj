@@ -10,11 +10,6 @@
  */
 package ffi_python
 
-import std.collection.HashMap
-import std.collection.HashSet
-import std.fs.*
-import std.io.*
-import std.sync.*
 /* Python interpreter Initialization, Finalization, and GIL. */
 var Py_Initialize: CFunc<() -> Unit> = {=> throw PythonException("Py_Initialize UnImplemented")}
 var Py_IsInitialized: CFunc<() -> Int32> = {

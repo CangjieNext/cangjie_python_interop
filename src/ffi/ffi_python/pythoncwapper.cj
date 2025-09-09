@@ -16,11 +16,6 @@
  */
 package ffi_python
 
-import std.collection.HashMap
-import std.collection.HashSet
-import std.fs.*
-import std.io.*
-import std.sync.*
 /* Interface from dlfcn.h. */
 @FastNative
 foreign func dlopen(c: CString, flag: Int32): CPointer<Unit>

@@ -17,11 +17,13 @@ main(): Int64 {
     Python.load()
     let futArr = Array<Future<Unit>>(5) { _ => 
         spawn { =>
-            if (Python["type"].isAvailable()) {
-                println("find type\n")
+            match (Python["type"]) {
+                case Some(v) => println("find type\n")
+                case None => ()
             }
-            if (!Python["mytype"].isAvailable()) {
-                println("cant find mytype\n")
+            match (Python["mytype"]) {
+                case Some(v) => ()
+                case None => println("cant find mytype\n")
             }
             println("Current thread id: ${Thread.currentThread.id}")
         }

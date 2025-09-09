@@ -17,7 +17,7 @@ main(): Int64 {
     var test = Python.Import("importTest")
     // value
     var a = test["a"]
-    Python["print"]([a])
+    Python["print"].getOrThrow()([a])
     // function
     test["func"]()
     Python.unload()
