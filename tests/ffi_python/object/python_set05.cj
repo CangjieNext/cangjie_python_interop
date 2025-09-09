@@ -66,7 +66,9 @@ main() {
     }
     println(e)
 
-    try {e.add(Python.Eval("a = 1"))}catch (x: PythonException) {println(x)}
+    //get a PyObj is not available
+    var unavaileObj = PyLong(0) + PyString("")
+    try {e.add(unavaileObj)}catch (x: PythonException) {println(x)}
 
     Python.unload()
 }

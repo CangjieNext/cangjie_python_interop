@@ -15,9 +15,9 @@
 // ASSERT: scan 0.1
 // ASSERT: scan 10.1
 // ASSERT: scan WARN: Unsupported operation between PyFloat and PyString, or operation is forbiden.
-// ASSERT: scan WARN: Unsupported operation between PyString and PyBool, or operation is forbiden.
-// ASSERT: scan WARN: Unsupported operation between PyString and PyLong, or operation is forbiden.
-// ASSERT: scan WARN: Unsupported operation between PyString and PyFloat, or operation is forbiden.
+// ASSERT: scan TypeError: not all arguments converted during string formatting
+// ASSERT: scan TypeError: not all arguments converted during string formatting
+// ASSERT: scan TypeError: not all arguments converted during string formatting
 
 internal import ffi_python.*
  
@@ -29,18 +29,18 @@ main(): Int64 {
     var d = PyString("test")
 
     // %
-    try { print("${a % b}\n") } catch(e: PythonException) {}
-    try { print("${a % c}\n") } catch(e: PythonException) {}
-    try { print("${a % d}\n") } catch(e: PythonException) {}
-    try { print("${b % a}\n") } catch(e: PythonException) {}
-    try { print("${b % c}\n") } catch(e: PythonException) {}
-    try { print("${b % d}\n") } catch(e: PythonException) {}
-    try { print("${c % a}\n") } catch(e: PythonException) {}
-    try { print("${c % b}\n") } catch(e: PythonException) {}
-    try { print("${c % d}\n") } catch(e: PythonException) {}
-    try { print("${d % a}\n") } catch(e: PythonException) {}
-    try { print("${d % b}\n") } catch(e: PythonException) {}
-    try { print("${d % c}\n") } catch(e: PythonException) {}
+    try { print("${a % b}\n") } catch(e: PythonException) {println(e)}
+    try { print("${a % c}\n") } catch(e: PythonException) {println(e)}
+    try { print("${a % d}\n") } catch(e: PythonException) {println(e)}
+    try { print("${b % a}\n") } catch(e: PythonException) {println(e)}
+    try { print("${b % c}\n") } catch(e: PythonException) {println(e)}
+    try { print("${b % d}\n") } catch(e: PythonException) {println(e)}
+    try { print("${c % a}\n") } catch(e: PythonException) {println(e)}
+    try { print("${c % b}\n") } catch(e: PythonException) {println(e)}
+    try { print("${c % d}\n") } catch(e: PythonException) {println(e)}
+    try { print("${d % a}\n") } catch(e: PythonException) {println(e)}
+    try { print("${d % b}\n") } catch(e: PythonException) {println(e)}
+    try { print("${d % c}\n") } catch(e: PythonException) {println(e)}
 
     Python.unload()
     return 0

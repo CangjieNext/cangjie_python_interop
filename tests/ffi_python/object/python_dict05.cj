@@ -8,11 +8,12 @@
 // EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
 // ASSERT: scan a: size: 2
 // ASSERT: scan (0, 1): 5, 0: 5, 
-// ASSERT: scan b: size: 1
-// ASSERT: scan 0: 5, 
-// ASSERT: scan c: size: 1
-// ASSERT: scan 0: 5, 
-// ASSERT: scan d: size: 1
+// ASSERT: scan TypeError: unhashable type: 'list'
+// ASSERT: scan PythonException: Dict set item failed.
+// ASSERT: scan TypeError: unhashable type: 'dict'
+// ASSERT: scan PythonException: Dict set item failed.
+// ASSERT: scan TypeError: unhashable type: 'set'
+// ASSERT: scan PythonException: Dict set item failed.
 // ASSERT: scan PyObj is unavailable.
 
 internal import ffi_python.*
@@ -36,21 +37,25 @@ main() {
     printDict(a)
 
     // key is python list
-    var b = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("[0, 1]"), 5), (Python.Eval("0"), 5)]))
-    print("b: ")
-    printDict(b)
+    try {
+        var b = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("[0, 1]"), 5), (Python.Eval("0"), 5)]))
+    } catch (e: PythonException) {println(e)}
 
     // key is python dict
-    var c = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("{0: 0, 1: 1}"), 5), (Python.Eval("0"), 5)]))
-    print("c: ")
-    printDict(c)
+    try {
+        var c = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("{0: 0, 1: 1}"), 5), (Python.Eval("0"), 5)]))
+    } catch (e: PythonException) {println(e)}
 
     // key is python set
-    var d = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("{0, 1}"), 5), (Python.Eval("0"), 5)]))
-    print("d: ")
-    printDict(d)
+    try {
+        var d = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("{0, 1}"), 5), (Python.Eval("0"), 5)]))
+    } catch (e: PythonException) {println(e)}
 
-    try {var e = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("a = 1"), 5), (Python.Eval("0"), 5)]))}catch (e: PythonException) {println(e)}
+    try {
+        //get a PyObj is not available
+        var unavaileObj = PyLong(0) + PyString("")
+        var e = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(unavaileObj, 5), (Python.Eval("0"), 5)]))
+    } catch (e: PythonException) {println(e)}
 
     Python.unload()
 }

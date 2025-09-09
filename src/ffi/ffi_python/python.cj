@@ -158,30 +158,29 @@ public class PythonLogger {
         log(LogLevel.WARN, msg)
     }
 
-    /* Print critical information and throw a PythonException. */
     public func error(msg: String): Unit {
         log(LogLevel.ERROR, msg)
     }
 
-    protected func printPythonErr(): Unit {
+    protected func getPythonErr(): String {
         unsafe {
             let pType = LibC.malloc<CPointer<Unit>>()
             if (pType.isNull()) {
-                log(LogLevel.ERROR, "Failed to malloc memory in func printPythonErr.")
-                return
+                log(LogLevel.ERROR, "Failed to malloc memory in func getPythonErr.")
+                return ""
             }
             let pValue = LibC.malloc<CPointer<Unit>>()
             if (pValue.isNull()) {
                 LibC.free<CPointer<Unit>>(pType)
-                log(LogLevel.ERROR, "Failed to malloc memory in func printPythonErr.")
-                return
+                log(LogLevel.ERROR, "Failed to malloc memory in func getPythonErr.")
+                return ""
             }
             let pTraceback = LibC.malloc<CPointer<Unit>>()
             if (pTraceback.isNull()) {
                 LibC.free<CPointer<Unit>>(pType)
                 LibC.free<CPointer<Unit>>(pValue)
-                log(LogLevel.ERROR, "Failed to malloc memory in func printPythonErr.")
-                return
+                log(LogLevel.ERROR, "Failed to malloc memory in func getPythonErr.")
+                return ""
             }
             pType.write(CPointer<Unit>())
             pValue.write(CPointer<Unit>())
@@ -191,14 +190,14 @@ public class PythonLogger {
 
             PyErr_Fetch(pType, pValue, pTraceback)
 
-            // print error message of python
+            // get error message of python
             var ttype = pType.read()
             if (ttype.isNull()) {
                 LibC.free<CPointer<Unit>>(pType)
                 LibC.free<CPointer<Unit>>(pValue)
                 LibC.free<CPointer<Unit>>(pTraceback)
                 releaseGIL(gstate)
-                return
+                return ""
             }
 
             var cName = unsafe { LibC.mallocCString("__name__") }
@@ -242,8 +241,6 @@ public class PythonLogger {
                 }
             }
 
-            log(LogLevel.ERROR, errMsg)
-
             Py_DecRef(typeStr)
             Py_DecRef(valueStr)
             Py_DecRef(ttype)
@@ -251,12 +248,12 @@ public class PythonLogger {
             LibC.free<CPointer<Unit>>(pType)
             LibC.free<CPointer<Unit>>(pValue)
 
-            // print traceback of python
+            // get traceback of python
             let traceback = pTraceback.read()
             if (traceback.isNull()) {
                 LibC.free<CPointer<Unit>>(pTraceback)
                 releaseGIL(gstate)
-                return
+                return errMsg
             }
             LibC.free<CPointer<Unit>>(pTraceback)
 
@@ -272,7 +269,7 @@ public class PythonLogger {
                 log(LogLevel.WARN, "Error importing python traceback module.")
                 Py_DecRef(traceback)
                 releaseGIL(gstate)
-                return
+                return errMsg
             }
 
             cName = unsafe { LibC.mallocCString("format_tb") }
@@ -283,7 +280,7 @@ public class PythonLogger {
                 Py_DecRef(tbModule)
                 Py_DecRef(traceback)
                 releaseGIL(gstate)
-                return
+                return errMsg
             }
 
             tbArgs = PyTuple_New(1)
@@ -293,7 +290,7 @@ public class PythonLogger {
                 Py_DecRef(formatFunc)
                 Py_DecRef(traceback)
                 releaseGIL(gstate)
-                return
+                return errMsg
             }
             if (PyTuple_SetItem(tbArgs, 0, traceback) != 0) {
                 log(LogLevel.WARN, "Set item failed.")
@@ -302,7 +299,7 @@ public class PythonLogger {
                 Py_DecRef(tbArgs)
                 Py_DecRef(traceback)
                 releaseGIL(gstate)
-                return
+                return errMsg
             }
 
             tbList = PyObject_Call(formatFunc, tbArgs, CPointer<Unit>())
@@ -313,12 +310,13 @@ public class PythonLogger {
                 Py_DecRef(tbList)
                 Py_DecRef(traceback)
                 releaseGIL(gstate)
-                return
+                return errMsg
             }
 
+            errMsg += "\n"
             for (i in 0..PyList_Size(tbList)) {
-                let errMsg = PyUnicode_AsUTF8(PyList_GetItem(tbList, i)).toString()
-                log(LogLevel.ERROR, "  " + errMsg)
+                let tbMsg = PyUnicode_AsUTF8(PyList_GetItem(tbList, i)).toString()
+                errMsg += tbMsg
             }
 
             Py_DecRef(tbModule)
@@ -327,6 +325,7 @@ public class PythonLogger {
             Py_DecRef(tbList)
             Py_DecRef(traceback)
             releaseGIL(gstate)
+            return errMsg
         }
     }
 
@@ -473,6 +472,9 @@ public class PythonBuiltins {
                 Py_Initialize()
                 // Release the GIL
                 pyThreadState = PyEval_SaveThread()
+                if (pyThreadState.isNull()) {
+                    throw PythonException("Release the GIL and save thread status failed.")
+                }
             }
             PYLOG.info("Python interpreter init success.")
 
@@ -796,7 +798,7 @@ public class PythonBuiltins {
         let gstate = getGIL()
         let ret = unsafe { PyEval_GetBuiltins() }
         if (ret.isNull()) {
-            PYLOG.printPythonErr()
+            PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -808,7 +810,9 @@ public class PythonBuiltins {
         let obj = unsafe { PyRun_String(cStr, mode, module.getPtr(), local.getPtr()) }
         unsafe { LibC.free(cStr) }
         if (pyErrOccurred()) {
-            PYLOG.printPythonErr()
+            let errMsg = PYLOG.getPythonErr()
+            releaseGIL(gstate)
+            throw PythonException("PyRunString failed, mode: ${mode}.\n${errMsg}")
         }
         releaseGIL(gstate)
         return Reference(obj)

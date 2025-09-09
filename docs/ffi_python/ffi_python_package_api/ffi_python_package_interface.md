@@ -3,7 +3,9 @@
 ## interface CjObj
 
 ```cangjie
-public interface CjObj <: PyFFIType
+public interface CjObj <: PyFFIType {
+    func toPyObj(): PyObj
+}
 ```
 
 功能：该接口提供将仓颉类型转换为 Python 类型的函数。
@@ -11,6 +13,20 @@ public interface CjObj <: PyFFIType
 父类型：
 
 - [PyFFIType](#interface-pyffitype)
+
+### func toPyObj()
+
+```cangjie
+func toPyObj(): PyObj
+```
+
+**功能：** 将仓颉类型转换为 Python 类型。
+
+**返回值：**
+
+|类型|说明|
+|:----|:----|
+|PyObj|Python统一类型。|
 
 ## interface PyFFIType
 

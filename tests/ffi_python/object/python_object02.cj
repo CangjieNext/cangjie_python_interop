@@ -11,10 +11,15 @@
 // ASSERT: scan b update to PyBool
 // ASSERT: scan c update to PyString
 // ASSERT: scan d is PyLong
-// ASSERT: scan SyntaxError: ('invalid syntax'
 // ASSERT: scan WARN: Set value is unavailable, attribute "d" will be delete.
+// ASSERT: scan Get attribute "d" failed.
 // ASSERT: scan AttributeError: module 'test01' has no attribute 'd'
-// ASSERT: scan d is unavailable
+// ASSERT: scan Get attribute "d" failed.
+// ASSERT: scan AttributeError: module 'test01' has no attribute 'd'
+// ASSERT: scan Get attribute "d" failed.
+// ASSERT: scan AttributeError: module 'test01' has no attribute 'd'
+// ASSERT: scan Get attribute "d" failed.
+// ASSERT: scan AttributeError: module 'test01' has no attribute 'd'
 internal import ffi_python.*
 
 main() {
@@ -40,13 +45,12 @@ main() {
         print("d is PyLong\n")
     }
 
-    test01["d"] = Python.Eval("e = 10")
-    if (!test01["d"].isAvailable()) {
-        print("d is unavailable\n")
-    }
-    try {test01["d"]["__add__"]} catch(e: PythonException) {}
-    try {println(test01["d"])} catch(e: PythonException) {}
-    try {test01["d"]()} catch(e: PythonException) {}
+    //get a PyObj is not available
+    test01["d"] = PyLong(0) + PyString("")
+    try { !test01["d"].isAvailable()} catch (e: PythonException) {println(e)}
+    try {test01["d"]["__add__"]} catch(e: PythonException) {println(e)}
+    try {println(test01["d"])} catch(e: PythonException) {println(e)}
+    try {test01["d"]()} catch(e: PythonException) {println(e)}
 
     Python.unload()
 }

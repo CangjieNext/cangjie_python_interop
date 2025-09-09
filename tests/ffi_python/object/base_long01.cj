@@ -61,7 +61,7 @@ main(): Int64 {
         print("success07\n")
     }
 
-    c2.toUInt64()
+    try { c2.toUInt64() } catch (e: PythonException) { println(e) }
 
     if (c1.toString() == "10") {
         print("success08\n")

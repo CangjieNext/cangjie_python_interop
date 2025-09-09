@@ -21,7 +21,7 @@ main() {
     var func01 = test01["func01"]
     func01()
 
-    func01([10.toPyObj()])
+    try { func01([10.toPyObj()]) } catch (e: PythonException) { println(e) }
 
     var func02 = test01["func02"]
     var ret = func02([10.toPyObj(), 20.2.toPyObj()])

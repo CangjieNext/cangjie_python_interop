@@ -14,7 +14,8 @@ main() {
     Python.load()
     var elem1 = Python.Eval("1")
     var elem2 = Python.Eval("2")
-    var elem3 = Python.Eval("a = 1") // invalid syntax
+    //get a PyObj is not available
+    var elem3 = PyLong(0) + PyString("")
     var a = [elem1, elem2, elem3]
     var pylist = PyList<PyObj>(a)
 

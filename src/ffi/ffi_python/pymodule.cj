@@ -43,7 +43,9 @@ class PyModule <: PyObj {
         let ret = unsafe { PyImport_ImportModule(cName) }
         unsafe { LibC.free(cName) }
         if (ret.isNull()) {
-            PYLOG.printPythonErr()
+            let errMsg = PYLOG.getPythonErr()
+            releaseGIL(gstate)
+            throw PythonException("Import \"${name}\" module failed.\n${errMsg}")
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -53,7 +55,9 @@ class PyModule <: PyObj {
         let gstate = getGIL()
         let ret = unsafe { PyModule_GetDict(handle.getPtr()) }
         if (ret.isNull()) {
-            PYLOG.printPythonErr()
+            let errMsg = PYLOG.getPythonErr()
+            releaseGIL(gstate)
+            throw PythonException("PyModule get dict failed.\n${errMsg}")
         }
         releaseGIL(gstate)
         return Reference(ret)

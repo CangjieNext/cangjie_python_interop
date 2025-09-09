@@ -4,6 +4,22 @@
 //
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
+// EXEC: %compiler %pyffi-link %f -o %output
+// EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
+// ASSERT: regex a
+// ASSERT: regex \\
+// ASSERT: regex \n
+// ASSERT: regex \t
+// ASSERT: regex 你
+// ASSERT: regex 好
+// ASSERT: regex a
+// ASSERT: regex \\
+// ASSERT: regex 你
+// ASSERT: regex s10: a
+// ASSERT: regex s11: \n
+// ASSERT: regex s12: \t
+// ASSERT: regex s13: 你好
+
 internal import ffi_python.*
 
 main(): Int64 {

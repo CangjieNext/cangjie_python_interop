@@ -54,7 +54,7 @@ public class PySlice<T> <: PyObj where T <: Countable<T> & Comparable<T> & Equat
         let ret = unsafe { PySlice_New(start.getPtr(), stop.getPtr(), step.getPtr()) }
 
         if (ret.isNull()) {
-            PYLOG.printPythonErr()
+            PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
         return Reference(ret)
@@ -80,7 +80,7 @@ public class PySlice<T> <: PyObj where T <: Countable<T> & Comparable<T> & Equat
         let gstate = getGIL()
         let ret = unsafe { PySlice_Unpack(handle.getPtr(), pStart, pStop, pStep) }
         if (ret == -1) {
-            PYLOG.printPythonErr()
+            PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
 

@@ -13,8 +13,18 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    var x = Python.Import("xxxx")
-    x["yyyy"]
+    var x: Option<PyObj> = try {
+        Python.Import("xxxx")
+    } catch (e: PythonException) {
+        println(e)
+        Option<PyObj>.None
+    }
+    var xx = match (x) {
+        case Some(v) => v
+        //get a PyObj is not available
+        case None => PyLong(0) + PyString("")
+    }
+    xx["yyyy"]
     Python.unload()
     return 0
 }

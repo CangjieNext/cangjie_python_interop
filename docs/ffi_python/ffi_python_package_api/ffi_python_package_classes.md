@@ -6,7 +6,7 @@
 public class PyBool <: PyObj
 ```
 
-功能：该类型为 Python 语言的布尔类型，可以与仓颉的 [Bool](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_intrinsics.html#bool) 类型互转。
+功能：该类型为 Python 语言的布尔类型，可以与仓颉的 Bool 类型互转。
 
 该类型的详细介绍请参见《仓颉编程语言开发指南》（跨语言互操作/与 Python 语言互操作/类型映射/PyBool 与 Bool 的映射）。
 
@@ -34,7 +34,7 @@ public class PyCFunc <: PyObj
 public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFIType
 ```
 
-功能：该类型为 Python 语言的字典类型，可以与仓颉的 [HashMap](https://docs.cangjie-lang.cn/docs/1.0.1/user_manual/source_zh_cn/collections/collection_hashmap.html#hashmap) 类型互转。
+功能：该类型为 Python 语言的字典类型，可以与仓颉的 HashMap 类型互转。
 
 该类型的详细介绍请参见《仓颉编程语言开发指南》（跨语言互操作/与 Python 语言互操作/类型映射/PyDict 与 HashMap 的映射）。
 
@@ -48,7 +48,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
 public class PyFloat <: PyObj
 ```
 
-功能：该类型为 Python 语言的浮点数类型，可以与仓颉的 [Float32](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_intrinsics.html#float32)/[Float64](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_intrinsics.html#float64) 类型互转。
+功能：该类型为 Python 语言的浮点数类型，可以与仓颉的 Float32/Float64 类型互转。
 
 该类型的详细介绍请参见《仓颉编程语言开发指南》（跨语言互操作/与 Python 语言互操作/类型映射/PyFloat 与浮点的映射）。
 
@@ -62,7 +62,7 @@ public class PyFloat <: PyObj
 public class PyList<T> <: PyObj where T <: PyFFIType
 ```
 
-功能：该类型为 Python 语言的列表类型，可以与仓颉的 [Array](https://docs.cangjie-lang.cn/docs/1.0.1/user_manual/source_zh_cn/basic_data_type/array.html#array) 类型互转。
+功能：该类型为 Python 语言的列表类型，可以与仓颉的 Array 类型互转。
 
 该类型的详细介绍请参见《仓颉编程语言开发指南》跨语言互操作/与 Python 语言互操作/类型映射/PyList 与 Array 的映射）。
 
@@ -76,7 +76,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType
 public class PyLong <: PyObj
 ```
 
-功能：该类型为 Python 语言的整数类型，与仓颉的 [UInt8](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_intrinsics.html#uint8)/[Int8](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_intrinsics.html#int8)/[Int16](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_intrinsics.html#int16)/[UInt16](http://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_intrinsics.html#uint16)/[Int32](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_intrinsics.html#int32)/[UInt32](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_intrinsics.html#uint32)/[Int64](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_intrinsics.html#int64)/[UInt64](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_intrinsics.html#uint64) 类型映射。
+功能：该类型为 Python 语言的整数类型，与仓颉的 UInt8/Int8/Int16/UInt16/Int32/UInt32/Int64/UInt64 类型映射。
 
 该类型的详细介绍请参见《仓颉编程语言开发指南》跨语言互操作/与 Python 语言互操作/类型映射/PyLong 与整型的映射）。
 
@@ -96,10 +96,10 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj>
 
 父类型：
 
-- [ToString](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_interfaces.html#interface-tostring)
-- [PyFFIType](ffi_python_package_interface.md#interface-pyffitype)
-- [Hashable](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_interfaces.html#interface-hashable)
-- [Equatable](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_interfaces.html#interface-equatablet)\<[PyObj](#class-pyobj)>
+- ToString
+- PyFFIType
+- Hashable
+- Equatable\<[PyObj](#class-pyobj)>
 
 ## class PyObjIterator
 
@@ -113,7 +113,7 @@ public class PyObjIterator <: Iterator<PyObj>
 
 父类型：
 
-- [Iterator](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_classes.html#class-iteratort)\<[PyObj](#class-pyobj)>
+- Iterator\<[PyObj](#class-pyobj)>
 
 ## class PySet\<T> where T <: Hashable & Equatable\<T> & PyFFIType
 
@@ -121,7 +121,7 @@ public class PyObjIterator <: Iterator<PyObj>
 public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType
 ```
 
-功能：该类型为 Python 语言的集合类型，可以与仓颉的 [HashSet](https://docs.cangjie-lang.cn/docs/1.0.1/user_manual/source_zh_cn/collections/collection_hashset.html) 类型互转。
+功能：该类型为 Python 语言的集合类型，可以与仓颉的 HashSet 类型互转。
 
 该类型的详细介绍请参见《仓颉编程语言开发指南》跨语言互操作/与 Python 语言互操作/类型映射/PySet 与 HashSet 的映射）。
 
@@ -135,7 +135,7 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType
 public class PySlice<T> <: PyObj where T <: Countable<T> & Comparable<T> & Equatable<T> & CjObj
 ```
 
-功能：该类型为 Python 语言的区间类型，可以与仓颉的 [Range](https://docs.cangjie-lang.cn/docs/1.0.1/libs/std/core/core_package_api/core_package_structs.html#struct-ranget-where-t--countablet--comparablet--equatablet) 类型互转。
+功能：该类型为 Python 语言的区间类型，可以与仓颉的 Range 类型互转。
 
 该类型的详细介绍请参见《仓颉编程语言开发指南》跨语言互操作/与 Python 语言互操作/类型映射/PySlice 类型）。
 
