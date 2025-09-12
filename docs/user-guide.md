@@ -1,8 +1,8 @@
-# 仓颉-Python 互操作用户指南
+# 仓颉-Python 互操作库用户指南
 
 ## 开源项目介绍
 
-为了兼容强大的计算和 AI 生态，仓颉支持与 Python 语言的互操作调用。Python 的互操作通过 ffi_python 库为用户提供能力。
+为了兼容强大的计算和 AI 生态，仓颉支持与 Python 语言的互操作调用，仓颉-Python 互操作库为用户提供该能力。
 
 目前 Python 互操作仅支持在 Linux 平台使用，并且仅支持仓颉编译器的 cjnative 后端。
 
@@ -547,7 +547,7 @@ cant find type1
 | UInt8/Int8/Int16/UInt16/Int32/UInt32/Int64/UInt64 |   PyLong    |
 |                  Float32/Float64                  |   PyFloat   |
 |                    Rune/String                    |  PyString   |
-|                  Array< PyObj >                   |   PyTuple   |
+|                  Array\<PyObj>                    |   PyTuple   |
 |                       Array                       |   PyList    |
 |                      HashMap                      |   PyDict    |
 |                      HashSet                      |    PySet    |

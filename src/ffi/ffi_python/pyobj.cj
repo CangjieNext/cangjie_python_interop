@@ -364,12 +364,12 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
         return hash
     }
 
-    // Returns true if and only if the two PyObj's porinter are identical.
+    // Returns true if and only if the two PyObj's pointer are identical.
     public operator func ==(right: PyObj): Bool {
         return pyObjectRichCompareBool(getRef(), right.getRef(), PY_EQ)
     }
 
-    // Returns true if and only if the two PyObj's porinter are not identical.
+    // Returns true if and only if the two PyObj's pointer are not identical.
     public operator func !=(right: PyObj): Bool {
         return !(this == right)
     }
