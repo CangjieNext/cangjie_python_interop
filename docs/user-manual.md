@@ -1186,7 +1186,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
     public func copy(): PyDict<K, V> { ... }
     public func del(key: K): Unit { ... }
     public func size(): Int64 { ... }
-    public func empty(): Unit { ... }
+    public func clear(): Unit { ... }
     public func items(): PyList<PyObj> { ... }
     public func values(): PyList<PyObj> { ... }
     public func keys(): PyList<PyObj> { ... }
@@ -1270,7 +1270,7 @@ main() {
     println(a.size())                   // 1
 
     // Usage of `empty`
-    a.empty()                           // Clear all elements in dict.
+    a.clear()                           // Clear all elements in dict.
 
     // Usage of `items`
     for (i in b.items()) {
@@ -1307,7 +1307,7 @@ public class PySet<T> <: PyObj where T <: Hashable, T <: Equatable<T> & PyFFITyp
     public func pop(): PyObj { ... }
     public func del(key: T): Unit { ... }
     public func size(): Int64 { ... }
-    public func empty(): Unit { ... }
+    public func clear(): Unit { ... }
 }
 ```
 
@@ -1374,7 +1374,7 @@ main() {
 
     // Usage of `empty`
     println(c.size())   // 2
-    c.empty()
+    c.clear()
     println(c.size())   // 0
 
     Python.unload()

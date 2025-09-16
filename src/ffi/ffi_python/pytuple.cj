@@ -11,11 +11,6 @@
  */
 package ffi_python
 
-import std.collection.HashMap
-import std.collection.HashSet
-import std.fs.*
-import std.io.*
-import std.sync.*
 /**
  * This class provides python tuple type.
  */
@@ -43,7 +38,7 @@ public class PyTuple <: PyObj {
      * @return element of index by PyObj type
      */
     public operator func [](key: Int64): PyObj {
-        return instance(pyTupleGetItem(getRef(), key))
+        return referenceToPyObj(pyTupleGetItem(getRef(), key))
     }
 
     /**
@@ -64,7 +59,7 @@ public class PyTuple <: PyObj {
      * @return a tuple slice by [begin, end). Failed return unavailable object.
      */
     public func slice(begin: Int64, end: Int64): PyTuple {
-        let ret = instance(pyTupleGetSlice(getRef(), begin, end))
+        let ret = referenceToPyObj(pyTupleGetSlice(getRef(), begin, end))
         return match (ret) {
             case val: PyTuple => val
             case _ =>

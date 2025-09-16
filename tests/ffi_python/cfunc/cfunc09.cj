@@ -50,9 +50,9 @@ func cfoo(ptr: CPointer<Unit>): CPointer<Unit> {
         print("\n")
 
     let obj3 = parseCallBackArgAsPyDict(listObj[3])
-        let d = parseCallBackArgAsPyString(obj3.getItem(PyString("name")))
+        let d = parseCallBackArgAsPyString(obj3.getItem(PyString("name")).getOrThrow())
         print("${d.toCjObj()} ")
-        let e = parseCallBackArgAsPyLong(obj3.getItem(PyString("age")))
+        let e = parseCallBackArgAsPyLong(obj3.getItem(PyString("age")).getOrThrow())
         print("${e.toCjObj()} ")
         print("\n")
 

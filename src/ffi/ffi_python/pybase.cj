@@ -11,11 +11,6 @@
  */
 package ffi_python
 
-import std.collection.HashMap
-import std.collection.HashSet
-import std.fs.*
-import std.io.*
-import std.sync.*
 /**
  * This class defined python bool type.
  */

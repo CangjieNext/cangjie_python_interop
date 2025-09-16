@@ -16,8 +16,8 @@ main(): Int64 {
     //get a PyObj is not available
     var b = PyLong(0) + PyString("")
     var c = Python.Eval("123")
-    var type_s = Python["type"]([a, b, c]) // call `type` by a null ptr.
-    Python["print"]([type_s])
+    var type_s = Python["type"].getOrThrow()([a, b, c]) // call `type` by a null ptr.
+    Python["print"].getOrThrow()([type_s])
     Python.unload()
     return 0
 }

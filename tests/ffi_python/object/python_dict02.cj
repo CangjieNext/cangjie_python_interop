@@ -37,16 +37,16 @@ main() {
     var b = a.copy()
 
     // getItem
-    print("a is ${a.getItem("a".toPyObj())}\n")
-    print("b is ${a.getItem("b".toPyObj())}\n")
-    print("c is ${a.getItem("c".toPyObj())}\n")
+    print("a is ${a.getItem("a".toPyObj()).getOrThrow()}\n")
+    print("b is ${a.getItem("b".toPyObj()).getOrThrow()}\n")
+    print("c is ${a.getItem("c".toPyObj()).getOrThrow()}\n")
     a.getItem("d".toPyObj())
 
     // setItem
     a.setItem("b".toPyObj(), 10.toPyObj())
-    print("b is ${a.getItem("b".toPyObj())}\n")
+    print("b is ${a.getItem("b".toPyObj()).getOrThrow()}\n")
     a.setItem("d".toPyObj(), 20.toPyObj())
-    print("d is ${a.getItem("d".toPyObj())}\n")
+    print("d is ${a.getItem("d".toPyObj()).getOrThrow()}\n")
 
     // contains
     print("a exist: ${a.contains("a".toPyObj())}\n")
@@ -54,9 +54,9 @@ main() {
     print("e exist: ${a.contains("e".toPyObj())}\n")
 
     // copy
-    print("b.a is ${b.getItem("a".toPyObj())}\n")
-    print("b.b is ${b.getItem("b".toPyObj())}\n")
-    print("b.c is ${b.getItem("c".toPyObj())}\n")
+    print("b.a is ${b.getItem("a".toPyObj()).getOrThrow()}\n")
+    print("b.b is ${b.getItem("b".toPyObj()).getOrThrow()}\n")
+    print("b.c is ${b.getItem("c".toPyObj()).getOrThrow()}\n")
     b.getItem("d".toPyObj())
 
     // del

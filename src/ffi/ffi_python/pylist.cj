@@ -11,11 +11,6 @@
  */
 package ffi_python
 
-import std.collection.HashMap
-import std.collection.HashSet
-import std.fs.*
-import std.io.*
-import std.sync.*
 /**
  * This class provides python list type.
  */
@@ -54,7 +49,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
      * @return element of index by PyObj type
      */
     public operator func [](key: Int64): PyObj {
-        return instance(pyListGetItem(getRef(), key))
+        return referenceToPyObj(pyListGetItem(getRef(), key))
     }
 
     /**

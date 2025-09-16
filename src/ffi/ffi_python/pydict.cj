@@ -12,12 +12,8 @@
 package ffi_python
 
 import std.collection.HashMap
-import std.collection.HashSet
-import std.fs.*
-import std.io.*
-import std.sync.*
 
-public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFIType {
+public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFIType, V <: PyFFIType {
     init() {}
 
     init(ref: Reference) {
@@ -45,13 +41,14 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
      *
      * @return element of index by PyObj type
      */
-    public func getItem(key: K): PyObj {
+    public func getItem(key: K): Option<PyObj> {
         let k = getKPyObj(key)
         let ret = pyDictGetItem(getRef(), k.getRef())
         if (ret.isNull()) {
             PYLOG.warn("Dict key \"${k}\" not found!")
+            return None<PyObj>
         }
-        return instance(ret)
+        return referenceToPyObj(ret)
     }
 
     /**
@@ -84,7 +81,6 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
                 case val: PyTuple => val
                 case _ =>
                     throw PythonException("Dict item type is not tuple.")
-                    PyTuple()
             }
             ret.add(tupleItem[0], tupleItem[1])
         }
@@ -118,7 +114,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
     public func copy(): PyDict<K, V> {
         let ret = pyDictCopy(getRef())
         if (ret.isNull()) {
-            PYLOG.warn("Dict copy failed, return unavailable object.")
+            throw PythonException("Dict copy failed, return unavailable object.")
         }
         return PyDict<K, V>(ret)
     }
@@ -148,7 +144,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
     /**
      * Remove all elems of dict.
      */
-    public func empty(): Unit {
+    public func clear(): Unit {
         pyDictClear(getRef())
     }
 
