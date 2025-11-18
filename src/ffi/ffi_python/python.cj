@@ -25,6 +25,10 @@ foreign func CJ_BindOSThread(): Int32
 
 foreign func CJ_UnbindOSThread(): Int32
 
+foreign func pthread_self(): CPointer<Unit>
+
+foreign func pthread_gettid_np(t: CPointer<Unit>): Int32
+
 /* This value indicates whether it has been initialized. */
 var envInit: Bool = false
 
@@ -350,18 +354,35 @@ public class PythonLogger {
 
 public let PYLOG: PythonLogger = PythonLogger()
 
+private var gilOwnerTid: Int32 = 0
+private let PyGILState_UNLOCKED: Int32 = 1
+
 func getGIL(): Int32 {
     if (!envInit) {
         throw PythonException("Python is not initialized. Please load it first.")
     }
-    return unsafe { PyGILState_Ensure() }
+    unsafe {
+        let state = PyGILState_Ensure()
+        if (state == PyGILState_UNLOCKED) {
+            let thread = pthread_self()
+            gilOwnerTid = pthread_gettid_np(thread)
+        }
+        return state
+    }
 }
 
 func releaseGIL(gstate: Int32): Unit {
     if (!envInit) {
         throw PythonException("Python is not initialized. Please load it first.")
     }
-    unsafe { PyGILState_Release(gstate) }
+    unsafe {
+        if (PyGILState_Check() != 1) {
+            let thread = pthread_self()
+            let currentTid = pthread_gettid_np(thread)
+            throw PythonException("The current thread does not hold the GIL! GIL owner thread ID: ${gilOwnerTid}, Current thread ID: ${currentTid}")
+        }
+        PyGILState_Release(gstate)
+    }
 }
 
 func pyErrOccurred(): Bool {
@@ -378,19 +399,19 @@ func pyErrOccurred(): Bool {
  * This class provides built-in functions commonly used of Python.
  * Users can call any built-in function through the `Get()` or index `[]`.
  */
-public class PythonBuiltins {
+public class Python {
     /* This variable stores the built-in functions of the current stack frame. */
-    private var builtins = PyDict<PyObj, PyObj>()
+    private static var builtins = PyDict<PyObj, PyObj>()
 
     // Equal to macro Py_eval_input.
-    private let pyEvalInput: Int32 = 258
-    private let PyFileInput: Int32 = 257
+    private static let pyEvalInput: Int32 = 258
+    private static let PyFileInput: Int32 = 257
 
     // Top version of python.
-    private let TOP_MOJOR_VERSION: Int64 = 3
-    private let TOP_MINOR_VERSION: Int64 = 12
+    private static let TOP_MOJOR_VERSION: Int64 = 3
+    private static let TOP_MINOR_VERSION: Int64 = 12
 
-    private var pyThreadState = CPointer<Unit>()
+    private static var pyThreadState = CPointer<Unit>()
 
     init() {}
 
@@ -406,7 +427,7 @@ public class PythonBuiltins {
      *
      * @throws PythonException
      */
-    public func load(loglevel!: LogLevel = LogLevel.WARN): Unit {
+    public static func load(loglevel!: LogLevel = LogLevel.WARN): Unit {
         if (envInit) {
             PYLOG.info("Libpython has loaded.")
             return
@@ -430,7 +451,7 @@ public class PythonBuiltins {
      *
      * @throws PythonException
      */
-    public func load(path: String, loglevel!: LogLevel = LogLevel.WARN): Unit {
+    public static func load(path: String, loglevel!: LogLevel = LogLevel.WARN): Unit {
         initLock.lock()
         if (envInit) {
             initLock.unlock()
@@ -461,10 +482,6 @@ public class PythonBuiltins {
             readSym()
             PYLOG.info("Read symbols success.")
 
-            if (initCExModule() == -1) {
-                PYLOG.warn("Init python C expansion module failed.")
-            }
-
             unsafe {
                 // Python Interpreter Initialization.
                 Py_Initialize()
@@ -493,7 +510,7 @@ public class PythonBuiltins {
      *
      * @return true means loaded, otherwise means unload.
      */
-    public func isLoad(): Bool {
+    public static func isLoad(): Bool {
         initLock.lock()
         let envInit_ = envInit
         initLock.unlock()
@@ -506,7 +523,7 @@ public class PythonBuiltins {
      *
      * @throws PythonException
      */
-    public func unload(): Unit {
+    public static func unload(): Unit {
         initLock.lock()
         if (!envInit) {
             initLock.unlock()
@@ -527,7 +544,6 @@ public class PythonBuiltins {
                 PyEval_RestoreThread(pyThreadState)
                 Py_FinalizeEx()
             }
-            releaseCExModule()
             PYLOG.info("Python interpreter finalize success.")
 
             closeHandle()
@@ -544,7 +560,7 @@ public class PythonBuiltins {
      * @return python module handle.
      * If the corresponding module cannot be found, `isAvailable()` of return value get false.
      */
-    public func Import(module: String): PyObj {
+    public static func Import(module: String): PyObj {
         if (!envInit) {
             PYLOG.warn("[Import] Python is not initialized. Please load it first.")
             return PyModule()
@@ -557,7 +573,7 @@ public class PythonBuiltins {
      *
      * @return Version type. If failed, version is 0.0.0
      */
-    public func getVersion(): Version {
+    public static func getVersion(): Version {
         if (!envInit) {
             PYLOG.warn("[getVersion] Python is not initialized. Please load it first.")
             return Version(0, 0, 0)
@@ -570,7 +586,7 @@ public class PythonBuiltins {
         return ver
     }
 
-    public func Eval(cmd: String, module!: String = "__main__"): PyObj {
+    public static func eval(cmd: String, module!: String = "__main__"): PyObj {
         if (!envInit) {
             PYLOG.warn("[Eval] Python is not initialized. Please load it first.")
             return PyObj()
@@ -589,7 +605,7 @@ public class PythonBuiltins {
         return referenceToPyObj(ret)
     }
 
-    public func exec(code: String): Unit {
+    public static func exec(code: String): Unit {
         if (!envInit) {
             PYLOG.warn("[exec] Python is not initialized. Please load it first.")
             return
@@ -615,11 +631,24 @@ public class PythonBuiltins {
      *
      * @return Python Object. If object is unavailable, `isAvailable()` get false
      */
-    public operator func [](attr: String): Option<PyObj> {
+    public static func getBuiltinsAttr(attr: String): Option<PyObj> {
         if (!builtins.isAvailable()) {
             throw PythonException("Builtins is unavailable.")
         }
         return builtins.getItem(attr.toPyObj())
+    }
+
+    internal static func setPyErr(e: String): Unit {
+        unsafe {
+            let re = getBuiltinsAttr("RuntimeError").getOrThrow()
+            let error = LibC.mallocCString(e)
+
+            let gstate = getGIL()
+            PyErr_SetString(re.getRef().getPtr(), error)
+            releaseGIL(gstate)
+
+            LibC.free(error)
+        }
     }
 
     /*
@@ -627,7 +656,7 @@ public class PythonBuiltins {
      *
      * @return path of String Type.
      */
-    private func readVersion(): Version {
+    private static func readVersion(): Version {
         let sys = Import("sys")
         if (!sys.isAvailable()) {
             return Version(0, 0, 0)
@@ -660,7 +689,7 @@ public class PythonBuiltins {
      *
      * @return path of String Type.
      */
-    private func getPythonPath(): String {
+    private static func getPythonPath(): String {
         PYLOG.info("Try to get libpython path.")
         var path = getPythonPathByEnv()
 
@@ -692,12 +721,12 @@ public class PythonBuiltins {
      *
      * @return path of String Type.
      */
-    private func getPythonPathByEnv(): String {
+    private static func getPythonPathByEnv(): String {
         let path = getVariable("PYTHON_DYNLIB") ?? ""
         return path
     }
 
-    private func getPythonPathBySysLib(): String {
+    private static func getPythonPathBySysLib(): String {
         let directories = ["/lib/", "/usr/lib/", "/usr/local/lib/"]
         for (directory in directories) {
             let ret = findLibIn(directory)
@@ -708,7 +737,7 @@ public class PythonBuiltins {
         return ""
     }
 
-    private func findLibIn(filePath: String): String {
+    private static func findLibIn(filePath: String): String {
         PYLOG.info("Find in ${filePath}.")
         let prefix = "libpython"
         let suffixes = [".${suffixOfDy}", "d.${suffixOfDy}", "m.${suffixOfDy}", "dm.${suffixOfDy}"]
@@ -734,7 +763,7 @@ public class PythonBuiltins {
      *
      * @return path of String Type. If failed, return "".
      */
-    private func getPythonPathByExec(): String {
+    private static func getPythonPathByExec(): String {
         // Only support python3, unsupport python2.
         var outputs = unsafe { cmdWithReturn(cmdExeDep) }
         outputs = outputs.trimAscii()
@@ -751,7 +780,7 @@ public class PythonBuiltins {
     }
 
     /* Obtains execution parameters and transfers them to Python. */
-    private func setPyArgs(): Unit {
+    private static func setPyArgs(): Unit {
         let args: Array<String> = getCommandLine()
         if (args.size < 0) {
             return
@@ -761,7 +790,7 @@ public class PythonBuiltins {
     }
 
     /* Python interface warpper, set args to python. */
-    private unsafe func pySetArgv(argc: Int64, argv: Array<String>): Unit {
+    private unsafe static func pySetArgv(argc: Int64, argv: Array<String>): Unit {
         var pArgv = LibC.malloc<CPointer<Unit>>(count: argc)
         if (pArgv.isNull()) {
             throw PythonException("Malloc size ${argc * 8} failed.")
@@ -803,7 +832,7 @@ public class PythonBuiltins {
     }
 
     /* Python interface warpper, get built-in function by dictionary type. */
-    private func pyGetBuiltins(): Reference {
+    private static func pyGetBuiltins(): Reference {
         let gstate = getGIL()
         let ret = unsafe { PyEval_GetBuiltins() }
         if (ret.isNull()) {
@@ -813,7 +842,7 @@ public class PythonBuiltins {
         return Reference(ret)
     }
 
-    private func pyRunString(str: String, mode: Int32, module: Reference, local: Reference): Reference {
+    private static func pyRunString(str: String, mode: Int32, module: Reference, local: Reference): Reference {
         let gstate = getGIL()
         var cStr = unsafe { LibC.mallocCString(str) }
         let obj = unsafe { PyRun_String(cStr, mode, module.getPtr(), local.getPtr()) }
@@ -826,20 +855,4 @@ public class PythonBuiltins {
         releaseGIL(gstate)
         return Reference(obj)
     }
-
-    /*
-     * Initialize all python c expansion modules.
-     *
-     * @return 0: success, -1: failed.
-     */
-    private func initCExModule(): Int32 {
-        CJ_init_args_processor()
-    }
-
-    /* Release resources of all python c expansion modules. */
-    private func releaseCExModule(): Unit {
-        CJ_release_args_processor()
-    }
 }
-
-public let Python: PythonBuiltins = PythonBuiltins()
