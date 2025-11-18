@@ -24,7 +24,7 @@ func printTuple(tup: PyTuple): Unit {
 main() {
     Python.load()
 
-    var b = Python.Eval("('cangjie', True, 10, 10.5)")
+    var b = Python.eval("('cangjie', True, 10, 10.5)")
     var tup = match (b) {
         case val: PyTuple => printTuple(val); val
         case _ => throw PythonException()

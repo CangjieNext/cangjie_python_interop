@@ -13,7 +13,7 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    var pyPrint = Python["print1"]
+    var pyPrint = Python.getBuiltinsAttr("print1")
     match (pyPrint) {
         case Some(v) => v()
         case None => print("Empty PyObj")

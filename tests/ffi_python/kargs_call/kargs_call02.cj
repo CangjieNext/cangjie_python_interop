@@ -47,15 +47,15 @@ main(): Int64 {
 
     // With nonexistent d.
     try {
-        test["function02"]([1], HashMap<String, PyObj>([("d", Python.Eval("1"))]))
+        test["function02"]([1], HashMap<String, PyObj>([("d", Python.eval("1"))]))
     } catch(e: PythonException) {println(e)}
 
     // b and c are named argument.
-    test["function02"](HashMap<String, PyObj>([("b", Python.Eval("1")), ("c", Python.Eval("2"))]))
+    test["function02"](HashMap<String, PyObj>([("b", Python.eval("1")), ("c", Python.eval("2"))]))
 
     // b assigned twice.
     try {
-        test["function02"]([0], HashMap<String, PyObj>([("b", Python.Eval("1")), ("c", Python.Eval("2"))]))
+        test["function02"]([0], HashMap<String, PyObj>([("b", Python.eval("1")), ("c", Python.eval("2"))]))
     } catch(e: PythonException) {println(e)}
 
     0

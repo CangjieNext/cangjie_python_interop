@@ -4,32 +4,39 @@
 //
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
-// DEPENDENCE: cast.c
-// EXEC: clang -fstack-protector-all -fPIC -shared ./cast.c -o %cffi_output
-// EXEC: %compiler %pyffi-link -l%n -L./ %f -o %output
+// EXEC: %compiler %pyffi-link %f -o %output
 // EXEC-PIPE: export cjStackSize=1MB && %run %run_opt %output %run_args
+// ASSERT: scan 42
+// ASSERT: scan hello
+// ASSERT: scan 4 5 6
 
 internal import std.core.sleep
 internal import std.core.Duration
 internal import ffi_python.*
 internal import std.collection.*
 
-@C
-func cfoo(a1: Bool): Int8 {
-    var f = spawn {sleep(Duration.second * 1);return 1}
-    f.get()
-    return 0
-}
+func foo(args: Array<PyObj>): PyObj {
+    let obj0 = args[0].asPyLong()
+    println("${obj0.toCjObj()}")
 
-foreign func cast(f: CFunc<(Bool) -> Int8>): CPointer<Unit>
+    let obj1 = args[1].asPyString()
+    println("${obj1.toCjObj()}")
+
+    let obj2 = args[2].asPyList()
+    for (item in obj2) {
+        let l = item.asPyLong()
+        print("${l.toCjObj()} ")
+    }
+    print("\n")
+
+    PyList<PyObj>([PyLong(12345), PyString("ret")])
+}
 
 main(): Int64 {
     let fut = spawn {
         var x = Python.load()
-        var f1 = PyCFunc(unsafe {cast(cfoo)}, 
-                argsTy: [PyCBool], 
-                retTy: PyCPointer)
-        f1([true])
+        var f1 = PyCFunc(foo)
+        f1([42, "hello", [4, 5, 6]])
     }
 
     fut.get()
