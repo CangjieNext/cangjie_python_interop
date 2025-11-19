@@ -37,7 +37,7 @@ main(): Int64 {
     /* Initialize python environment */
     Python.load()
     /* Get build-in function print */
-    var prt = Python["print"].getOrThrow()
+    var prt = Python.getBuiltinsAttr("print").getOrThrow()
  
     /* string type interop. */
     var valStr = PyString("Cangjie: Hello, Python!")

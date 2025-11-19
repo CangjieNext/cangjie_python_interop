@@ -4,31 +4,54 @@
 //
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
-// DEPENDENCE: cast.c
 // DEPENDENCE: cfunc01.py
-// EXEC: clang -fPIC -shared ./cast.c -o %cffi_output
-// EXEC: %compiler %pyffi-link -l%n -L./ %f -o %output
+// EXEC: %compiler %pyffi-link %f -o %output
 // EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
-// ASSERT: scan Args cannot be a PyCVoid.
+// ASSERT: scan PythonException: Python is not initialized. Please load it first.
+// ASSERT: scan RuntimeError: PythonException: this is a PythonException.
+// ASSERT: scan RuntimeError: IndexOutOfBoundsException
 
 internal import ffi_python.*
 
-foreign func cast(f: CFunc<(Bool, Int32, Int64) -> CPointer<Unit>>): CPointer<Unit>
+func foo(args: Array<PyObj>): PyObj {
+    let obj0 = args[0].asPyLong()
+    println("${obj0.toCjObj()}")
 
-@C
-func cfoo(a: Bool, b: Int32, c: Int64): CPointer<Unit> {
-    print("cfoo called.\n")
-    print("${a}, ${b}, ${c}\n")
-    return CPointer<Unit>()
+    let obj1 = args[1].asPyString()
+    println("${obj1.toCjObj()}")
+
+    PyList<PyObj>([PyLong(12345), PyString("ret")])
+}
+
+func foo2(args: Array<PyObj>): PyObj {
+    throw PythonException("this is a PythonException.")
 }
 
 // test construct.
 main() {
-    Python.load()
+    try {
+        var f1 = PyCFunc(foo)
+    } catch (e: PythonException) {
+        println(e)
+    }
 
-    var f1 = PyCFunc(unsafe {cast(cfoo)}, 
-                    argsTy: [PyCBool, PyCInt, PyCVoid], 
-                    retTy: PyCPointer)
-    Python.unload()
+    try {
+        Python.load()
+        var f2 = PyCFunc(foo2)
+        f2()
+        Python.unload()
+    } catch (e: PythonException) {
+        println(e)
+    }
+
+    try {
+        Python.load()
+        var f3 = PyCFunc(foo)
+        f3()
+        Python.unload()
+    } catch (e: PythonException) {
+        println(e)
+    }
+    
     0
 }

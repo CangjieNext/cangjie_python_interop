@@ -12,6 +12,6 @@
 internal import ffi_python.*
 
 main(): Int64 {
-    Python["type"]
+    Python.getBuiltinsAttr("type")
     return 0
 }
