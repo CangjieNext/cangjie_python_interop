@@ -15,9 +15,9 @@ main() {
     Python.load()
     let fut = spawn {
         Python.load()
-        Python["print"].getOrThrow()(["---fut---"])
+        Python.getBuiltinsAttr("print").getOrThrow()(["---fut---"])
     }
-    Python["print"].getOrThrow()(["---main---"])
+    Python.getBuiltinsAttr("print").getOrThrow()(["---main---"])
 
     fut.get()
     0

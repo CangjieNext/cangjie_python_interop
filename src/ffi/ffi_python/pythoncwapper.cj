@@ -195,6 +195,7 @@ unsafe func readApiBuiltin(): Unit {
     PyErr_Occurred = CFunc<() -> CPointer<Unit>>(getPythonFunc("PyErr_Occurred"))
     PyErr_Fetch = CFunc<(CPointer<CPointer<Unit>>, CPointer<CPointer<Unit>>,
             CPointer<CPointer<Unit>>) -> Unit>(getPythonFunc("PyErr_Fetch"))
+    PyErr_SetString = CFunc<(CPointer<Unit>, CString) -> Unit>(getPythonFunc("PyErr_SetString"))
     PyEval_GetBuiltins = CFunc<() -> CPointer<Unit>>(getPythonFunc("PyEval_GetBuiltins"))
 }
 
@@ -221,7 +222,8 @@ unsafe func readApiModule(): Unit {
     PyImport_ImportModule = CFunc<(CString) -> CPointer<Unit>>(getPythonFunc("PyImport_ImportModule"))
     PyModule_GetDict = CFunc<(CPointer<Unit>) -> CPointer<Unit>>(getPythonFunc("PyModule_GetDict"))
     PyImport_AppendInittab = CFunc<(CString, CPointer<Unit>) -> Int32>(getPythonFunc("PyImport_AppendInittab"))
-    PyModule_Create = CFunc<(CPointer<PyModuleDef>, Int32) -> CPointer<Unit>>(getPythonFunc("PyModule_Create2"))
+    PyCFunction_New = CFunc<(CPointer<PyMethodDef>, CPointer<Unit>) -> CPointer<Unit>>(getPythonFunc("PyCFunction_New"))
+    PyWeakref_NewRef = CFunc<(CPointer<Unit>, CPointer<Unit>) -> CPointer<Unit>>(getPythonFunc("PyWeakref_NewRef"))
 }
 
 unsafe func readApiPyDict(): Unit {
@@ -280,8 +282,6 @@ unsafe func readApiPyTuple(): Unit {
     PyTuple_GetItem = CFunc<(CPointer<Unit>, Int64) -> CPointer<Unit>>(getPythonFunc("PyTuple_GetItem"))
     PyTuple_Size = CFunc<(CPointer<Unit>) -> Int64>(getPythonFunc("PyTuple_Size"))
     PyTuple_GetSlice = CFunc<(CPointer<Unit>, Int64, Int64) -> CPointer<Unit>>(getPythonFunc("PyTuple_GetSlice"))
-    PyArg_ParseTuple = CFunc<(CPointer<Unit>, CString, CPointer<Unit>, CPointer<CPointer<Unit>>) -> Int32>(
-        getPythonFunc("PyArg_ParseTuple"))
 }
 
 unsafe func readApiPyList(): Unit {

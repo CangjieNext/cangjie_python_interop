@@ -43,7 +43,7 @@ main() {
 
     var pylist2 = PyList<PyObj>([])
 
-    pylist2.insert(0, Python.Eval("30"))
+    pylist2.insert(0, Python.eval("30"))
     printPyList<PyObj>(pylist2)
 
     Python.unload()

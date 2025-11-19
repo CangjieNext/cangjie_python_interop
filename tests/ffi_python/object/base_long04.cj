@@ -23,25 +23,25 @@ internal import ffi_python.*
 main(): Int64 {
     Python.load()
 
-    var c1: UInt64 = match (Python.Eval("18446744073709551616")) {
+    var c1: UInt64 = match (Python.eval("18446744073709551616")) {
         case val: PyLong => try { val.toUInt64() } catch(e: PythonException) { println(e); 0 }
         case _ => 0
     }
     print("${c1}\n")
 
-    var c2: UInt64 = match (Python.Eval("-1")) {
+    var c2: UInt64 = match (Python.eval("-1")) {
         case val: PyLong => try { val.toUInt64() } catch(e: PythonException) { println(e); 0 }
         case _ => 0
     }
     print("${c2}\n")
 
-    var c3: Int64 = match (Python.Eval("-9223372036854775809")) {
+    var c3: Int64 = match (Python.eval("-9223372036854775809")) {
         case val: PyLong => try { val.toInt64() } catch(e: PythonException) { println(e); 0 }
         case _ => 0
     }
     print("${c3}\n")
 
-    var c4: Int64 = match (Python.Eval("9223372036854775809")) {
+    var c4: Int64 = match (Python.eval("9223372036854775809")) {
         case val: PyLong => try { val.toInt64() } catch(e: PythonException) { println(e); 0 }
         case _ => 0
     }

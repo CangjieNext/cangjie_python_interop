@@ -19,7 +19,7 @@ main() {
     
     var a = PySet<Int64>(HashSet<Int64>([1, 2, 3]))
 
-    var b = match (Python.Eval("{1, 2, 3, 4}")) {
+    var b = match (Python.eval("{1, 2, 3, 4}")) {
         case val: PySet<PyObj> => val
         case _ => throw PythonException()
     }
@@ -29,7 +29,7 @@ main() {
         print("success01\n")
     }
 
-    var b1 = match (Python.Eval("{3, 2, 4, 1}")) {
+    var b1 = match (Python.eval("{3, 2, 4, 1}")) {
         case val: PySet<PyObj> => val
         case _ => throw PythonException()
     }
