@@ -32,29 +32,29 @@ main() {
     Python.load(loglevel: LogLevel.WARN)
 
     // key is python tuple
-    var a = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("(0, 1)"), 5), (Python.Eval("0"), 5)]))
+    var a = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.eval("(0, 1)"), 5), (Python.eval("0"), 5)]))
     print("a: ")
     printDict(a)
 
     // key is python list
     try {
-        var b = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("[0, 1]"), 5), (Python.Eval("0"), 5)]))
+        var b = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.eval("[0, 1]"), 5), (Python.eval("0"), 5)]))
     } catch (e: PythonException) {println(e)}
 
     // key is python dict
     try {
-        var c = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("{0: 0, 1: 1}"), 5), (Python.Eval("0"), 5)]))
+        var c = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.eval("{0: 0, 1: 1}"), 5), (Python.eval("0"), 5)]))
     } catch (e: PythonException) {println(e)}
 
     // key is python set
     try {
-        var d = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("{0, 1}"), 5), (Python.Eval("0"), 5)]))
+        var d = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.eval("{0, 1}"), 5), (Python.eval("0"), 5)]))
     } catch (e: PythonException) {println(e)}
 
     try {
         //get a PyObj is not available
         var unavaileObj = PyLong(0) + PyString("")
-        var e = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(unavaileObj, 5), (Python.Eval("0"), 5)]))
+        var e = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(unavaileObj, 5), (Python.eval("0"), 5)]))
     } catch (e: PythonException) {println(e)}
 
     Python.unload()

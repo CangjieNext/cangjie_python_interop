@@ -11,6 +11,6 @@
 internal import ffi_python.*
 
 main(): Int64 {
-    Python.Eval("123")
+    Python.eval("123")
     return 0
 }

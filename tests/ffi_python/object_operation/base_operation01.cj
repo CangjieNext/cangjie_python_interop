@@ -35,8 +35,8 @@ internal import ffi_python.*
  
 main(): Int64 {
     Python.load()
-    var a = Python.Eval("2")
-    var b = Python.Eval("2.5")
+    var a = Python.eval("2")
+    var b = Python.eval("2.5")
 
     // int + int
     print("${a + a}\n")
