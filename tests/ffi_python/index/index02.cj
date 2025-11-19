@@ -86,7 +86,7 @@ let builtin_function: Array<String> = [
 main(): Int64 {
     Python.load()
     for(func_name in builtin_function) {
-        match (Python[func_name]) {
+        match (Python.getBuiltinsAttr(func_name)) {
             case Some(v) => ()
             case None => print("${func_name} failed.\n")
         }

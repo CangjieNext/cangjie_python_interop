@@ -19,8 +19,8 @@ main(): Int64 {
     /* Initialize python environment */
     var sys = Python.Import("sys")
     var os = Python.Import("os")
-    var prt = Python["print"].getOrThrow()
-    var str = Python["str"].getOrThrow()
+    var prt = Python.getBuiltinsAttr("print").getOrThrow()
+    var str = Python.getBuiltinsAttr("str").getOrThrow()
     prt(str(sys))
     prt(str(os))
     /* unload python lib and clean environment */
