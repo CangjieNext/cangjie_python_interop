@@ -14,12 +14,12 @@ internal import std.collection.*
 
 main(): Int64 {
     Python.load()
-    var d = match (Python.Eval("['Google', 'Runoob', 1997, 2000]")) {
+    var d = match (Python.eval("['Google', 'Runoob', 1997, 2000]")) {
         case val: PyList<PyObj> => val
         case _ => throw PythonException()
     }
 
-    var e = match (Python.Eval("['Google', 'Runoob', 1997, 2000]")) {
+    var e = match (Python.eval("['Google', 'Runoob', 1997, 2000]")) {
         case val: PyList<PyObj> => val
         case _ => throw PythonException()
     }

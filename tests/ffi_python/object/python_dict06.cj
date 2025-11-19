@@ -16,14 +16,14 @@ main() {
     Python.load(loglevel: LogLevel.WARN)
 
     // key is python tuple
-    var a = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.Eval("(0, 1)"), 5), (Python.Eval("0"), 5)]))
-    var b = HashMap<PyObj, Int64>([(Python.Eval("(0, 1)"), 5), (Python.Eval("0"), 5)]).toPyObj()
+    var a = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([(Python.eval("(0, 1)"), 5), (Python.eval("0"), 5)]))
+    var b = HashMap<PyObj, Int64>([(Python.eval("(0, 1)"), 5), (Python.eval("0"), 5)]).toPyObj()
 
-    if (a.getItem(Python.Eval("(0, 1)")) == b.getItem(Python.Eval("(0, 1)"))) {
+    if (a.getItem(Python.eval("(0, 1)")) == b.getItem(Python.eval("(0, 1)"))) {
         print("1 success\n")
     }
 
-    if (a.getItem(Python.Eval("0")) == b.getItem(Python.Eval("0"))) {
+    if (a.getItem(Python.eval("0")) == b.getItem(Python.eval("0"))) {
         print("2 success\n")
     }
 
