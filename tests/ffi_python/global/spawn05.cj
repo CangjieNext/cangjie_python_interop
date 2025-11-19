@@ -17,11 +17,11 @@ main(): Int64 {
     Python.load()
     let futArr = Array<Future<Unit>>(5) { _ => 
         spawn { =>
-            match (Python["type"]) {
+            match (Python.getBuiltinsAttr("type")) {
                 case Some(v) => println("find type\n")
                 case None => ()
             }
-            match (Python["mytype"]) {
+            match (Python.getBuiltinsAttr("mytype")) {
                 case Some(v) => ()
                 case None => println("cant find mytype\n")
             }
