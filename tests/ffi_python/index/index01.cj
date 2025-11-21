@@ -15,19 +15,19 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    match (Python["type"]) {
+    match (Python.getBuiltinsAttr("type")) {
         case Some(v) => print("success01\n")
         case None => ()
     }
-    match (Python["type1"]) {
+    match (Python.getBuiltinsAttr("type1")) {
         case Some(v) => ()
         case None => print("success02\n")
     }
-    match (Python[""]) {
+    match (Python.getBuiltinsAttr("")) {
         case Some(v) => ()
         case None => print("success03\n")
     }
-    match (Python["   "]) {
+    match (Python.getBuiltinsAttr("   ")) {
         case Some(v) => ()
         case None => print("success04\n")
     }

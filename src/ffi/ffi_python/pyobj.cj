@@ -64,74 +64,18 @@ func isInstance(handle: Reference, pType: CPointer<Unit>): Bool {
     return ret
 }
 
-public func parseCallBackArgsList(ptr: CPointer<Unit>): PyList<PyObj> {
-    if (!isInstance(Reference(ptr), PyList_Type)) {
-        throw PythonException("callback arguments list type error!")
+internal func parseCallBackArgsLong(ptr: CPointer<Unit>): PyLong {
+    if (!isInstance(Reference(ptr), PyLong_Type)) {
+        throw PythonException("callback arguments long type error!")
     }
-    PyList<PyObj>(Reference(ptr))
+    PyLong(Reference(ptr))
 }
 
-public func parseCallBackArgAsPyLong(obj: PyObj): PyLong {
-    match (obj as PyLong) {
-        case Some(v) => v
-        case None => throw PythonException("argsType is not long!")
+internal func parseCallBackArgsTuple(ptr: CPointer<Unit>): PyTuple {
+    if (!isInstance(Reference(ptr), PyTuple_Type)) {
+        throw PythonException("callback arguments tuple type error!")
     }
-}
-
-public func parseCallBackArgAsPyFloat(obj: PyObj): PyFloat {
-    match (obj as PyFloat) {
-        case Some(v) => v
-        case None => throw PythonException("argsType is not float!")
-    }
-}
-
-public func parseCallBackArgAsPyString(obj: PyObj): PyString {
-    match (obj as PyString) {
-        case Some(v) => v
-        case None => throw PythonException("argsType is not string!")
-    }
-}
-
-public func parseCallBackArgAsPyBool(obj: PyObj): PyBool {
-    match (obj as PyBool) {
-        case Some(v) => v
-        case None => throw PythonException("argsType is not bool!")
-    }
-}
-
-public func parseCallBackArgAsPyTuple(obj: PyObj): PyTuple {
-    match (obj as PyTuple) {
-        case Some(v) => v
-        case None => throw PythonException("argsType is not tuple!")
-    }
-}
-
-public func parseCallBackArgAsPyDict(obj: PyObj): PyDict<PyObj, PyObj> {
-    match (obj as PyDict<PyObj, PyObj>) {
-        case Some(v) => v
-        case None => throw PythonException("argsType is not dict!")
-    }
-}
-
-public func parseCallBackArgAsPyList(obj: PyObj): PyList<PyObj> {
-    match (obj as PyList<PyObj>) {
-        case Some(v) => v
-        case None => throw PythonException("argsType is not list!")
-    }
-}
-
-public func parseCallBackArgAsPySet(obj: PyObj): PySet<PyObj> {
-    match (obj as PySet<PyObj>) {
-        case Some(v) => v
-        case None => throw PythonException("argsType is not set!")
-    }
-}
-
-public func parseCallBackArgAsPySlice(obj: PyObj): PySlice<Int64> {
-    match (obj as PySlice<Int64>) {
-        case Some(v) => v
-        case None => throw PythonException("argsType is not slice!")
-    }
+    PyTuple(Reference(ptr))
 }
 
 /**
@@ -175,9 +119,7 @@ class Reference {
 
     ~init() {
         if (envInit && ptr.isNotNull()) {
-            let gstate = getGIL()
             unsafe { Py_DecRef(ptr) }
-            releaseGIL(gstate)
         }
         ptr = CPointer<Unit>()
     }
@@ -372,6 +314,69 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
     // Returns true if and only if the two PyObj's pointer are not identical.
     public operator func !=(right: PyObj): Bool {
         return !(this == right)
+    }
+
+    public func asPyLong(): PyLong {
+        match (this as PyLong) {
+            case Some(v) => v
+            case None => throw PythonException("Type is not long!")
+        }
+    }
+
+    public func asPyFloat(): PyFloat {
+        match (this as PyFloat) {
+            case Some(v) => v
+            case None => throw PythonException("argsType is not float!")
+        }
+    }
+
+    public func asPyString(): PyString {
+        match (this as PyString) {
+            case Some(v) => v
+            case None => throw PythonException("argsType is not string!")
+        }
+    }
+
+    public func asPyBool(): PyBool {
+        match (this as PyBool) {
+            case Some(v) => v
+            case None => throw PythonException("argsType is not bool!")
+        }
+    }
+
+    public func asPyTuple(): PyTuple {
+        match (this as PyTuple) {
+            case Some(v) => v
+            case None => throw PythonException("argsType is not tuple!")
+        }
+    }
+
+    public func asPyDict(): PyDict<PyObj, PyObj> {
+        match (this as PyDict<PyObj, PyObj>) {
+            case Some(v) => v
+            case None => throw PythonException("argsType is not dict!")
+        }
+    }
+
+    public func asPyList(): PyList<PyObj> {
+        match (this as PyList<PyObj>) {
+            case Some(v) => v
+            case None => throw PythonException("argsType is not list!")
+        }
+    }
+
+    public func asPySet(): PySet<PyObj> {
+        match (this as PySet<PyObj>) {
+            case Some(v) => v
+            case None => throw PythonException("argsType is not set!")
+        }
+    }
+
+    public func asPySlice(): PySlice<Int64> {
+        match (this as PySlice<Int64>) {
+            case Some(v) => v
+            case None => throw PythonException("argsType is not slice!")
+        }
     }
 
     private func binaryOperation(b: PyObj, opt: String, opt1: String): PyObj {

@@ -4,25 +4,26 @@
 //
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
-// DEPENDENCE: cast.c
 // DEPENDENCE: cfunc01.py
-// EXEC: clang -fPIC -shared ./cast.c -o %cffi_output
-// EXEC: %compiler %pyffi-link -l%n -L./ %f -o %output
-// EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args
+// EXEC: %compiler %pyffi-link %f -o %output
+// EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
 
 internal import ffi_python.*
 
 var x = Python.load()
 
-foreign func cast(f: CFunc<(CPointer<Int64>, CString, CString) -> Unit>): CPointer<Unit>
+func foo(args: Array<PyObj>): PyObj {
+    let obj0 = args[0].asPyLong()
+    println("${obj0.toCjObj()}")
 
-@C
-func foo(a: CPointer<Int64>, b: CString, c: CString): Unit {
-    print("${unsafe {a.read(0)}}, ${b.toString()}, ${c.toString()}\n")
+    let obj1 = args[1].asPyString()
+    println("${obj1.toCjObj()}")
+
+    PyList<PyObj>([PyLong(12345), PyString("ret")])
 }
 
 main(): Int64 {
-    var f = PyCFunc(unsafe {cast(foo)}, argsTy: [PyCPointer, PyCCpointer, PyCWcpointer], retTy: PyCVoid)
+    var f = PyCFunc(foo)
     var s = PySlice(0..10:1)
     var s1 = PySlice(Int8(0)..Int8(10):1)
 

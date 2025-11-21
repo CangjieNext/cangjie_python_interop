@@ -17,7 +17,7 @@ main(): Int64 {
         try {Python.Import("test")} catch(e: PythonException) {}
         try {println(Python.getVersion())} catch(e: PythonException) {}
         try {Python.Eval("123")} catch(e: PythonException) {}
-        try {Python["print"];()} catch(e: PythonException) {}
+        try {Python.getBuiltinsAttr("print");()} catch(e: PythonException) {}
     }
 
     fut.get()

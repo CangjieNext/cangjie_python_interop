@@ -19,12 +19,12 @@ main() {
     
     let fut = spawn {
         Python.load("/usr/bin/python3")
-        Python["print"].getOrThrow()(["failure"])
+        Python.getBuiltinsAttr("print").getOrThrow()(["failure"])
         Python.unload()
     }
     sleep(Duration.second * 1)
     Python.load()
-    Python["print"].getOrThrow()(["main"])
+    Python.getBuiltinsAttr("print").getOrThrow()(["main"])
     
     0
 }
