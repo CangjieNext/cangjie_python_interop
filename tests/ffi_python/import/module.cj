@@ -5,7 +5,7 @@
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
  
 // EXEC: %compiler %pyffi-link %f -o %output
-// EXEC-PIPE: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
+// EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
 // ASSERT: scan module 'sys'
 // ASSERT: scan module 'os'
 
@@ -19,8 +19,8 @@ main(): Int64 {
     /* Initialize python environment */
     var sys = Python.Import("sys")
     var os = Python.Import("os")
-    var prt = Python["print"].getOrThrow()
-    var str = Python["str"].getOrThrow()
+    var prt = Python.getBuiltinsAttr("print").getOrThrow()
+    var str = Python.getBuiltinsAttr("str").getOrThrow()
     prt(str(sys))
     prt(str(os))
     /* unload python lib and clean environment */

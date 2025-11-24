@@ -5,14 +5,14 @@
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
 // EXEC: %compiler %pyffi-link %f -o %output
-// EXEC-PIPE: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
+// EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
 // ASSERT: scan 1
 
 internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    Python["print"].getOrThrow()([1])
+    Python.getBuiltinsAttr("print").getOrThrow()([1])
     Python.unload()
     return 0
 }
