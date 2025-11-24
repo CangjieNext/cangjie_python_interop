@@ -6,14 +6,18 @@
 
 # File cfunc02.py
 
-# Import args_processor extended module and convert the argument list of the callback function to c_void_p.
-import args_processor
-from ctypes import *
+class MyCustomClass:
+    def __init__(self):
+        self.data = "This is MyCustomClass"
+    def getData(self):
+        return self.data
 
-# `foo` get a function pointer and call it.
-def foo(func):
-    # 1. convert argument list to c_void_p
-    mixed_list = [
+def MyCustomFunc():
+    return "This is MyCustomFunc"
+
+# `testFoo` get a c function.
+def testFoo(foo):
+    ret = foo(
         42,                             # int
         "hello",                        # str
         (123, "str", [1, 2, 3]),        # tuple
@@ -23,9 +27,7 @@ def foo(func):
         3.14,                           # float
         {7, 8, 9},                      # set
         slice(1, 5, 2),                 # slice
-    ]
-    pyobj_list = args_processor.process_list(mixed_list)
-    # 2. call func
-    func(pyobj_list)
-    # 3. release pyobj_list
-    args_processor.release_list(pyobj_list)
+        MyCustomClass(),                # class
+        MyCustomFunc                    # function
+    )
+    print("get return:\n", ret)

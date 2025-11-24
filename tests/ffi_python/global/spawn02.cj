@@ -5,7 +5,7 @@
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
 // EXEC: %compiler %pyffi-link %f -o %output
-// EXEC: export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
+// EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
 // ASSERT: regex true
 
 internal import ffi_python.*
@@ -17,7 +17,7 @@ main(): Int64 {
         try {Python.Import("test")} catch(e: PythonException) {}
         try {println(Python.getVersion())} catch(e: PythonException) {}
         try {Python.Eval("123")} catch(e: PythonException) {}
-        try {Python["print"];()} catch(e: PythonException) {}
+        try {Python.getBuiltinsAttr("print");()} catch(e: PythonException) {}
     }
 
     fut.get()
