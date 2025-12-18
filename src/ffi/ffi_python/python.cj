@@ -824,7 +824,7 @@ public class PythonBuiltins {
             throw PythonException("PyRunString failed, mode: ${mode}.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return Reference(obj)
+        return Reference(obj, needDecRef: true)
     }
 
     /*

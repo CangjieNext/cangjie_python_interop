@@ -148,7 +148,7 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
         if (ret.isNull()) {
             throw PythonException("Set create failed.")
         }
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 
     private func pySetAdd(handle: Reference, key: Reference): Int32 {
@@ -185,7 +185,7 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
             PYLOG.warn("Set pop elem failed, return unavailable object.\n" + PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 
     private func pySetDiscard(handle: Reference, key: Reference): Int32 {
