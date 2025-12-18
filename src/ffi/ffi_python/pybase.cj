@@ -47,7 +47,7 @@ public class PyBool <: PyObj {
         let gstate = getGIL()
         let ret = unsafe { PyBool_FromLong(value) }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 
     private func pyBoolCheck(handle: Reference): Bool {
@@ -194,14 +194,14 @@ public class PyLong <: PyObj {
         let gstate = getGIL()
         let ret = unsafe { PyLong_FromLongLong(value) }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 
     private func pyUInt(value: UInt64): Reference {
         let gstate = getGIL()
         let ret = unsafe { PyLong_FromUnsignedLongLong(value) }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 }
 
@@ -245,7 +245,7 @@ public class PyFloat <: PyObj {
         let gstate = getGIL()
         let ret = unsafe { PyFloat_FromDouble(value) }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 
     private func pyToFloat(handle: Reference): Float64 {
@@ -307,7 +307,7 @@ public class PyString <: PyObj {
         let ret = unsafe { PyUnicode_FromString(cStr) }
         unsafe { LibC.free(cStr) }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 
     private func pyFromString(handle: Reference): String {

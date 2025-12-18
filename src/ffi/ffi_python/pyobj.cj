@@ -68,7 +68,7 @@ public func parseCallBackArgsList(ptr: CPointer<Unit>): PyList<PyObj> {
     if (!isInstance(Reference(ptr), PyList_Type)) {
         throw PythonException("callback arguments list type error!")
     }
-    PyList<PyObj>(Reference(ptr))
+    PyList<PyObj>(Reference(ptr, needDecRef: true))
 }
 
 public func parseCallBackArgAsPyLong(obj: PyObj): PyLong {
@@ -141,6 +141,8 @@ public func parseCallBackArgAsPySlice(obj: PyObj): PySlice<Int64> {
  */
 class Reference {
     private var ptr = CPointer<Unit>()
+    //todo:是否需要这个标志？
+    private var needDecRef = false
 
     init() {}
 
@@ -151,13 +153,14 @@ class Reference {
      *
      * @return cangjie class.
      */
-    init(ptr: CPointer<Unit>) {
+    init(ptr: CPointer<Unit>, needDecRef!: Bool = false) {
         this.ptr = ptr
-        if (envInit) {
-            let gstate = getGIL()
-            unsafe { Py_IncRef(this.ptr) }
-            releaseGIL(gstate)
-        }
+        this.needDecRef = needDecRef
+//        if (envInit) {
+//            let gstate = getGIL()
+//            unsafe { Py_IncRef(this.ptr) }
+//            releaseGIL(gstate)
+//        }
     }
 
     /* Whether the pointer is null */
@@ -174,7 +177,7 @@ class Reference {
     }
 
     ~init() {
-        if (envInit && ptr.isNotNull()) {
+        if (envInit && ptr.isNotNull() && needDecRef) {
             let gstate = getGIL()
             unsafe { Py_DecRef(ptr) }
             releaseGIL(gstate)
@@ -439,7 +442,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
             PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 
     private func pyObjectCall(
@@ -466,7 +469,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
             throw PythonException("PyObject call function failed.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 
     private func pyObjectRichCompareBool(left: Reference, right: Reference, op: Int32): Bool {
