@@ -42,7 +42,7 @@ class PyModule <: PyObj {
             throw PythonException("Import \"${name}\" module failed.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 
     private func pyModuleGetDict(handle: Reference): Reference {

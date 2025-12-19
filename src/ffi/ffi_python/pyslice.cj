@@ -51,7 +51,7 @@ public class PySlice<T> <: PyObj where T <: Countable<T> & Comparable<T> & Equat
             PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 
     private func pySliceUnpack(handle: Reference): (Int64, Int64, Int64) {
