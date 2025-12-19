@@ -36,11 +36,11 @@ var handle: CPointer<Unit> = CPointer<Unit>()
  * and unload of global resources.
  */
 let initLock = ReentrantMutex()
-@When[os == "Linux" || os == "HarmonyOS"]
+@When[os == "Linux"]
 let cmdExeDep = "ldd $(which python3)"
 @When[os == "macOS"]
 let cmdExeDep = "otool -L $(which python3)"
-@When[os == "Linux" || os == "HarmonyOS"]
+@When[os == "Linux"]
 let suffixOfDy = "so"
 @When[os == "macOS"]
 let suffixOfDy = "dylib"
@@ -824,7 +824,7 @@ public class PythonBuiltins {
             throw PythonException("PyRunString failed, mode: ${mode}.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return Reference(obj)
+        return Reference(obj, needDecRef: true)
     }
 
     /*

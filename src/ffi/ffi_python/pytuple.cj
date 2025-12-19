@@ -85,14 +85,9 @@ public class PyTuple <: PyObj {
                 throw PythonException("Index ${count} is unavailable.")
             }
             pyTupleSetItem(ret, count, arg.getRef())
-            if (arg.isNeedRef()) {
-                let gstate = getGIL()
-                unsafe { Py_IncRef(arg.getRef().getPtr()) }
-                releaseGIL(gstate)
-            }
             count++
         }
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 
     private func pyTupleSetItem(handle: CPointer<Unit>, pos: Int64, v: Reference): Unit {

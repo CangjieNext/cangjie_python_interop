@@ -30,13 +30,6 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
         for (arg in args) {
             var a = getVPyObj(arg)
             pyListSetItem(getRef(), idx, a.getRef())
-            if (a.isNeedRef()) {
-                let gstate = getGIL()
-                unsafe {
-                    Py_IncRef(a.getRef().getPtr())
-                }
-                releaseGIL(gstate)
-            }
             idx++
         }
     }
@@ -137,7 +130,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
             throw PythonException("List create failed.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needDecRef: true)
     }
 
     private func pyListSetItem(handle: Reference, index: Int64, value: Reference): Unit {
