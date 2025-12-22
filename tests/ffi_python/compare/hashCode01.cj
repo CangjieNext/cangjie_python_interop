@@ -19,25 +19,25 @@ var x = Python.load()
 main(): Int64 {
     Python.load()
 
-    var dict = match (Python.Eval("{'name': 'xxx', 'likes': 123, 'url': 'xxx'}")) {
+    var dict = match (Python.eval("{'name': 'xxx', 'likes': 123, 'url': 'xxx'}")) {
         case val: PyDict<PyObj, PyObj> => val
         case _ => throw PythonException()
     }
     println(dict.hashCode())
 
-    var set = match (Python.Eval("{'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}")) {
+    var set = match (Python.eval("{'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}")) {
         case val: PySet<PyObj> => val
         case _ => throw PythonException()
     }
     println(set.hashCode())
 
-    var tuple = match (Python.Eval("('Google', 'Runoob', 1997, 2000)")) {
+    var tuple = match (Python.eval("('Google', 'Runoob', 1997, 2000)")) {
         case val: PyTuple => val
         case _ => throw PythonException()
     }
     println(tuple.hashCode())
 
-    var list = match (Python.Eval("['Google', 'Runoob', 1997, 2000]")) {
+    var list = match (Python.eval("['Google', 'Runoob', 1997, 2000]")) {
         case val: PyList<PyObj> => val
         case _ => throw PythonException()
     }

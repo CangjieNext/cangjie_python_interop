@@ -14,10 +14,10 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    var test = Python.Import("importTest")
+    var test = Python.importMod("importTest")
     // value
     var a = test["a"]
-    Python["print"].getOrThrow()([a])
+    Python.getBuiltinsAttr("print").getOrThrow()([a])
     // function
     test["func"]()
     Python.unload()

@@ -16,7 +16,7 @@ main(): Int64 {
     Python.load()
     //get a PyObj is not available
     var unavaileObj = PyLong(0) + PyString("")
-    var a = Python.Eval("1")
+    var a = Python.eval("1")
     try { a == unavaileObj } catch (e: PythonException) {println(e)}
     try { unavaileObj == a } catch (e: PythonException) {println(e)}
 

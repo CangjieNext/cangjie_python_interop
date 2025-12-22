@@ -12,117 +12,108 @@
  */
 package ffi_python
 
-import std.collection.HashMap
-/* Enum type of module `ctypes`. */
-public enum PyCType {
-    PyCBool
-    | PyCChar
-    | PyCWchar
-    | PyCByte
-    | PyCUbyte
-    | PyCShort
-    | PyCUshort
-    | PyCInt
-    | PyCUint
-    | PyCLonglong
-    | PyCUlonglong
-    | PyCFloat
-    | PyCDouble
-    | PyCPointer
-    | PyCCpointer
-    | PyCWcpointer
-    | PyCVoid
+@C
+struct PyMethodDef {
+    PyMethodDef(
+        let name: CString,
+        let meth: CPointer<Unit>,
+        let flags: Int32,
+        let doc: CString
+    ) {}
+}
+
+@C
+func py_invoke_callback(self: CPointer<Unit>, args: CPointer<Unit>): CPointer<Unit> {
+    unsafe {
+        try {
+        	let id = parseCallBackArgsLong(self)
+            let tuple = parseCallBackArgsTuple(args)
+
+            var insertElem: (Int64) -> PyObj = {
+                i => return tuple[i]
+            }
+            var args_list = Array<PyObj>(tuple.size(), insertElem)
+
+            var cfunc = PyCFunc.getFunc(id.toCjObj())
+            cfunc(args_list).getRef().getPtr()
+        } catch (e: Exception) {
+            var stackTrace = e.getStackTrace()
+            var msg = e.toString()
+            for (element in stackTrace) {
+                msg = msg + "\n  at " + element.declaringClass + "." +
+                               element.methodName + "(" + element.fileName + ":" + 
+                               element.lineNumber.toString() + ")"
+            }
+
+            Python.setPyErr(msg)
+            CPointer<Unit>()
+        }
+    }
+}
+
+@C
+func py_invoke_callback_clean(self: CPointer<Unit>, args: CPointer<Unit>): CPointer<Unit> {
+    unsafe {
+        try {
+        	let id = parseCallBackArgsLong(self)
+            PyCFunc.delFunc(id.toCjObj())
+        } catch (e: Exception) {
+            var stackTrace = e.getStackTrace()
+            var msg = e.toString()
+            for (element in stackTrace) {
+                msg = msg + "\n  at " + element.declaringClass + "." + 
+                               element.methodName + "(" + element.fileName + ":" + 
+                               element.lineNumber.toString() + ")"
+            }
+            
+            Python.setPyErr(msg)
+            return CPointer<Unit>()
+        }
+
+        Py_IncRef(Py_None)
+        return Py_None
+    }
 }
 
 public class PyCFunc <: PyObj {
-    private var m_ctypes = PyModule()
-    private var mctypes = PyModule()
+    private static var cb = SlabMT<(Array<PyObj>) -> PyObj>()
+    private static let pyMethod_name = unsafe { LibC.mallocCString("invoke_callback") }
+    private static let pyMethod_doc = unsafe { LibC.mallocCString("invoke a callback.") }
+    private static let pyMethod_clean_name = unsafe { LibC.mallocCString("invoke_callback_clean") }
+    private static let pyMethod_clean_doc = unsafe { LibC.mallocCString("invoke callback clean.") }
+    private static var pyMethod_p = LibC.malloc<PyMethodDef>()
+    private static var pyMethod_clean_p = LibC.malloc<PyMethodDef>()
 
-    /*
-     * Construct by a cangjie @C function pointer.
-     *
-     * @param f is cangjie @C function pointer
-     * @param argsTy is f's args value type, maybe more than one.
-     * @param retTy is f's return value type.
-     */
-    public init(f: CPointer<Unit>, argsTy!: Array<PyCType> = [], retTy!: PyCType = PyCType.PyCVoid) {
-        // set CPointer to a func ptr.
-        super(setFuncPtr(f), "PyCFunc")
-
-        // set args type.
-        setArgTypes(argsTy)
-
-        // set return type.
-        setRetTypes(retTy)
+    static init() {
+        unsafe {
+            pyMethod_p.write(PyMethodDef(pyMethod_name, CPointer<Unit>(py_invoke_callback), 1, pyMethod_doc))
+            pyMethod_clean_p.write(PyMethodDef(pyMethod_clean_name, CPointer<Unit>(py_invoke_callback_clean), 1, pyMethod_clean_doc))
+        }
     }
 
-    private func setFuncPtr(f: CPointer<Unit>): Reference {
-        if (!envInit) {
-            throw PythonException("[PyCFunc] Python is not initialized. Please load it first.")
+    private func registerCallback(callback: (Array<PyObj>) -> PyObj): Reference {
+        var id = cb.append(callback)
+        unsafe {
+            let gstate = getGIL()
+            let f = PyCFunction_New(pyMethod_p, PyLong(id).getRef().getPtr())
+            let cf = PyCFunction_New(pyMethod_clean_p, PyLong(id).getRef().getPtr())
+            PyWeakref_NewRef(f, cf)
+            let ret = Reference(f)
+            Py_DecRef(f)
+            releaseGIL(gstate)
+            ret
         }
-        m_ctypes = PyModule("_ctypes")
-        mctypes = PyModule("ctypes")
-
-        if (f.isNull()) {
-            throw PythonException("Null CPointer given.")
-        }
-        var funcName = PyString("PyFuncPtr")
-        var bases = PyTuple([m_ctypes["CFuncPtr"]])
-        var namespace = PyDict(HashMap<String, PyObj>([("_flags_", m_ctypes["FUNCFLAG_CDECL"])]))
-
-        // simulate python code: type("PyFuncPtr", (_ctypes.CFuncPtr), {"_flags_" : flags})
-        var funcPtr = Python["type"].getOrThrow()([funcName, bases, namespace])
-        return funcPtr([Int64(f.toUIntNative())]).getRef()
     }
 
-    /* Set args type of function. */
-    public func setArgTypes(args: Array<PyCType>): PyCFunc {
-        let insert = {
-            i: Int64 =>
-            let ret = matchType(args[i])
-            if (!ret.isAvailable()) {
-                throw PythonException("Args cannot be a PyCVoid.")
-            }
-            return ret
-        }
-        this["argtypes"] = PyTuple(Array<PyObj>(args.size, insert))
-        return this
+    public init(callback: (Array<PyObj>) -> PyObj) {
+        super(registerCallback(callback), "PyCFunc")
     }
 
-    /* Set return type of function. */
-    public func setRetTypes(ret: PyCType): PyCFunc {
-        let r = matchType(ret)
-
-        // If return value type is void, do not set restype.
-        if (r.isAvailable()) {
-            this["restype"] = r
-        }
-        return this
+    internal static func getFunc(id: Int64): (Array<PyObj>) -> PyObj {
+        cb[id]
     }
 
-    protected override func isNeedRef(): Bool {
-        return true
-    }
-
-    private func matchType(ty: PyCType): PyObj {
-        return match (ty) {
-            case PyCType.PyCBool => mctypes["c_bool"]
-            case PyCType.PyCChar => mctypes["c_char"]
-            case PyCType.PyCWchar => mctypes["c_wchar"]
-            case PyCType.PyCByte => mctypes["c_byte"]
-            case PyCType.PyCUbyte => mctypes["c_ubyte"]
-            case PyCType.PyCShort => mctypes["c_short"]
-            case PyCType.PyCUshort => mctypes["c_ushort"]
-            case PyCType.PyCInt => mctypes["c_int"]
-            case PyCType.PyCUint => mctypes["c_uint"]
-            case PyCType.PyCLonglong => mctypes["c_longlong"]
-            case PyCType.PyCUlonglong => mctypes["c_ulonglong"]
-            case PyCType.PyCFloat => mctypes["c_float"]
-            case PyCType.PyCDouble => mctypes["c_double"]
-            case PyCType.PyCPointer => mctypes["c_void_p"]
-            case PyCType.PyCCpointer => mctypes["c_char_p"]
-            case PyCType.PyCWcpointer => mctypes["c_wchar_p"]
-            case PyCType.PyCVoid => PyObj()
-        }
+    internal static func delFunc(id: Int64): Unit {
+        cb.remove(id)
     }
 }
