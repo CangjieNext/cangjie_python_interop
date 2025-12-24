@@ -84,20 +84,21 @@ public class PyTuple <: PyObj {
             if (!arg.isAvailable()) {
                 throw PythonException("Index ${count} is unavailable.")
             }
+            // https://docs.python.org/3.10/c-api/intro.html#reference-count-details
+            // steal reference, shoult call Py_INCREF and Py_DECREF
+            // will Py_DECREF when Py_DECREF tuple
             pyTupleSetItem(ret, count, arg.getRef())
-            if (arg.isNeedRef()) {
-                let gstate = getGIL()
-                unsafe { Py_IncRef(arg.getRef().getPtr()) }
-                releaseGIL(gstate)
-            }
             count++
         }
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyTupleSetItem(handle: CPointer<Unit>, pos: Int64, v: Reference): Unit {
         let gstate = getGIL()
-        let ret = unsafe { PyTuple_SetItem(handle, pos, v.getPtr()) }
+        let ret = unsafe {
+            Py_IncRef(v.getPtr())
+            PyTuple_SetItem(handle, pos, v.getPtr())
+        }
         if (ret != 0) {
             let errMsg = PYLOG.getPythonErr()
             releaseGIL(gstate)
@@ -109,12 +110,13 @@ public class PyTuple <: PyObj {
 
     private func pyTupleGetItem(handle: Reference, pos: Int64): Reference {
         let gstate = getGIL()
+        // borrowed reference
         let ret = unsafe { PyTuple_GetItem(handle.getPtr(), pos) }
         if (ret.isNull()) {
             PYLOG.warn("Get item at ${pos} failed, return unavailable object.\n" + PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: true)
     }
 
     private func pyTupleSize(handle: Reference): Int64 {
@@ -126,11 +128,12 @@ public class PyTuple <: PyObj {
 
     private func pyTupleGetSlice(handle: Reference, begin: Int64, end: Int64): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyTuple_GetSlice(handle.getPtr(), begin, end) }
         if (ret.isNull()) {
             PYLOG.warn("Get slice error, return unavailable object, check index: [${begin}, ${end}).")
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 }
