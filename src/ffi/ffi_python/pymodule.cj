@@ -34,6 +34,7 @@ class PyModule <: PyObj {
     private func pyImportModule(name: String): Reference {
         let gstate = getGIL()
         var cName = unsafe { LibC.mallocCString(name) }
+        // new reference
         let ret = unsafe { PyImport_ImportModule(cName) }
         unsafe { LibC.free(cName) }
         if (ret.isNull()) {
@@ -42,11 +43,12 @@ class PyModule <: PyObj {
             throw PythonException("Import \"${name}\" module failed.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyModuleGetDict(handle: Reference): Reference {
         let gstate = getGIL()
+        // borrowed reference
         let ret = unsafe { PyModule_GetDict(handle.getPtr()) }
         if (ret.isNull()) {
             let errMsg = PYLOG.getPythonErr()
@@ -54,6 +56,6 @@ class PyModule <: PyObj {
             throw PythonException("PyModule get dict failed.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: true)
     }
 }

@@ -45,9 +45,10 @@ public class PyBool <: PyObj {
             0
         }
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyBool_FromLong(value) }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyBoolCheck(handle: Reference): Bool {
@@ -192,16 +193,18 @@ public class PyLong <: PyObj {
 
     private func pyInt(value: Int64): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyLong_FromLongLong(value) }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyUInt(value: UInt64): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyLong_FromUnsignedLongLong(value) }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 }
 
@@ -243,9 +246,10 @@ public class PyFloat <: PyObj {
 
     private func pyFromFloat(value: Float64): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyFloat_FromDouble(value) }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyToFloat(handle: Reference): Float64 {
@@ -304,15 +308,21 @@ public class PyString <: PyObj {
     private func pyString(s: String): Reference {
         let gstate = getGIL()
         var cStr = unsafe { LibC.mallocCString(s) }
+        // new reference
         let ret = unsafe { PyUnicode_FromString(cStr) }
         unsafe { LibC.free(cStr) }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyFromString(handle: Reference): String {
         let gstate = getGIL()
         let strObj = unsafe { PyUnicode_AsUTF8(handle.getPtr()) }
+        if (pyErrOccurred()) {
+            let errMsg = PYLOG.getPythonErr()
+            releaseGIL(gstate)
+            throw PythonException("pyFromString failed, return ${errMsg}")
+        }
         releaseGIL(gstate)
         return strObj.toString()
     }
