@@ -17,7 +17,7 @@ import std.fs.*
 import std.io.*
 import std.sync.*
 import std.env.*
-@When[ffi_python_plat == "ohos"]
+
 import ohos.hilog.*
 
 /* dopra schedule.h */
@@ -129,6 +129,8 @@ public enum LogLevel <: ToString {
 
 /* Python library logger, default log level is warn. */
 public class PythonLogger {
+    // 宿主注入日志打印，实现日志回捞
+    public static var matrixLog = Option<(Int32, String, String) -> Unit>.None
     private var level_ = LogLevel.WARN
 
     public mut prop level: LogLevel {
@@ -326,15 +328,6 @@ public class PythonLogger {
             return errMsg
         }
     }
-
-    @When[ffi_python_plat == "Linux"]
-    public func log(level: LogLevel, msg: String): Unit {
-        if (this.level_.level() >= level.level()) {
-            print("${level}: ${msg}\n")
-        }
-    }
-
-    @When[ffi_python_plat == "ohos"]
     public func log(level: LogLevel, msg: String): Unit {
         if (this.level_.level() < level.level()) {
             return
@@ -344,6 +337,9 @@ public class PythonLogger {
             case LogLevel.WARN => Hilog.warn(0, "FFIPythonLog", msg)
             case LogLevel.INFO => Hilog.info(0, "FFIPythonLog", msg)
             case LogLevel.DEBUG => Hilog.debug(0, "FFIPythonLog", msg)
+        }
+        if (let Some(v) <- matrixLog) {
+            v(level.level(), "FFIPythonLog", msg)
         }
     }
 }
@@ -805,26 +801,29 @@ public class PythonBuiltins {
     /* Python interface warpper, get built-in function by dictionary type. */
     private func pyGetBuiltins(): Reference {
         let gstate = getGIL()
+        // borrowed reference
         let ret = unsafe { PyEval_GetBuiltins() }
         if (ret.isNull()) {
             PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: true)
     }
 
     private func pyRunString(str: String, mode: Int32, module: Reference, local: Reference): Reference {
         let gstate = getGIL()
         var cStr = unsafe { LibC.mallocCString(str) }
+        // new reference
         let obj = unsafe { PyRun_String(cStr, mode, module.getPtr(), local.getPtr()) }
         unsafe { LibC.free(cStr) }
         if (pyErrOccurred()) {
             let errMsg = PYLOG.getPythonErr()
+
             releaseGIL(gstate)
             throw PythonException("PyRunString failed, mode: ${mode}.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return Reference(obj)
+        return Reference(obj, needIncreReference: false)
     }
 
     /*
