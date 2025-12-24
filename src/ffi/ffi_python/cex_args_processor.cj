@@ -62,14 +62,16 @@ func py_process_list(self: CPointer<Unit>, args: CPointer<Unit>): CPointer<Unit>
     unsafe {
         let objPtr = LibC.malloc<CPointer<Unit>>()
         if (objPtr.isNull()) {
-            throw PythonException("Failed to create CPointer<Unit> pointer, failed to malloc memory.")
+            PYLOG.error("py_process_list failed:objPtr is null.")
+            return CPointer<Unit>()
         }
         let flag = LibC.mallocCString("O!")
 
         if (PyArg_ParseTuple(args, flag, PyList_Type, objPtr) == 0) {
             LibC.free(flag)
             LibC.free<CPointer<Unit>>(objPtr)
-            throw PythonException("Python arguments parse to list failed.")
+            PYLOG.error("py_process_list failed:Python arguments parse to list failed.")
+            return CPointer<Unit>()
         }
         let pyList = objPtr.read()
         Py_IncRef(pyList)
@@ -86,14 +88,16 @@ func py_release_list(self: CPointer<Unit>, args: CPointer<Unit>): CPointer<Unit>
     unsafe {
         let objPtr = LibC.malloc<CPointer<Unit>>()
         if (objPtr.isNull()) {
-            throw PythonException("Failed to create CPointer<Unit> pointer, failed to malloc memory.")
+            PYLOG.error("py_release_list failed:objPtr is null.")
+            return CPointer<Unit>()
         }
         let flag = LibC.mallocCString("O!")
 
         if (PyArg_ParseTuple(args, flag, PyLong_Type, objPtr) == 0) {
             LibC.free(flag)
             LibC.free<CPointer<Unit>>(objPtr)
-            throw PythonException("Python arguments parse to long failed.")
+            PYLOG.error("py_release_list failed:Python arguments parse to list failed.")
+            return CPointer<Unit>()
         }
         let ptr = PyLong_AsVoidPtr(objPtr.read())
         Py_DecRef(ptr)
@@ -110,7 +114,8 @@ func py_release_list(self: CPointer<Unit>, args: CPointer<Unit>): CPointer<Unit>
 func PyInit_args_processor(): CPointer<Unit> {
     if (modName.isNull() || funcName1.isNull() || funcDoc1.isNull() || funcName2.isNull() || funcDoc2.isNull() ||
         module_methods.isNull() || module_def.isNull()) {
-        throw PythonException("Failed to create pointer in cex_args_processor, failed to malloc memory.")
+        PYLOG.error("Failed to create pointer in cex_args_processor, failed to malloc memory.")
+        return CPointer<Unit>()
     }
     unsafe {
         module_methods.write(0, PyMethodDef(funcName1, CPointer<Unit>(py_process_list), 1, funcDoc1))

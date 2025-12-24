@@ -65,10 +65,12 @@ func isInstance(handle: Reference, pType: CPointer<Unit>): Bool {
 }
 
 public func parseCallBackArgsList(ptr: CPointer<Unit>): PyList<PyObj> {
-    if (!isInstance(Reference(ptr), PyList_Type)) {
+    // ptr is borrowed reference
+    let ref = Reference(ptr, needIncreReference: true)
+    if (!isInstance(ref, PyList_Type)) {
         throw PythonException("callback arguments list type error!")
     }
-    PyList<PyObj>(Reference(ptr))
+    PyList<PyObj>(ref)
 }
 
 public func parseCallBackArgAsPyLong(obj: PyObj): PyLong {
@@ -151,9 +153,9 @@ class Reference {
      *
      * @return cangjie class.
      */
-    init(ptr: CPointer<Unit>) {
+    init(ptr: CPointer<Unit>, needIncreReference!:Bool = false) {
         this.ptr = ptr
-        if (envInit) {
+        if (envInit && needIncreReference) {
             let gstate = getGIL()
             unsafe { Py_IncRef(this.ptr) }
             releaseGIL(gstate)
@@ -233,7 +235,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
     }
 
     // Subclass PySlice/PyCFunc need return true.
-    // PySlice/PyCFunc as tuple elem, need refcount++. Otherwise, the GC will be aborted: 
+    // PySlice/PyCFunc as tuple elem, need refcount++. Otherwise, the GC will be aborted:
     // gc_decref: Assertion "gc_get_refs(g) > 0" failed: refcount is too small.
     // More info see tests/LLT/Stdlib/ffi/python/slice/slice05.cj.
     protected open func isNeedRef(): Bool {
@@ -359,7 +361,6 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
             }
             PYLOG.warn("PyObj call hash failed.")
         }
-        PYLOG.info("Called hashCode. Value ${this} hash code is ${hash}")
         releaseGIL(gstate)
         return hash
     }
@@ -392,7 +393,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
         PYLOG.info("Unsupported operation, try ${b.refType} ${opt1} ${this.refType}")
         funcOpt = try {
             b[opt1]
-        } catch (e: PythonException) { 
+        } catch (e: PythonException) {
             PyObj()
         }
         if (funcOpt.isAvailable()) {
@@ -410,6 +411,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
     private func pyObjectGetAttrString(handle: Reference, name: String): Reference {
         let gstate = getGIL()
         var cName = unsafe { LibC.mallocCString(name) }
+        // new reference
         let ret = unsafe { PyObject_GetAttrString(handle.getPtr(), cName) }
         unsafe { LibC.free(cName) }
         if (ret.isNull()) {
@@ -418,7 +420,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
             throw PythonException("Get attribute \"${name}\" failed.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyObjectSetAttrString(handle: Reference, name: String, value: Reference): Unit {
@@ -434,12 +436,13 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
 
     private func pyObjectStr(handle: Reference): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyObject_Str(handle.getPtr()) }
         if (ret.isNull()) {
             PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyObjectCall(
@@ -452,6 +455,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
         }
         let gstate = getGIL()
         let ret = try {
+            // new reference
             unsafe { PyObject_Call(handle.getPtr(), args.getPtr(), kargs.getPtr()) }
         } catch (e: Error) {
             releaseGIL(gstate)
@@ -466,7 +470,7 @@ public open class PyObj <: ToString & PyFFIType & Hashable & Equatable<PyObj> {
             throw PythonException("PyObject call function failed.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyObjectRichCompareBool(left: Reference, right: Reference, op: Int32): Bool {
@@ -534,6 +538,7 @@ public class PyObjIterator <: Iterator<PyObj> {
             throw PythonException("Unavailable PyObj given.")
         }
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyObject_GetIter(obj.getPtr()) }
         if (ret.isNull()) {
             PYLOG.error(PYLOG.getPythonErr())
@@ -541,16 +546,17 @@ public class PyObjIterator <: Iterator<PyObj> {
             throw PythonException("PyObj cannot obtain the iterator.")
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyIterNext(handle: Reference): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyIter_Next(handle.getPtr()) }
         if (ret.isNull() && pyErrOccurred()) {
             PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 }

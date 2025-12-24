@@ -30,6 +30,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
         for ((key, value) in args) {
             var k = getKPyObj(key)
             var v = getVPyObj(value)
+            // https://docs.python.org/zh-cn/3.9/c-api/dict.html#c.PyDict_Next
             pyDictSetItem(getRef(), k.getRef(), v.getRef())
         }
     }
@@ -193,6 +194,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
 
     private func pyDictNew(): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyDict_New() }
 
         if (ret.isNull()) {
@@ -201,17 +203,19 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
             throw PythonException("Create dictionary failed.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyDictGetItem(handle: Reference, key: Reference): Reference {
         let gstate = getGIL()
+        // Borrowed reference.
+        // https://docs.python.org/zh-cn/3.7/c-api/tuple.html#c.PyTuple_GetItem
         let ret = unsafe { PyDict_GetItem(handle.getPtr(), key.getPtr()) }
         if (ret.isNull()) {
             PYLOG.warn("Dict get item failed.\n" + PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: true)
     }
 
     private func pyDictSetItem(handle: Reference, key: Reference, value: Reference): Unit {
@@ -235,12 +239,13 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
 
     private func pyDictCopy(handle: Reference): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyDict_Copy(handle.getPtr()) }
         if (ret.isNull()) {
             PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyDictDelItem(handle: Reference, key: Reference): Int32 {
@@ -262,12 +267,13 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
 
     private func pyDictItems(handle: Reference): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyDict_Items(handle.getPtr()) }
         if (ret.isNull()) {
             PYLOG.warn("Dict get items list failed, return null array.\n" + PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyDictClear(handle: Reference): Unit {
@@ -278,21 +284,23 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
 
     private func pyDictKeys(handle: Reference): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyDict_Keys(handle.getPtr()) }
         if (ret.isNull()) {
             PYLOG.warn("Dict get keys list failed.\n" + PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyDictValues(handle: Reference): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyDict_Values(handle.getPtr()) }
         if (ret.isNull()) {
             PYLOG.warn("Dict get values list failed.\n" + PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 }

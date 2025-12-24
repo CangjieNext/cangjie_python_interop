@@ -30,13 +30,6 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
         for (arg in args) {
             var a = getVPyObj(arg)
             pyListSetItem(getRef(), idx, a.getRef())
-            if (a.isNeedRef()) {
-                let gstate = getGIL()
-                unsafe {
-                    Py_IncRef(a.getRef().getPtr())
-                }
-                releaseGIL(gstate)
-            }
             idx++
         }
     }
@@ -130,6 +123,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
 
     private func pyListNew(size: Int64): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyList_New(size) }
         if (ret.isNull()) {
             let errMsg = PYLOG.getPythonErr()
@@ -137,12 +131,15 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
             throw PythonException("List create failed.\n${errMsg}")
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pyListSetItem(handle: Reference, index: Int64, value: Reference): Unit {
         let gstate = getGIL()
-        let ret = unsafe { PyList_SetItem(handle.getPtr(), index, value.getPtr()) }
+        let ret = unsafe {
+            Py_IncRef(value.getPtr())
+            PyList_SetItem(handle.getPtr(), index, value.getPtr())
+        }
         if (ret != 0) {
             let errMsg = PYLOG.getPythonErr()
             releaseGIL(gstate)
@@ -154,12 +151,13 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
 
     private func pyListGetItem(handle: Reference, index: Int64): Reference {
         let gstate = getGIL()
+        // borrowed reference
         let ret = unsafe { PyList_GetItem(handle.getPtr(), index) }
         if (ret.isNull()) {
             PYLOG.warn("List elem at ${index} is null.\n" + PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: true)
     }
 
     private func pyListSize(handle: Reference): Int64 {
@@ -171,7 +169,10 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
 
     private func pyListInsert(handle: Reference, index: Int64, value: Reference): Int32 {
         let gstate = getGIL()
-        let ret = unsafe { PyList_Insert(handle.getPtr(), index, value.getPtr()) }
+        let ret = unsafe {
+            Py_IncRef(value.getPtr())
+            PyList_Insert(handle.getPtr(), index, value.getPtr())
+        }
         if (ret != 0) {
             PYLOG.error(PYLOG.getPythonErr())
         }
@@ -181,7 +182,10 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
 
     private func pyListAppend(handle: Reference, item: Reference): Unit {
         let gstate = getGIL()
-        let ret = unsafe { PyList_Append(handle.getPtr(), item.getPtr()) }
+        let ret = unsafe {
+            Py_IncRef(item.getPtr())
+            PyList_Append(handle.getPtr(), item.getPtr())
+        }
         if (ret != 0) {
             let errMsg = PYLOG.getPythonErr()
             releaseGIL(gstate)
@@ -193,11 +197,12 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
 
     private func pyListGetSlice(handle: Reference, begin: Int64, end: Int64): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PyList_GetSlice(handle.getPtr(), begin, end) }
         if (ret.isNull()) {
             PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 }
