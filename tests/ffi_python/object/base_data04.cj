@@ -19,37 +19,37 @@ internal import std.collection.*
 main() {
     Python.load(loglevel: LogLevel.INFO)
     
-    if (1.toPyObj() == Python.Eval("1")) {
+    if (1.toPyObj() == Python.eval("1")) {
         print("success01\n")
     }
 
-    if (true.toPyObj() == Python.Eval("True")) {
+    if (true.toPyObj() == Python.eval("True")) {
         print("success11\n")
     }
 
-    if ('a'.toPyObj() == Python.Eval("'a'")) {
+    if ('a'.toPyObj() == Python.eval("'a'")) {
         print("success21\n")
     }
 
-    if (!(1.toPyObj() != Python.Eval("1"))) {
+    if (!(1.toPyObj() != Python.eval("1"))) {
         print("success02\n")
     }
 
-    if (!(true.toPyObj() != Python.Eval("True"))) {
+    if (!(true.toPyObj() != Python.eval("True"))) {
         print("success12\n")
     }
 
-    if (!('a'.toPyObj() != Python.Eval("'a'"))) {
+    if (!('a'.toPyObj() != Python.eval("'a'"))) {
         print("success22\n")
     }
 
-    try {1.toPyObj() == Python.Eval("a = 1")}catch(e: PythonException) {}
+    try {1.toPyObj() == Python.eval("a = 1")}catch(e: PythonException) {}
 
-    try {Python.Eval("a = 1") == 1.toPyObj()}catch(e: PythonException) {}
+    try {Python.eval("a = 1") == 1.toPyObj()}catch(e: PythonException) {}
 
-    try {1.toPyObj() != Python.Eval("a = 1")}catch(e: PythonException) {}
+    try {1.toPyObj() != Python.eval("a = 1")}catch(e: PythonException) {}
 
-    try {Python.Eval("a = 1") != 1.toPyObj()}catch(e: PythonException) {}
+    try {Python.eval("a = 1") != 1.toPyObj()}catch(e: PythonException) {}
 
     Python.unload()
 }

@@ -15,11 +15,11 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    let a = Python.Eval("123")
+    let a = Python.eval("123")
     println((a as PyLong).getOrThrow().toCjObj())
-    let b = Python.Eval("456", module: "__main__")
+    let b = Python.eval("456", module: "__main__")
     println((b as PyLong).getOrThrow().toCjObj())
-    let c = Python.Eval("a+b", module: "evalTest")
+    let c = Python.eval("a+b", module: "evalTest")
     println((c as PyLong).getOrThrow().toCjObj())
     Python.unload()
     return 0

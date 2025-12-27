@@ -24,12 +24,12 @@ main() {
     
     var a = PySet<Int64>(HashSet<Int64>([1, 2, 3]))
 
-    var b = match (Python.Eval("{'PySet', 'HashSet', 1, 1.1, True}")) {
+    var b = match (Python.eval("{'PySet', 'HashSet', 1, 1.1, True}")) {
         case val: PySet<PyObj> => val
         case _ => throw PythonException()
     }
    
-    var test = Python.Import("test01")
+    var test = Python.importMod("test01")
     var e = match (test["pyset"]) {
         case val: PySet<PyObj> => val
         case _ => throw PythonException()
@@ -39,9 +39,9 @@ main() {
     print("a contains 0 ${a.contains(0)}\n")
 
     print("b contains PySet ${b.contains("PySet".toPyObj())}\n")
-    print("b contains python PySet ${b.contains(Python.Eval("'PySet'"))}\n")
-    print("b contains python pySet ${b.contains(Python.Eval("'pySet'"))}\n")
-    try { b.contains(Python.Eval("a = 1")) }catch(x: PythonException) {  }
+    print("b contains python PySet ${b.contains(Python.eval("'PySet'"))}\n")
+    print("b contains python pySet ${b.contains(Python.eval("'pySet'"))}\n")
+    try { b.contains(Python.eval("a = 1")) }catch(x: PythonException) {  }
     
     print("e contains Array ${e.contains("Array".toPyObj())}\n")
     print("e contains array ${e.contains("array".toPyObj())}\n")

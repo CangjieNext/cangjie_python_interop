@@ -23,7 +23,7 @@ func printPyList<T>(list: PyList<T>): Unit where T <: PyFFIType {
 main() {
     Python.load()
 
-    var test = Python.Import("test01")
+    var test = Python.importMod("test01")
     var pylist = test["pylist"]
     var list = match (pylist) {
         case val: PyList<PyObj> => printPyList<PyObj>(val); val

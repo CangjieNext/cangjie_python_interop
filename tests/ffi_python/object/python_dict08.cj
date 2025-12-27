@@ -13,10 +13,10 @@ internal import std.collection.*
 main() {
     Python.load()
     var a = PyDict<PyObj, Int64>(HashMap<PyObj, Int64>([]))
-    try {a.getItem(Python.Eval("a = 1"))} catch(e: PythonException) {}
+    try {a.getItem(Python.eval("a = 1"))} catch(e: PythonException) {}
 
     var b = PyDict<Int64, PyObj>(HashMap<Int64, PyObj>([]))
-    try {b.setItem(1, Python.Eval("a = 1"))} catch(e: PythonException) {}
+    try {b.setItem(1, Python.eval("a = 1"))} catch(e: PythonException) {}
 
     Python.unload()
 }

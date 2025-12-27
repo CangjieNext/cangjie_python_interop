@@ -28,7 +28,7 @@ func printDict<K, V>(dict: PyDict<K, V>) where K <: Hashable & Equatable<K> & Py
 
 main() {
     Python.load(loglevel: LogLevel.WARN)
-    var hashmap = HashMap<PyObj, Int64>([(1.toPyObj(), 3), (2.toPyObj(), 4), (Python.Eval("1"), 5), ("1".toPyObj(), 6)])
+    var hashmap = HashMap<PyObj, Int64>([(1.toPyObj(), 3), (2.toPyObj(), 4), (Python.eval("1"), 5), ("1".toPyObj(), 6)])
     var a = PyDict<PyObj, Int64>(hashmap)
     if(a.size() == hashmap.size) {
         print("success\n")

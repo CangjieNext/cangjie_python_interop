@@ -27,7 +27,7 @@ main() {
     print("a is ")
     printTuple(a)
 
-    var b = match (Python.Eval("('cangjie', True, 10, 10.5)")) {
+    var b = match (Python.eval("('cangjie', True, 10, 10.5)")) {
         case val: PyTuple => print("b is "); printTuple(val); val
         case _ => throw PythonException()
     }

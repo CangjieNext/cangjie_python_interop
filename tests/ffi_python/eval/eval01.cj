@@ -14,10 +14,10 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    Python.Eval("123")
-    Python.Eval("123", module: "__main__")
+    Python.eval("123")
+    Python.eval("123", module: "__main__")
     var a: Option<PyObj> = try {
-        Python.Eval("a=123")
+        Python.eval("a=123")
     } catch (e: PythonException) { 
         println(e)
         Option<PyObj>.None
@@ -26,7 +26,7 @@ main(): Int64 {
         case Some(v) => println(v.toString())
         case None => println("None")
     }
-    Python.Eval("123", module: "importTest01")
+    Python.eval("123", module: "importTest01")
     Python.unload()
     return 0
 }

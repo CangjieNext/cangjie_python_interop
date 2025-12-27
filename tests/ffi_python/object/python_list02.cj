@@ -12,8 +12,8 @@ internal import ffi_python.*
 
 main() {
     Python.load()
-    var elem1 = Python.Eval("1")
-    var elem2 = Python.Eval("2")
+    var elem1 = Python.eval("1")
+    var elem2 = Python.eval("2")
     //get a PyObj is not available
     var elem3 = PyLong(0) + PyString("")
     var a = [elem1, elem2, elem3]
