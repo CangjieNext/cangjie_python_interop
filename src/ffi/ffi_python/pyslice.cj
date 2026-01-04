@@ -45,13 +45,14 @@ public class PySlice<T> <: PyObj where T <: Countable<T> & Comparable<T> & Equat
 
     private func pySliceNew(start: Reference, stop: Reference, step: Reference): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PySlice_New(start.getPtr(), stop.getPtr(), step.getPtr()) }
 
         if (ret.isNull()) {
             PYLOG.error(PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pySliceUnpack(handle: Reference): (Int64, Int64, Int64) {
