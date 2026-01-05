@@ -143,12 +143,13 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
 
     private func pySetNew(): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PySet_New(CPointer<Unit>()) }
         releaseGIL(gstate)
         if (ret.isNull()) {
             throw PythonException("Set create failed.")
         }
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pySetAdd(handle: Reference, key: Reference): Int32 {
@@ -180,12 +181,13 @@ public class PySet<T> <: PyObj where T <: Hashable & Equatable<T> & PyFFIType {
 
     private func pySetPop(handle: Reference): Reference {
         let gstate = getGIL()
+        // new reference
         let ret = unsafe { PySet_Pop(handle.getPtr()) }
         if (ret.isNull()) {
             PYLOG.warn("Set pop elem failed, return unavailable object.\n" + PYLOG.getPythonErr())
         }
         releaseGIL(gstate)
-        return Reference(ret)
+        return Reference(ret, needIncreReference: false)
     }
 
     private func pySetDiscard(handle: Reference, key: Reference): Int32 {
