@@ -6,11 +6,11 @@
 
 // EXEC: %compiler %pyffi-link %f -o %output
 // EXEC: export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
-// ASSERT: scan WARN: [Eval] Python is not initialized. Please load it first.
+// ASSERT: scan WARN: [eval] Python is not initialized. Please load it first.
 
 internal import ffi_python.*
 
 main(): Int64 {
-    Python.Eval("123")
+    Python.eval("123")
     return 0
 }

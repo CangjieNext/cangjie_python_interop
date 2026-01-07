@@ -12,12 +12,12 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    var a = Python.Eval("123")
+    var a = Python.eval("123")
     //get a PyObj is not available
     var b = PyLong(0) + PyString("")
-    var c = Python.Eval("123")
-    var type_s = Python["type"].getOrThrow()([a, b, c]) // call `type` by a null ptr.
-    Python["print"].getOrThrow()([type_s])
+    var c = Python.eval("123")
+    var type_s = Python.getBuiltinsAttr("type").getOrThrow()([a, b, c]) // call `type` by a null ptr.
+    Python.getBuiltinsAttr("print").getOrThrow()([type_s])
     Python.unload()
     return 0
 }

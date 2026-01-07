@@ -13,7 +13,7 @@ internal import ffi_python.*
 main(): Int64 {
     Python.load()
 
-    var a = match (Python.Eval("0.058823529411764705882352941176470588235294117647059")) {
+    var a = match (Python.eval("0.058823529411764705882352941176470588235294117647059")) {
         case val: PyFloat => val
         case _ => throw PythonException()
     }

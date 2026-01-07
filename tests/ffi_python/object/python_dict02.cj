@@ -29,7 +29,7 @@ internal import std.collection.*
 
 main() {
     Python.load()
-    var a = match (Python.Eval("{'a': 1, 'b': 2, 'c': 3}")) {
+    var a = match (Python.eval("{'a': 1, 'b': 2, 'c': 3}")) {
         case val: PyDict<PyObj, PyObj> => val
         case _ => throw PythonException()
     }

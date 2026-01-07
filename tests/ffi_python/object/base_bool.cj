@@ -28,7 +28,7 @@ main(): Int64 {
         print("success02\n")
     }
 
-    var c3 = match (Python.Eval("True")) {
+    var c3 = match (Python.eval("True")) {
         case val: PyBool => val
         case _ => throw Exception()
     }
@@ -36,7 +36,7 @@ main(): Int64 {
         print("success03\n")
     }
 
-    var c4 = match (Python.Eval("False")) {
+    var c4 = match (Python.eval("False")) {
         case val: PyBool => val
         case _ => throw Exception()
     }
