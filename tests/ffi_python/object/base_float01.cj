@@ -25,8 +25,8 @@ main(): Int64 {
 
     var f1 = PyFloat(10.0)
     var f2 = PyFloat(-10.0)
-    var f3 = Python.Eval("10.0")
-    var f4 = Python.Eval("-10.0")
+    var f3 = Python.eval("10.0")
+    var f4 = Python.eval("-10.0")
     var f5 = 10.0.toPyObj()
     var f6 = (-10.0).toPyObj()
 

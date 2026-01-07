@@ -14,7 +14,7 @@ internal import ffi_python.*
 main(): Int64 {
     Python.load()
     var x: Option<PyObj> = try {
-        Python.Import("xxxx")
+        Python.importMod("xxxx")
     } catch (e: PythonException) {
         println(e)
         Option<PyObj>.None

@@ -41,7 +41,7 @@ main(): Int64 {
         print("success04\n")
     }
 
-    var c5 = match (Python.Eval("10")) {
+    var c5 = match (Python.eval("10")) {
         case val: PyLong => val
         case _ => throw Exception()
     }
@@ -49,7 +49,7 @@ main(): Int64 {
         print("success05\n")
     }
 
-    var c6 = match (Python.Eval("-10")) {
+    var c6 = match (Python.eval("-10")) {
         case val: PyLong => val
         case _ => throw Exception()
     }

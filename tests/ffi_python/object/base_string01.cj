@@ -14,7 +14,7 @@ internal import ffi_python.*
 var i = Python.load()
 
 main(): Int64 {
-    var test = Python.Import("test01")
+    var test = Python.importMod("test01")
     println(test["C"]())
     return 0
 }
