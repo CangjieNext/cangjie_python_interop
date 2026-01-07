@@ -5,7 +5,7 @@
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
 // EXEC: %compiler %pyffi-link %f -o %output
-// EXEC: export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
+// EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
 // ASSERT: scan-not core dumped
 // ASSERT: scan-not stack trace
 // ASSERT: regex-5 find type
@@ -17,11 +17,11 @@ main(): Int64 {
     Python.load()
     let futArr = Array<Future<Unit>>(5) { _ => 
         spawn { =>
-            match (Python["type"]) {
+            match (Python.getBuiltinsAttr("type")) {
                 case Some(v) => println("find type\n")
                 case None => ()
             }
-            match (Python["mytype"]) {
+            match (Python.getBuiltinsAttr("mytype")) {
                 case Some(v) => ()
                 case None => println("cant find mytype\n")
             }

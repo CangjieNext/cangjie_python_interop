@@ -14,12 +14,12 @@ internal import std.collection.*
 
 main(): Int64 {
     Python.load()
-    var d = match (Python.Eval("{'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}")) {
+    var d = match (Python.eval("{'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}")) {
         case val: PySet<PyObj> => val
         case _ => throw PythonException()
     }
 
-    var e = match (Python.Eval("{'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}")) {
+    var e = match (Python.eval("{'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}")) {
         case val: PySet<PyObj> => val
         case _ => throw PythonException()
     }

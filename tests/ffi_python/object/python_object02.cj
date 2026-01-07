@@ -24,7 +24,7 @@ internal import ffi_python.*
 
 main() {
     Python.load()
-    var test01 = Python.Import("test01")
+    var test01 = Python.importMod("test01")
     test01["a"] = 11.1.toPyObj()
     if (test01["a"] is PyFloat) {
         print("a update to PyFloat\n")

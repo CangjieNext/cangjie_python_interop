@@ -16,7 +16,7 @@ internal import ffi_python.*
 main(): Int64 {
     /* Initialize python environment */
     Python.load()
-    var test = Python.Import("importTest")
+    var test = Python.importMod("importTest")
     /* call class, pass two argument. */
     var point = test["Point"](0, 0)
     point["set"](3, 4)

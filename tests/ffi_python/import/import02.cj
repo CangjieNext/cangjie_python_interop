@@ -12,7 +12,7 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    Python.Import("xxxx")
+    Python.importMod("xxxx")
     Python.unload()
     return 0
 }

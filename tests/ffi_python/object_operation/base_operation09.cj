@@ -15,7 +15,7 @@ internal import ffi_python.*
  
 main(): Int64 {
     Python.load()
-    let test = Python.Import("test")
+    let test = Python.importMod("test")
     let myint = test["MyIntegral"]()
     myint + myint
     myint + PyLong(1)

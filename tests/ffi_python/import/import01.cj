@@ -11,7 +11,7 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    var sys = Python.Import("sys")
+    var sys = Python.importMod("sys")
     sys["version"]
     Python.unload()
     return 0

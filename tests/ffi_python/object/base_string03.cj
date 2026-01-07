@@ -47,10 +47,10 @@ main(): Int64 {
     print("${s8}\n")
     print("${s9}\n")
 
-    var s10 = Python.Eval("\"a\"")
-    var s11 = Python.Eval("\"\\n\"")
-    var s12 = Python.Eval("\"\\t\"")
-    var s13 = Python.Eval("\"你好\"")
+    var s10 = Python.eval("\"a\"")
+    var s11 = Python.eval("\"\\n\"")
+    var s12 = Python.eval("\"\\t\"")
+    var s13 = Python.eval("\"你好\"")
     match (s10) {
         case val: PyString => print("s10: ${val.toCjObj()}\n")
         case _ => print("failed\n")
