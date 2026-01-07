@@ -14,7 +14,7 @@ internal import std.collection.*
 
 main(): Int64 {
     Python.load()
-    var d = match (Python.Eval("{'name': 'xxx', 'likes': 123, 'url': 'xxx'}")) {
+    var d = match (Python.eval("{'name': 'xxx', 'likes': 123, 'url': 'xxx'}")) {
         case val: PyDict<PyObj, PyObj> => val
         case _ => throw PythonException()
     }

@@ -23,11 +23,11 @@ internal import std.collection.*
 main(): Int64 {
     Python.load()
 
-    var test = Python.Import("test")
+    var test = Python.importMod("test")
     test["function01"](HashMap<String, PyObj>([("a", 2.toPyObj())]))
 
     test["function02"]([1], HashMap<String, PyObj>([("c", 2.toPyObj())]))
-    test["function02"]([Python.Eval("1")], HashMap<String, PyObj>([("c", 2.toPyObj())]))
+    test["function02"]([Python.eval("1")], HashMap<String, PyObj>([("c", 2.toPyObj())]))
 
     test["function03"]([1, 2], HashMap<String, PyObj>([("f", 3.toPyObj()), ("g", 4.toPyObj())]))
 

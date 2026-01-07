@@ -10,7 +10,7 @@
 internal import ffi_python.*
 
 func getPyLong(str: String): PyLong {
-    return match (Python.Eval(str)) {
+    return match (Python.eval(str)) {
         case val: PyLong => return val
         case _ => throw Exception()
     }

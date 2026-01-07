@@ -5,7 +5,7 @@
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
 // EXEC: %compiler %pyffi-link %f -o %output
-// EXEC: export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
+// EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
 // ASSERT: regex ---main---
 // ASSERT: regex ---fut---
 
@@ -15,9 +15,9 @@ main() {
     Python.load()
     let fut = spawn {
         Python.load()
-        Python["print"].getOrThrow()(["---fut---"])
+        Python.getBuiltinsAttr("print").getOrThrow()(["---fut---"])
     }
-    Python["print"].getOrThrow()(["---main---"])
+    Python.getBuiltinsAttr("print").getOrThrow()(["---main---"])
 
     fut.get()
     0

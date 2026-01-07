@@ -20,7 +20,7 @@ internal import ffi_python.*
 
 main() {
     Python.load()
-    var test01 = Python.Import("test01")
+    var test01 = Python.importMod("test01")
     if (test01["a"] is PyLong) {
         print("a is PyLong\n")
     }

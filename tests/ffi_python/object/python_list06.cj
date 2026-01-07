@@ -15,7 +15,7 @@ internal import ffi_python.*
 main() {
     Python.load()
 
-    var test = Python.Import("test01")
+    var test = Python.importMod("test01")
     var a = test["A"]()
     var b = test["B"]()
 
