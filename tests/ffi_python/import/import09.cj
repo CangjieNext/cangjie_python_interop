@@ -15,7 +15,7 @@ internal import ffi_python.*
 
 main(): Int64 {
     Python.load()
-    var test = Python.Import("importTest")
+    var test = Python.importMod("importTest")
     test["func2"]()
     Python.unload()
     return 0

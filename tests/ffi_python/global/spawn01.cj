@@ -5,7 +5,7 @@
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
 // EXEC: %compiler %pyffi-link %f -o %output
-// EXEC: export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
+// EXEC: export cjProcessorNum=1 && export cjStackSize=1MB && %run %run_opt %output %run_args 2>&1 | compare %f
 // ASSERT: regex-not failure
 // ASSERT: regex main
 
@@ -19,12 +19,12 @@ main() {
     
     let fut = spawn {
         Python.load("/usr/bin/python3")
-        Python["print"].getOrThrow()(["failure"])
+        Python.getBuiltinsAttr("print").getOrThrow()(["failure"])
         Python.unload()
     }
     sleep(Duration.second * 1)
     Python.load()
-    Python["print"].getOrThrow()(["main"])
+    Python.getBuiltinsAttr("print").getOrThrow()(["main"])
     
     0
 }

@@ -25,12 +25,12 @@ main() {
     
     var a = PySet<Int64>(HashSet<Int64>([1, 2, 3]))
 
-    var b = match (Python.Eval("{'PySet', 'HashSet', 1, 1.1, True}")) {
+    var b = match (Python.eval("{'PySet', 'HashSet', 1, 1.1, True}")) {
         case val: PySet<PyObj> => val
         case _ => throw PythonException()
     }
    
-    var test = Python.Import("test01")
+    var test = Python.importMod("test01")
     var e = match (test["pyset"]) {
         case val: PySet<PyObj> => val
         case _ => throw PythonException()

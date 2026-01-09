@@ -15,19 +15,19 @@ internal import ffi_python.*
 main(): Int64 {
     Python.load()
 
-    if (Python.Eval("True") is PyBool) {
+    if (Python.eval("True") is PyBool) {
         print("success00\n")
     }
 
-    if (Python.Eval("10") is PyLong) {
+    if (Python.eval("10") is PyLong) {
         print("success01\n")
     }
 
-    if (Python.Eval("10.1") is PyFloat) {
+    if (Python.eval("10.1") is PyFloat) {
         print("success02\n")
     }
 
-    if (Python.Eval("\"hello world\"") is PyString) {
+    if (Python.eval("\"hello world\"") is PyString) {
         print("success03\n")
     }
     Python.unload()

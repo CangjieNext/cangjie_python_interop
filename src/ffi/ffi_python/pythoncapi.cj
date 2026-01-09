@@ -53,6 +53,10 @@ var PyErr_Fetch: CFunc<(CPointer<CPointer<Unit>>, CPointer<CPointer<Unit>>, CPoi
     _: CPointer<CPointer<Unit>>, _: CPointer<CPointer<Unit>>, _: CPointer<CPointer<Unit>> =>
     throw PythonException("PyErr_Fetch UnImplemented")
 }
+var PyErr_SetString: CFunc<(CPointer<Unit>, CString) -> Unit> = {
+    _: CPointer<Unit>, _: CString =>
+    throw PythonException("PyErr_SetString UnImplemented")
+}
 var PyEval_GetBuiltins: CFunc<() -> CPointer<Unit>> = {
     =>
     throw PythonException("PyEval_GetBuiltins UnImplemented")
@@ -142,9 +146,14 @@ var PyImport_AppendInittab: CFunc<(CString, CPointer<Unit>) -> Int32> = {
     throw PythonException("PyImport_AppendInittab UnImplemented")
     0
 }
-var PyModule_Create: CFunc<(CPointer<PyModuleDef>, Int32) -> CPointer<Unit>> = {
-    _: CPointer<PyModuleDef>, _: Int32 =>
-    throw PythonException("PyModule_Create UnImplemented")
+var PyCFunction_New: CFunc<(CPointer<PyMethodDef>, CPointer<Unit>) -> CPointer<Unit>> = {
+    _: CPointer<PyMethodDef>, _: CPointer<Unit> =>
+    throw PythonException("PyCFunction_New UnImplemented")
+    CPointer<Unit>()
+}
+var PyWeakref_NewRef: CFunc<(CPointer<Unit>, CPointer<Unit>) -> CPointer<Unit>> = {
+    _: CPointer<Unit>, _: CPointer<Unit> =>
+    throw PythonException("PyWeakref_NewRef UnImplemented")
     CPointer<Unit>()
 }
 
@@ -307,11 +316,6 @@ var PyTuple_GetSlice: CFunc<(CPointer<Unit>, Int64, Int64) -> CPointer<Unit>> = 
     _: CPointer<Unit>, _: Int64, _: Int64 =>
     throw PythonException("PyTuple_GetSlice UnImplemented")
     CPointer<Unit>()
-}
-var PyArg_ParseTuple: CFunc<(CPointer<Unit>, CString, CPointer<Unit>, CPointer<CPointer<Unit>>) -> Int32> = {
-    _: CPointer<Unit>, _: CString, _: CPointer<Unit>, _: CPointer<CPointer<Unit>> =>
-    throw PythonException("PyArg_ParseTuple UnImplemented")
-    0
 }
 
 /* List */
