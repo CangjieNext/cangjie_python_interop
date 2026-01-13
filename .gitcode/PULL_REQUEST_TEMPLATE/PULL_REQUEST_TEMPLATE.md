@@ -17,7 +17,7 @@ Please describe the type of changes in this Pull Request (reason). **Simply save
 
 ### Local Compilation Verification Results:
 
-- [ ] Cangjie ffi_python Library compiled successfully
+- [ ] Cangjie py_interop Library compiled successfully
 - [ ] Not applicable (select this option for auxiliary tool changes or documentation updates)
 
 ### Local Test Case Verification Results:

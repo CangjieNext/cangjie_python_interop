@@ -15,7 +15,7 @@ cangjie_interop/
 ├── docs                        # 介绍文档，包括用户指南、开发者指南、api参考
 ├── src                         # 源码文件夹
 │   ├── ffi
-│       └── ffi_python          # 仓颉-Python 互操作库源码
+│       └── py_interop          # 仓颉-Python 互操作库源码
 └── tests                       # 测试用例
 ```
 

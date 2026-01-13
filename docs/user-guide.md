@@ -2,18 +2,18 @@
 
 ## 整体介绍
 
-为了兼容强大的计算和 AI 生态，仓颉支持与 Python 语言的互操作调用。Python 的互操作通过 ffi_python 库为用户提供能力。
+为了兼容强大的计算和 AI 生态，仓颉支持与 Python 语言的互操作调用。Python 的互操作通过 py_interop 库为用户提供能力。
 
-目前 ffi_python 库仅支持在 Linux 和 OpenHarmony 平台上仓颉调用 Python，并且仅支持仓颉编译器的 cjnative 后端。
+目前 py_interop 库仅支持在 Linux 和 OpenHarmony 平台上仓颉调用 Python，并且仅支持仓颉编译器的 cjnative 后端。
 
-### 使用 ffi_python 库的简单用例
+### 使用 py_interop 库的简单用例
 
 导入 Python 标准库中的 `sys` 模块，并访问 `sys` 模块的 `version` 属性。
 
 <!-- run -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -30,10 +30,10 @@ main(): Int64 {
 3.10.12 (main, May 27 2025, 17:12:29) [GCC 11.4.0]
 ```
 
-### 使用 ffi_python 库流程
+### 使用 py_interop 库流程
 
-1. 导入 `ffi_python` 库
-   `ffi_python` 库为用户提供了解释器类：`Python` ，通过该解释器类的接口可以加载 Python 解释器，创建并操作 Python 对象，调用 Python 能力。
+1. 导入 `py_interop` 库
+   `py_interop` 库为用户提供了解释器类：`Python` ，通过该解释器类的接口可以加载 Python 解释器，创建并操作 Python 对象，调用 Python 能力。
 2. 使用解释器类 `Python` 提供的接口
    
    * 加载、卸载 Python 解释器资源；
@@ -42,7 +42,7 @@ main(): Int64 {
    * 执行一个 Python 表达式并返回表达式的值，包括：字面量、变量与已定义对象的引用、算术与逻辑运算表达式、函数调用等符合语法规范的单个表达式；
    * 执行一段 Python 代码，包括：函数和类的定义，模块导入，多行流程控制语句等合法且完整的 Python 代码块。
 3. 使用 `PyObject` 类型创建和操作 Python 对象
-   `ffi_python` 库支持多种 Python 数据类型与仓颉类型之间的互相转换。它们均继承自 `PyObject` 类型。`PyObject` 类型提供了对 Python 对象的成员变量访问、函数访问、与仓颉类型转换等通用接口。下面所列子类也提供了每个类型独有的接口能力：
+   `py_interop` 库支持多种 Python 数据类型与仓颉类型之间的互相转换。它们均继承自 `PyObject` 类型。`PyObject` 类型提供了对 Python 对象的成员变量访问、函数访问、与仓颉类型转换等通用接口。下面所列子类也提供了每个类型独有的接口能力：
    
    * `PyBool`
    * `PyLong`
@@ -53,11 +53,11 @@ main(): Int64 {
    * `PyDict`
    * `PySet`
 4. 支持 Python 代码回调仓颉函数
-   `ffi_python` 库支持简单的函数注册及 Python 对仓颉函数调用。实现一个 `CFunc` 函数并构造出一个 `PyCFunc` 对象，可以直接传递给 Python 侧进行调用。`CFunc` 函数入参和返回值支持的类型包括：`Bool`/`Int8`/`UInt8`/`Int16`/`UInt16`/`Int32`/`UInt32`/`Int64`/`UInt64`/`Float32`/`Float64`/`CPointer<Unit>`/`CString`/`Unit` 类型。
+   `py_interop` 库支持简单的函数注册及 Python 对仓颉函数调用。实现一个 `CFunc` 函数并构造出一个 `PyCFunc` 对象，可以直接传递给 Python 侧进行调用。`CFunc` 函数入参和返回值支持的类型包括：`Bool`/`Int8`/`UInt8`/`Int16`/`UInt16`/`Int32`/`UInt32`/`Int64`/`UInt64`/`Float32`/`Float64`/`CPointer<Unit>`/`CString`/`Unit` 类型。
 
 ## 规格介绍
 
-### `ffi_python` 库全局资源介绍
+### `py_interop` 库全局资源介绍
 
 #### 全局日志打印对象 `PYLOG`
 
@@ -87,7 +87,7 @@ public let PYLOG = PythonLogger()
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     PYLOG.level = LogLevel.WARN // Only logs of the warn level and above are printed.
@@ -112,7 +112,7 @@ WARN: loglevel warn
 ERROR: loglevel error
 ```
 
-#### 提供 `ffi_python` 库的版本信息类 `Version`
+#### 提供 `py_interop` 库的版本信息类 `Version`
 
 代码原型：
 
@@ -139,7 +139,7 @@ public struct Version <: ToString {
 <!-- run -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -191,7 +191,7 @@ public class Python {
 <!-- compile -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -207,7 +207,7 @@ main(): Int64 {
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     print("${Python.isLoad()}\n")
@@ -278,7 +278,7 @@ libpython3.9dm.so
 <!-- run -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load(loglevel: LogLevel.INFO)
@@ -361,7 +361,7 @@ public static func getVersion(): Version
 <!-- run -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -405,7 +405,7 @@ public static func importMod(module: String): PyModule
 <!-- compile -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -454,7 +454,7 @@ ModuleNotFoundError: No module named 'xxxx'
   * 方法二：运行时动态修改 `sys.path`
     
     ```cangjie
-    import ffi_python.*
+    import py_interop.*
     
     main(): Int64 {
         Python.load()
@@ -503,7 +503,7 @@ public static func eval(cmd: String, module!: String = "__main__"): PyObj
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -547,7 +547,7 @@ def add(x, y):
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -593,7 +593,7 @@ public static func exec(code: String): Unit
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -632,7 +632,7 @@ def add(x, y):
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -678,7 +678,7 @@ public static func getBuiltinsAttr(attr: String): Option<PyObj>
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -861,7 +861,7 @@ def function02(b, c = 1):
 <!-- compile -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 import std.collection.*
 
 main(): Int64 {
@@ -986,7 +986,7 @@ public class PyBool <: PyObj {
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -1054,7 +1054,7 @@ public class PyLong <: PyObj {
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -1108,7 +1108,7 @@ public class PyFloat <: PyObj {
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -1163,7 +1163,7 @@ public class PyString <: PyObj {
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -1224,7 +1224,7 @@ public class PyTuple <: PyObj {
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -1293,7 +1293,7 @@ public class PyList<T> <: PyObj where T <: PyFFIType {
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     Python.load()
@@ -1396,7 +1396,7 @@ public class PyDict<K, V> <: PyObj where K <: Hashable & Equatable<K> & PyFFITyp
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 import std.collection.*
 
 main() {
@@ -1532,7 +1532,7 @@ public class PySet<T> <: PyObj where T <: Hashable, T <: Equatable<T> & PyFFITyp
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 import std.collection.*
 
 main() {
@@ -1614,7 +1614,7 @@ public class PySlice<T> <: PyObj where T <: Countable<T> & Comparable<T> & Equat
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main() {
     Python.load()
@@ -1693,7 +1693,7 @@ public class PyObjIterator <: Iterator<PyObj> {
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 import std.collection.*
 
 main() {
@@ -1783,7 +1783,7 @@ def testFoo(foo):
 ```
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 func foo(args: Array<PyObj>): PyObj { ... }
 
@@ -1877,7 +1877,7 @@ def testFoo(foo):
 2、准备仓颉函数：
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 func foo(args: Array<PyObj>): PyObj {
     println("start parse list:")
@@ -1951,7 +1951,7 @@ func foo(args: Array<PyObj>): PyObj {
 3、注册回调函数，并由 Python 进行调用：
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main() {
     Python.load()
@@ -1972,7 +1972,7 @@ main() {
 4、对其编译并执行：
 
 ```shell
-$ cjc -l ffi_python -L /path/to/ffi_python --import-path /path/to/ffi_python ./main.cj -o ./main && ./main
+$ cjc -l py_interop -L /path/to/py_interop --import-path /path/to/py_interop ./main.cj -o ./main && ./main
 start parse list:
 42
 hello
@@ -1998,7 +1998,7 @@ Python 互操作库提供的接口支持系统线程间的并发场景，不支�
 主线程在调用 `load` 函数初始化 Python 解释器时已完成自动绑定，无需额外操作。
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 foreign func CJ_BindOSThread(): Int32
 foreign func CJ_UnbindOSThread(): Int32
 
@@ -2045,14 +2045,14 @@ public class PythonException <: Exception {
 使用说明：
 
 * `PythonException` 与被继承的 `Exception` 除了异常前缀存在差异，其他使用无差异；
-* 当使用 ffi_python 库的接口出现异常时，可以通过 `try-catch` 进行捕获，如果不进行捕获会打印异常堆栈并退出程序，返回值为 1。
+* 当使用 py_interop 库的接口出现异常时，可以通过 `try-catch` 进行捕获，如果不进行捕获会打印异常堆栈并退出程序，返回值为 1。
 
 使用示例：
 
 <!-- verify -->
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main(): Int64 {
     try {
@@ -2087,7 +2087,7 @@ def testFoo(foo):
 2、仓颉回调函数：
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 func foo(args: Array<PyObj>): PyObj {
     // Throw a PythonException in callback function
@@ -2098,7 +2098,7 @@ func foo(args: Array<PyObj>): PyObj {
 3、注册回调函数，并由 Python 进行调用：
 
 ```cangjie
-import ffi_python.*
+import py_interop.*
 
 main() {
     Python.load()
@@ -2121,13 +2121,13 @@ main() {
 ```text
 PythonException: PyObject call function failed.
 RuntimeError: PythonException: This is a PythonException of callback.
-  at ffi_python.PythonException::init(std.core::String)(D:\tasks\python-ffi\ffi_python_demo\third_party\cangjie_interop\src\ffi\ffi_python/python.cj:98)
-  at ohos_app_cangjie_entry.foo(std.core::Array<...>)(D:\tasks\python-ffi\ffi_python_demo\entry\src\main\cangjie/python_worker.cj:100)
-  at ffi_python.py_invoke_callback(CPointer<...>, CPointer<...>)(D:\tasks\python-ffi\ffi_python_demo\third_party\cangjie_interop\src\ffi\ffi_python/pycfunc.cj:38)
-  at ffi_python.PyObj::pyObjectCall(ffi_python::Reference, ffi_python::Reference, ffi_python::Reference)(D:\tasks\python-ffi\ffi_python_demo\third_party\cangjie_interop\src\ffi\ffi_python/pyobj.cj:460)
-  at ffi_python.PyObj::()(std.core::Array<...>)(D:\tasks\python-ffi\ffi_python_demo\third_party\cangjie_interop\src\ffi\ffi_python/pyobj.cj:250)
-  at ohos_app_cangjie_entry.PythonWorker::test10()(D:\tasks\python-ffi\ffi_python_demo\entry\src\main\cangjie/python_worker.cj:564)
-  at ohos_app_cangjie_entry.EntryView::build::lambda.0::lambda.0::lambda.0::lambda.0::lambda.5::lambda.1()(D:\tasks\python-ffi\ffi_python_demo\entry\src\main\cangjie/index.cj:109)
+  at py_interop.PythonException::init(std.core::String)(D:\tasks\python-ffi\py_interop_demo\third_party\cangjie_interop\src\ffi\py_interop/python.cj:98)
+  at ohos_app_cangjie_entry.foo(std.core::Array<...>)(D:\tasks\python-ffi\py_interop_demo\entry\src\main\cangjie/python_worker.cj:100)
+  at py_interop.py_invoke_callback(CPointer<...>, CPointer<...>)(D:\tasks\python-ffi\py_interop_demo\third_party\cangjie_interop\src\ffi\py_interop/pycfunc.cj:38)
+  at py_interop.PyObj::pyObjectCall(py_interop::Reference, py_interop::Reference, py_interop::Reference)(D:\tasks\python-ffi\py_interop_demo\third_party\cangjie_interop\src\ffi\py_interop/pyobj.cj:460)
+  at py_interop.PyObj::()(std.core::Array<...>)(D:\tasks\python-ffi\py_interop_demo\third_party\cangjie_interop\src\ffi\py_interop/pyobj.cj:250)
+  at ohos_app_cangjie_entry.PythonWorker::test10()(D:\tasks\python-ffi\py_interop_demo\entry\src\main\cangjie/python_worker.cj:564)
+  at ohos_app_cangjie_entry.EntryView::build::lambda.0::lambda.0::lambda.0::lambda.0::lambda.5::lambda.1()(D:\tasks\python-ffi\py_interop_demo\entry\src\main\cangjie/index.cj:109)
   at ohos.arkui.component.common.CallbackCJClickEvent::invoke(Int32, CPointer<...>, CPointer<...>)(cj_lambda_invoker_impl.cj:43)
   at ohos.ffi.ohosFFICJCallbackInvoker(Int64, Int32, CPointer<...>, CPointer<...>)(ffi_callback.cj:156)
   File "/data/storage/el1/bundle/entry/resources/resfile/script/main.py", line 91, in testFoo2
