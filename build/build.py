@@ -8,7 +8,7 @@
 #
 # See https://cangjie-lang.cn/pages/LICENSE for license information.
 
-"""cangjie ffi_python build entry"""
+"""cangjie py_interop build entry"""
 
 import argparse
 import os
@@ -27,7 +27,7 @@ SUPPORTED_TARGET = ["native"]
 
 def build(args):
     if not (IS_LINUX and args.target == 'native'):
-        print("error: ffi_python compile is only supported for native Linux.")
+        print("error: py_interop compile is only supported for native Linux.")
         return 1
 
     command = ['cjpm', 'build']
@@ -35,7 +35,7 @@ def build(args):
         command.append("--debug")
     else:
         command.append("--release")
-    py_interop_dir = os.path.join(CURRENT_DIR, '..', 'src', 'ffi', 'ffi_python')
+    py_interop_dir = os.path.join(CURRENT_DIR, '..', 'src', 'ffi', 'py_interop')
 
     try:
         subprocess.check_call(command, cwd=py_interop_dir)
@@ -45,22 +45,22 @@ def build(args):
 
 def install(args):
     prefix = args.prefix
-    if not os.path.exists(os.path.join(CURRENT_DIR, '..', 'target', 'release', 'ffi_python')):
-        print("error: no ffi_python output, please run command 'build' first.")
+    if not os.path.exists(os.path.join(CURRENT_DIR, '..', 'target', 'release', 'py_interop')):
+        print("error: no py_interop output, please run command 'build' first.")
         return 1
 
     if prefix:
         os.makedirs(os.path.abspath(prefix), exist_ok=True)
-        if os.path.exists(os.path.join(CURRENT_DIR, '..', 'target', 'release', 'ffi_python', 'ffi_python.cjo')):
-            shutil.copy(os.path.join(CURRENT_DIR, '..', 'target', 'release', 'ffi_python', 'ffi_python.cjo'), os.path.abspath(prefix))
-        if os.path.exists(os.path.join(CURRENT_DIR, '..', 'target', 'release', 'ffi_python', 'libffi_python.so')):
-            shutil.copy(os.path.join(CURRENT_DIR, '..', 'target', 'release', 'ffi_python', 'libffi_python.so'), os.path.abspath(prefix))
-        print("Successfully install ffi_python!")
+        if os.path.exists(os.path.join(CURRENT_DIR, '..', 'target', 'release', 'py_interop', 'py_interop.cjo')):
+            shutil.copy(os.path.join(CURRENT_DIR, '..', 'target', 'release', 'py_interop', 'py_interop.cjo'), os.path.abspath(prefix))
+        if os.path.exists(os.path.join(CURRENT_DIR, '..', 'target', 'release', 'py_interop', 'libpy_interop.so')):
+            shutil.copy(os.path.join(CURRENT_DIR, '..', 'target', 'release', 'py_interop', 'libpy_interop.so'), os.path.abspath(prefix))
+        print("Successfully install py_interop!")
 
 def clean():
     if os.path.exists(os.path.join(CURRENT_DIR, '..', 'target')):
         shutil.rmtree(os.path.join(CURRENT_DIR, '..', 'target'))
-    print("Successfully clean ffi_python!")
+    print("Successfully clean py_interop!")
 
 def main():
     # set options
@@ -68,12 +68,12 @@ def main():
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
     # Build command
-    build_parser = subparsers.add_parser('build', help='Build ffi_python')
+    build_parser = subparsers.add_parser('build', help='Build py_interop')
     build_parser.add_argument('-t', '--build-type', default='release', choices=list(SUPPORTED_BUILD_TYPE), help='Select target build type')
     build_parser.add_argument('--target', default='native', choices=list(SUPPORTED_TARGET), help='Specify the target platform for cross compilation')
 
     # Install command
-    install_parser = subparsers.add_parser('install', help='Install ffi_python')
+    install_parser = subparsers.add_parser('install', help='Install py_interop')
     install_parser.add_argument('--prefix', help='Specify installation prefix')
 
     # Clean command

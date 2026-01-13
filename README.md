@@ -15,7 +15,7 @@ cangjie_interop/
 ├── docs                        # Introduction documentincluding user guide、development guide and API reference
 ├── src                         # Source code directory
 │   ├── ffi
-│       └── ffi_python          # Cangjie-Python interop library source code
+│       └── py_interop          # Cangjie-Python interop library source code
 └── tests                       # test cases
 ```
 
