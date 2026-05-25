@@ -42,8 +42,8 @@
 
     ```text
     output/
-    |-- ffi_python.cjo                         # cjo文件
-    |-- libffi_python.so                       # 共享库文件
+    |-- py_interop.cjo                         # cjo文件
+    |-- libpy_interop.so                       # 共享库文件
     ```
 
 4. 清理编译中间产物：
