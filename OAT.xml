@@ -7,6 +7,8 @@
             <policy name="projectPolicy" desc="">
                 <policyitem type="copyright" name="Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved." path=".*" rule="may" group="defaultGroup" filefilter="copyrightPolicyFilter" desc=""/>
                 <policyitem type="copyright" name="REM Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved." path=".*" rule="may" group="defaultGroup" filefilter="copyrightPolicyFilter" desc=""/>
+                <policyitem type="copyright" name="Copyright (c) Huawei Technologies Co., Ltd. 2026. All rights reserved." path=".*" rule="may" group="defaultGroup" filefilter="copyrightPolicyFilter" desc=""/>
+                <policyitem type="copyright" name="REM Copyright (c) Huawei Technologies Co., Ltd. 2026. All rights reserved." path=".*" rule="may" group="defaultGroup" filefilter="copyrightPolicyFilter" desc=""/>
                 <policyitem type="license" name="CC-BY-4.0" path=".*" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc=""/>
             </policy>
         </policylist>
@@ -17,10 +19,10 @@
                 <filteritem type="filename" name="*.cj|*.dylib|*.obfmap|*.expect|*.tsv|*.csv|*.der|*.text|*.key|*.zoneinfo.tar.g|errorTimeZone|*.expect|*.csr|*.der|Shanghai|*.info|*.dll|*.so|*.out|*.gz|TyKind.inc|*.base|*.test|*.list" desc="desc files"/>
             </filefilter>
             <filefilter name="licenseFileNamePolicyFilter" desc="Filters for LICENSE file policies">
-
+                <filteritem type="filepath" name="doc/.*" desc="doc目录过滤"/>
             </filefilter>
             <filefilter name="defaultPolicyFilter" desc="Files that do not need to be applied specified policy, will be merged with the filter items which has the same filefilter name">
-                <filteritem type="filepath" name="docs/.*" desc="doc目录过滤"/>
+
             </filefilter>
             <filefilter name="copyrightPolicyFilter" desc="">
 
