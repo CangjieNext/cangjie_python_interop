@@ -10,9 +10,9 @@
 ## 目录
 
 ```text
-cangjie_interop/
+cangjie_python_interop/
 ├── build                       # 构建脚本
-├── docs                        # 介绍文档，包括用户指南、开发者指南、api参考
+├── docs                        # 介绍文档，包括用户指南、开发者指南、API参考
 ├── src                         # 源码文件夹
 │   ├── ffi
 │       └── py_interop          # 仓颉-Python 互操作库源码
@@ -21,7 +21,7 @@ cangjie_interop/
 
 ## 约束
 
-目前仅支持在 Linux 平台编译和使用，并且仅支持仓颉编译器的 cjnative 后端。
+目前仅支持在 Linux 和 OpenHarmony平台上仓颉调用 python ，并且仅支持仓颉编译器的 cjnative 后端。
 
 ## 编译构建
 
