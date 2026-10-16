@@ -661,7 +661,7 @@ protected open func isNeedRef(): Bool
 
 返回值：
 
-- Bool - 子类 [PySlice](#class-pyslicet-where-t--countablet--comparablet--equatablet--cjobj)、[PyCFunc](#class-pycfunc) 返回 true，其它返回 false。
+- Bool - 子类 [PySlice](#class-pyslicet-where-t--countablet--comparablet--equatablet--cjobj)、[PyCFunc](#class-pycfunc) 返回 true，其他返回 false。
 
 ### func toString()
 
